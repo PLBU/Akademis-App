@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "649038781582",
+    "firebase_url": "https://akademis-id.firebaseio.com",
+    "project_id": "akademis-id",
+    "storage_bucket": "akademis-id.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:649038781582:android:6e25e12938ec7b50a63ddf",
+        "android_client_info": {
+          "package_name": "com.akademis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "649038781582-leh2lrl45rmh001g96udbgn6gitudb7j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.akademis",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "649038781582-t9skoelrbqn9hv1asvh1039sjuetomls.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCscl7O9NS83j1EqBgB-dTTHhRPh2itDQM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "649038781582-t9skoelrbqn9hv1asvh1039sjuetomls.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

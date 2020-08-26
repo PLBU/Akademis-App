@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   StyleSheet,
+  Dimensions,
 } from 'react-native';
 
 //Importing theme
@@ -33,10 +34,13 @@ export default StyleSheet.create({
     alignItems: "center",
     backgroundColor: theme.PRIMARY_ACCENT_COLOR,
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 15,
     elevation: 5,
     width: 300,
-    marginBottom: 20
+    marginBottom: 20,
+  },
+  buttonText: {
+    fontSize: 18
   },
   largeCardWithDesc: {
     width: 360,
@@ -71,6 +75,17 @@ export default StyleSheet.create({
     borderBottomColor: theme.SECONDARY_DARK_COLOR,
     borderBottomWidth: 2,
     margin: 10
+  },
+  pickerStyle: {
+    height: 50,
+    width: Dimensions.get('window').width*0.8, 
+  },
+  pickerContainerStyle: {
+    alignSelf: 'center',
+    width: Dimensions.get('window').width*0.8, 
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: theme.SECONDARY_DARK_COLOR
   },
   backgroundImage: {
     flex: 1,

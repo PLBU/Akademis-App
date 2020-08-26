@@ -133,44 +133,50 @@ export default () => {
         <Text style={styles.leftMediumText}>Email : {"\n"}
           <Text style={styles.leftSmallText}>{email}</Text>
         </Text>
+        
         <Text style={styles.leftMediumText}>Universitas :</Text>
-        <Picker
-          selectedValue={university}
-          style={{height: 50, width: 300, alignSelf: 'center',}}
-          onValueChange={ (itemValue) =>
-            {setUniversity(itemValue)
-            setMajor(majors[itemValue][0])
-            setChanged(true)}
-          }>
-          { (university === null) && <Picker.Item label="Choose" value={null}/>}
-          {universities.map( (item, index) => (
-            <Picker.Item label={item} value={item} key={index}/>
-          ))}
-        </Picker>
-        <Text style={styles.leftMediumText}>Jurusan :</Text>
-        <Picker
-          selectedValue={major}
-          style={{height: 50, width: 300, alignSelf: 'center',}}
-          onValueChange={ (itemValue) =>
-            {setMajor(itemValue)
-            setChanged(true)}
-          }>
-          { (university === null) ?
-            <Picker.Item label="Choose your university first" value={null}/>
-            :
-            majors[String(university) ].map( (item, index) => (
+        <View style={[styles.pickerContainerStyle, {marginTop: 10}]}>
+          <Picker
+            selectedValue={university}
+            style={styles.pickerStyle}
+            onValueChange={ (itemValue) =>
+              {setUniversity(itemValue)
+              setMajor(majors[itemValue][0])
+              setChanged(true)}
+            }>
+            { (university === null) && <Picker.Item label="Choose" value={null}/>}
+            {universities.map( (item, index) => (
               <Picker.Item label={item} value={item} key={index}/>
-            ))
-          }
-        </Picker>
+            ))}
+          </Picker>
+        </View>
+
+        <Text style={styles.leftMediumText}>Jurusan :</Text>
+        <View style={[styles.pickerContainerStyle, {marginTop: 10}]}>
+          <Picker
+            selectedValue={major}
+            style={styles.pickerStyle}
+            onValueChange={ (itemValue) =>
+              {setMajor(itemValue)
+              setChanged(true)}
+            }>
+            { (university === null) ?
+              <Picker.Item label="Choose your university first" value={null}/>
+              :
+              majors[String(university) ].map( (item, index) => (
+                <Picker.Item label={item} value={item} key={index}/>
+              ))
+            }
+          </Picker>
+        </View>
       </View>
 
       {changed &&
         <TouchableOpacity style={[styles.button, {alignSelf: 'center'}]} onPress={() => saveChanges()}>
-          <Text>Save</Text>
+          <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>}
       <TouchableOpacity style={[styles.button, {alignSelf: 'center'}]} onPress={() => logOut()}>
-        <Text>Log out</Text>
+        <Text style={styles.buttonText}>Log out</Text>
       </TouchableOpacity> 
     </ScrollView>
   )

@@ -52,7 +52,12 @@ const VirtualClassStack = createNativeStackNavigator()
 
 const VirtualClassStackComponent = ({navigation}) => {
   return (
-    <VirtualClassStack.Navigator initialRouteName="Main">
+    <VirtualClassStack.Navigator 
+      initialRouteName="Main" 
+      screenOptions={{
+        stackAnimation: 'fade'
+      }}
+    >
       <VirtualClassStack.Screen name="Main" component={VirtualClassTabComponent}
         options={{
           headerTopInsetEnabled: false,

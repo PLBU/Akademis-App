@@ -71,13 +71,15 @@ export default [
     return (
       <ScrollView contentContainerStyle={{flexGrow: 1}}>
         <Text style={{top: 10, left: 20, fontSize: 22, marginBottom: 15}}>Pilih Kategori</Text>
-        <Picker
-          selectedValue={subject}
-          style={{height: 50, width: Dimensions.get('window').width*0.9, alignSelf: 'center'}}
-          onValueChange={ (itemValue) => setSubject(itemValue)}>
-          <Picker.Item label={"All"} value={"All"}/>
-          <Picker.Item label={"Mathematics"} value={"Mathematics"}/>
-        </Picker>
+        <View style={[styles.pickerContainerStyle, {marginTop: 10, marginBottom: 10}]}>
+          <Picker
+            selectedValue={subject}
+            style={styles.pickerStyle}
+            onValueChange={ (itemValue) => setSubject(itemValue)}>
+            <Picker.Item label={"All"} value={"All"}/>
+            <Picker.Item label={"Matematika"} value={"Matematika"}/>
+          </Picker>
+        </View>
         <View style={styles.horizontalRuler}/>
         <Text style={{left: 20, fontSize: 22, marginBottom: 20}}>Pilih Virtual Class</Text>
         {items.map( (value, index) => {
@@ -121,13 +123,15 @@ export default [
     return (
        <ScrollView contentContainerStyle={{flexGrow: 1}}>
         <Text style={{top: 10, left: 20, fontSize: 22, marginBottom: 15}}>Pilih Kategori</Text>
-        <Picker
-          selectedValue={subject}
-          style={{height: 50, width: Dimensions.get('window').width*0.9, alignSelf: 'center'}}
-          onValueChange={ (itemValue) => setSubject(itemValue)}>
-          <Picker.Item label={"All"} value={"All"}/>
-          <Picker.Item label={"Mathematics"} value={"Mathematics"}/>
-        </Picker>
+        <View style={[styles.pickerContainerStyle, {marginTop: 10, marginBottom: 10}]}>
+          <Picker
+            selectedValue={subject}
+            style={styles.pickerStyle}
+            onValueChange={ (itemValue) => setSubject(itemValue)}>
+            <Picker.Item label={"All"} value={"All"}/>
+            <Picker.Item label={"Matematika"} value={"Matematika"}/>
+          </Picker>
+        </View>
         <View style={styles.horizontalRuler}/>
         <Text style={{left: 20, fontSize: 22, marginBottom: 20}}>Pilih Virtual Class</Text>
         {items.map( (value, index) => {
@@ -219,7 +223,7 @@ export default [
               />
               <View style={{margin: 20, alignItems: 'center'}}>
                 <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
-                  <Text>Unggah Rating</Text>
+                  <Text style={styles.buttonText}>Unggah Penilaian</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -252,10 +256,10 @@ export default [
 
               <View style={{margin: 20, alignItems: 'center'}}>
                 <TouchableOpacity style={styles.button} onPress={ () => navigation.goBack()}>
-                  <Text>Beli dengan diamond</Text>
+                  <Text style={styles.buttonText}>Beli dengan diamond</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={ () => navigation.goBack()}>
-                  <Text>Beli dengan mengeshare ke media sosial</Text>
+                  <Text style={styles.buttonText}>Beli via share ke media sosial</Text>
                 </TouchableOpacity>
               </View>
             </View>

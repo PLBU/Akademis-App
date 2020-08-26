@@ -66,105 +66,131 @@ const items = [
 export default [
   //Catalogue
   ({navigation}) => {
-    const [subject, setSubject] = React.useState("")
+    const [subjectPicker, setSubject] = React.useState("")
+    const availableClasses = items.filter( ({paid}) => (paid === false))
 
     return (
       <ScrollView contentContainerStyle={{flexGrow: 1}}>
         <Text style={{top: 10, left: 20, fontSize: 22, marginBottom: 15}}>Pilih Kategori</Text>
         <View style={[styles.pickerContainerStyle, {marginTop: 10, marginBottom: 10}]}>
           <Picker
-            selectedValue={subject}
+            selectedValue={subjectPicker}
             style={styles.pickerStyle}
             onValueChange={ (itemValue) => setSubject(itemValue)}>
-            <Picker.Item label={"All"} value={"All"}/>
+            <Picker.Item label={"All"} value={""}/>
             <Picker.Item label={"Matematika"} value={"Matematika"}/>
+            <Picker.Item label={"Geografi"} value={"Geografi"}/>
+            <Picker.Item label={"Ilmu Pengetahuan Alam"} value={"Ilmu Pengetahuan Alam"}/>
+            <Picker.Item label={"Bahasa Jepang"} value={"Bahasa Jepang"}/>
           </Picker>
         </View>
         <View style={styles.horizontalRuler}/>
         <Text style={{left: 20, fontSize: 22, marginBottom: 20}}>Pilih Virtual Class</Text>
-        {items.map( (value, index) => {
-          if (!value.paid) return (
-            <TouchableOpacity onPress={() => navigation.navigate('Details', {...value})} key={index}>
-              <View style={styles.mediumCardWithDesc}>
-                <View style={{height: 50, flexDirection: 'row', backgroundColor: theme.PRIMARY_DARK_COLOR}}>
-                  <Text style={{fontSize: 20, color: 'white', alignSelf: 'center', left: 15}}>{value.subject}</Text>
-                  <View style={{flexDirection: 'row', alignItems:'center', alignSelf: 'center', position: 'absolute', right: 15}}>
-                    <FontAwesomeIcon name="diamond" color={theme.PRIMARY_ACCENT_COLOR} size={18}/>
-                    <Text style={{fontSize: 17, color: 'white'}}>{" "}{value.price}</Text>
+        {availableClasses.filter( ({ subject }) => (subjectPicker === "") ? true : (subject === subjectPicker))
+          .map( (value, index) => {
+            return (
+              <TouchableOpacity onPress={() => navigation.navigate('Details', {...value})} key={index}>
+                <View style={styles.mediumCardWithDesc}>
+                  <View style={{height: 50, flexDirection: 'row', backgroundColor: theme.PRIMARY_DARK_COLOR}}>
+                    <Text style={{fontSize: 20, color: 'white', alignSelf: 'center', left: 15}}>{value.subject}</Text>
+                    <View style={{flexDirection: 'row', alignItems:'center', alignSelf: 'center', position: 'absolute', right: 15}}>
+                      <FontAwesomeIcon name="diamond" color={theme.PRIMARY_ACCENT_COLOR} size={18}/>
+                      <Text style={{fontSize: 17, color: 'white'}}>{" "}{value.price}</Text>
+                    </View>
                   </View>
+                  <Text style={styles.leftSmallText}>Nama Guru : {value.teacher}</Text>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={styles.leftSmallText}>
+                      Rating : {"   "}
+                    </Text>
+                    <Stars
+                      default={value.rating}
+                      count={5}
+                      half={true}
+                      disabled={true}
+                      fullStar={<MaterialIcon name={'star'} size={18} color={theme.PRIMARY_ACCENT_COLOR}/>}
+                      emptyStar={<MaterialIcon name={'star-border'} size={18} color={theme.PRIMARY_ACCENT_COLOR}/>}
+                      halfStar={<MaterialIcon name={'star-half'} size={18} color={theme.PRIMARY_ACCENT_COLOR}/>}
+                    />
+                  </View>
+                  <Text style={styles.leftSmallText}>Deskripsi : {value.desc}</Text>
                 </View>
-                <Text style={styles.leftSmallText}>Nama Guru : {value.teacher}</Text>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={styles.leftSmallText}>
-                    Rating : {"   "}
-                  </Text>
-                  <Stars
-                    default={value.rating}
-                    count={5}
-                    half={true}
-                    disabled={true}
-                    fullStar={<MaterialIcon name={'star'} size={18} color={theme.PRIMARY_ACCENT_COLOR}/>}
-                    emptyStar={<MaterialIcon name={'star-border'} size={18} color={theme.PRIMARY_ACCENT_COLOR}/>}
-                    halfStar={<MaterialIcon name={'star-half'} size={18} color={theme.PRIMARY_ACCENT_COLOR}/>}
-                  />
-                </View>
-                <Text style={styles.leftSmallText}>Deskripsi : {value.desc}</Text>
-              </View>
-            </TouchableOpacity>
-          )
-        })}
+              </TouchableOpacity>
+            )
+        })
+      }
+      { (availableClasses.find( ({ subject }) => (subjectPicker === "") ? true : (subject === subjectPicker) ) ) ?
+          null 
+        :
+          <View style={styles.centeredView}>
+            <Text style={{fontSize: 20}}>Maaf, tidak ada kelas yang tersedia</Text>
+          </View>
+      }
       </ScrollView>
     )
   },
   //My Class
   ({navigation}) => {
-    const [subject, setSubject] = React.useState("")
+    const [subjectPicker, setSubject] = React.useState("")
+    const availableClasses = items.filter( ({paid}) => (paid === true))
 
     return (
-       <ScrollView contentContainerStyle={{flexGrow: 1}}>
+      <ScrollView contentContainerStyle={{flexGrow: 1}}>
         <Text style={{top: 10, left: 20, fontSize: 22, marginBottom: 15}}>Pilih Kategori</Text>
         <View style={[styles.pickerContainerStyle, {marginTop: 10, marginBottom: 10}]}>
           <Picker
-            selectedValue={subject}
+            selectedValue={subjectPicker}
             style={styles.pickerStyle}
             onValueChange={ (itemValue) => setSubject(itemValue)}>
-            <Picker.Item label={"All"} value={"All"}/>
+            <Picker.Item label={"All"} value={""}/>
             <Picker.Item label={"Matematika"} value={"Matematika"}/>
+            <Picker.Item label={"Geografi"} value={"Geografi"}/>
+            <Picker.Item label={"Ilmu Pengetahuan Alam"} value={"Ilmu Pengetahuan Alam"}/>
+            <Picker.Item label={"Bahasa Jepang"} value={"Bahasa Jepang"}/>
           </Picker>
         </View>
         <View style={styles.horizontalRuler}/>
         <Text style={{left: 20, fontSize: 22, marginBottom: 20}}>Pilih Virtual Class</Text>
-        {items.map( (value, index) => {
-          if (value.paid) return (
-            <TouchableOpacity onPress={() => navigation.navigate('Details', {...value})} key={index}>
-              <View style={styles.mediumCardWithDesc}>
-                <View style={{height: 50, flexDirection: 'row', backgroundColor: theme.PRIMARY_DARK_COLOR}}>
-                  <Text style={{fontSize: 20, color: 'white', alignSelf: 'center', left: 15}}>{value.subject}</Text>
-                  <View style={{flexDirection: 'row', alignItems:'center', alignSelf: 'center', position: 'absolute', right: 15}}>
-                    <FontAwesomeIcon name="diamond" color={theme.PRIMARY_ACCENT_COLOR} size={18}/>
-                    <Text style={{fontSize: 17, color: 'white'}}>{" "}{value.price}</Text>
+        {availableClasses.filter( ({ subject }) => (subjectPicker === "") ? true : (subject === subjectPicker))
+          .map( (value, index) => {
+            return (
+              <TouchableOpacity onPress={() => navigation.navigate('Details', {...value})} key={index}>
+                <View style={styles.mediumCardWithDesc}>
+                  <View style={{height: 50, flexDirection: 'row', backgroundColor: theme.PRIMARY_DARK_COLOR}}>
+                    <Text style={{fontSize: 20, color: 'white', alignSelf: 'center', left: 15}}>{value.subject}</Text>
+                    <View style={{flexDirection: 'row', alignItems:'center', alignSelf: 'center', position: 'absolute', right: 15}}>
+                      <FontAwesomeIcon name="diamond" color={theme.PRIMARY_ACCENT_COLOR} size={18}/>
+                      <Text style={{fontSize: 17, color: 'white'}}>{" "}{value.price}</Text>
+                    </View>
                   </View>
+                  <Text style={styles.leftSmallText}>Nama Guru : {value.teacher}</Text>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={styles.leftSmallText}>
+                      Rating : {"   "}
+                    </Text>
+                    <Stars
+                      default={value.rating}
+                      count={5}
+                      half={true}
+                      disabled={true}
+                      fullStar={<MaterialIcon name={'star'} size={18} color={theme.PRIMARY_ACCENT_COLOR}/>}
+                      emptyStar={<MaterialIcon name={'star-border'} size={18} color={theme.PRIMARY_ACCENT_COLOR}/>}
+                      halfStar={<MaterialIcon name={'star-half'} size={18} color={theme.PRIMARY_ACCENT_COLOR}/>}
+                    />
+                  </View>
+                  <Text style={styles.leftSmallText}>Deskripsi : {value.desc}</Text>
                 </View>
-                <Text style={styles.leftSmallText}>Nama Guru : {value.teacher}</Text>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={styles.leftSmallText}>
-                    Rating : {"   "}
-                  </Text>
-                  <Stars
-                    default={value.rating}
-                    count={5}
-                    half={true}
-                    disabled={true}
-                    fullStar={<MaterialIcon name={'star'} size={18} color={theme.PRIMARY_ACCENT_COLOR}/>}
-                    emptyStar={<MaterialIcon name={'star-border'} size={18} color={theme.PRIMARY_ACCENT_COLOR}/>}
-                    halfStar={<MaterialIcon name={'star-half'} size={18} color={theme.PRIMARY_ACCENT_COLOR}/>}
-                  />
-                </View>
-                <Text style={styles.leftSmallText}>Deskripsi : {value.desc}</Text>
-              </View>
-            </TouchableOpacity>
-          )
-        })}
+              </TouchableOpacity>
+            )
+        })
+      }
+      { (availableClasses.find( ({ subject }) => (subjectPicker === "") ? true : (subject === subjectPicker) ) ) ?
+          null 
+        :
+          <View style={styles.centeredView}>
+            <Text style={{fontSize: 20}}>Maaf, tidak ada kelas yang tersedia</Text>
+          </View>
+      }
       </ScrollView>
     )
   },

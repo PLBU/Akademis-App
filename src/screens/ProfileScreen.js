@@ -27,9 +27,10 @@ import styles from '../styles/mainScreenStyle.js';
 //Importing theme
 import theme from '../styles/theme.js'
 
-export default () => {
+export default ({navigation}) => {
   const { _setProfile, logOut, authState } = React.useContext(AuthContext)
 
+  const [posY, setPosY] = React.useState(0)
   const [avatar, setAvatar] = React.useState(null)
   const [name, setName] = React.useState('')
   const [username, setUsername] = React.useState('')
@@ -87,6 +88,23 @@ export default () => {
       })
   }
 
+  const handleScroll = (e) => {
+    const THRESHOLD = 5
+    const moveY = posY - e.nativeEvent.contentOffset.y
+    setPosY(e.nativeEvent.contentOffset.y)
+    // console.log(moveY)
+    
+    if (moveY < -THRESHOLD) {
+      navigation.setOptions({
+        tabBarVisible: false
+      })
+    } else if (moveY > THRESHOLD){
+      navigation.setOptions({
+        tabBarVisible: true
+      })
+    }
+  }
+
   React.useEffect( () => {
     getUserProfile()
 
@@ -103,7 +121,9 @@ export default () => {
     </View>
   )
   else return (
-    <ScrollView contentContainerStyle={{flexGrow: 1}}>
+    <ScrollView 
+      // onScroll={(e) => handleScroll(e)} 
+      contentContainerStyle={{flexGrow: 1}}>
       <View style={{
         height: 150, 
         backgroundColor: theme.PRIMARY_DARK_COLOR, 
@@ -133,7 +153,7 @@ export default () => {
         <Text style={styles.leftMediumText}>Email : {"\n"}
           <Text style={styles.leftSmallText}>{email}</Text>
         </Text>
-        
+
         <Text style={styles.leftMediumText}>Universitas :</Text>
         <View style={[styles.pickerContainerStyle, {marginTop: 10}]}>
           <Picker

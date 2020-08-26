@@ -9,6 +9,7 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  Dimensions
 } from 'react-native'
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { Picker } from '@react-native-community/picker';
@@ -22,6 +23,9 @@ import { universities, majors } from '../data';
 
 //Styling
 import styles from '../styles/mainScreenStyle.js';
+
+//Importing theme
+import theme from '../styles/theme.js'
 
 export default () => {
   const { _setProfile, logOut, authState } = React.useContext(AuthContext)
@@ -99,51 +103,75 @@ export default () => {
     </View>
   )
   else return (
-    <View style={styles.centeredView}>
-      <Text style={styles.sectionTitle}>Profile Screen</Text>
-      {avatar ? 
-        <Image source={avatar} style={{width: 100, height: 100}}/>
-        :
-        <Image source={require('../images/profile-icon.png')} style={{width: 100, height: 100}}/>
-      }
-      <Text style={styles.description}>Name: {name}</Text>
-      <Text style={styles.description}>Username: {username}</Text>
-      <Text style={styles.description}>Email: {email}</Text>
-      <Picker
-        selectedValue={university}
-        style={{height: 50, width: 300}}
-        onValueChange={ (itemValue) =>
-          {setUniversity(itemValue)
-          setMajor(majors[itemValue][0])
-          setChanged(true)}
-        }>
-        { (university === null) && <Picker.Item label="Choose" value={null}/>}
-        {universities.map( (item, index) => (
-          <Picker.Item label={item} value={item} key={index}/>
-        ))}
-      </Picker>
-      <Picker
-        selectedValue={major}
-        style={{height: 50, width: 300}}
-        onValueChange={ (itemValue) =>
-          {setMajor(itemValue)
-          setChanged(true)}
-        }>
-        { (university === null) ?
-          <Picker.Item label="Choose your university first" value={null}/>
+    <ScrollView contentContainerStyle={{flexGrow: 1}}>
+      <View style={{
+        height: 150, 
+        backgroundColor: theme.PRIMARY_DARK_COLOR, 
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderBottomLeftRadius: 50,
+        borderBottomRightRadius: 50,
+        }}>
+        {avatar ? 
+          <Image source={avatar} style={{width: 100, height: 100}}/>
           :
-          majors[String(university) ].map( (item, index) => (
-            <Picker.Item label={item} value={item} key={index}/>
-          ))
+          <Image source={require('../images/profile-icon.png')} style={{width: 100, height: 100}}/>
         }
-      </Picker>
+        <Text style={styles.bigWhiteText}>Halo, {name}</Text>
+      </View>
+
+      <Text style={styles.sectionText}>Informasi General</Text>
+      <View style={styles.horizontalRuler}/>
+
+      <View style={{width: Dimensions.get('window').width*0.9, alignSelf: 'center', marginBottom: 20}}>
+        <Text style={styles.leftMediumText}>Nama Lengkap : {"\n"}
+          <Text style={styles.leftSmallText}>{name}</Text>
+        </Text>
+        <Text style={styles.leftMediumText}>Username : {"\n"}
+          <Text style={styles.leftSmallText}>{username}</Text>
+        </Text>
+        <Text style={styles.leftMediumText}>Email : {"\n"}
+          <Text style={styles.leftSmallText}>{email}</Text>
+        </Text>
+        <Text style={styles.leftMediumText}>Universitas :</Text>
+        <Picker
+          selectedValue={university}
+          style={{height: 50, width: 300, alignSelf: 'center',}}
+          onValueChange={ (itemValue) =>
+            {setUniversity(itemValue)
+            setMajor(majors[itemValue][0])
+            setChanged(true)}
+          }>
+          { (university === null) && <Picker.Item label="Choose" value={null}/>}
+          {universities.map( (item, index) => (
+            <Picker.Item label={item} value={item} key={index}/>
+          ))}
+        </Picker>
+        <Text style={styles.leftMediumText}>Jurusan :</Text>
+        <Picker
+          selectedValue={major}
+          style={{height: 50, width: 300, alignSelf: 'center',}}
+          onValueChange={ (itemValue) =>
+            {setMajor(itemValue)
+            setChanged(true)}
+          }>
+          { (university === null) ?
+            <Picker.Item label="Choose your university first" value={null}/>
+            :
+            majors[String(university) ].map( (item, index) => (
+              <Picker.Item label={item} value={item} key={index}/>
+            ))
+          }
+        </Picker>
+      </View>
+
       {changed &&
-        <TouchableOpacity style={styles.button} onPress={() => saveChanges()}>
+        <TouchableOpacity style={[styles.button, {alignSelf: 'center'}]} onPress={() => saveChanges()}>
           <Text>Save</Text>
         </TouchableOpacity>}
-      <TouchableOpacity style={styles.button} onPress={() => logOut()}>
+      <TouchableOpacity style={[styles.button, {alignSelf: 'center'}]} onPress={() => logOut()}>
         <Text>Log out</Text>
       </TouchableOpacity> 
-    </View>
+    </ScrollView>
   )
 };

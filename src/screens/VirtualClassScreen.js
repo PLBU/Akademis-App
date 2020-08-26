@@ -69,8 +69,8 @@ export default [
     const [subject, setSubject] = React.useState("")
 
     return (
-      <ScrollView>
-        <Text style={{top: 10, left: 20, fontSize: 20, marginBottom: 15}}>Pilih Kategori</Text>
+      <ScrollView contentContainerStyle={{flexGrow: 1}}>
+        <Text style={{top: 10, left: 20, fontSize: 22, marginBottom: 15}}>Pilih Kategori</Text>
         <Picker
           selectedValue={subject}
           style={{height: 50, width: Dimensions.get('window').width*0.9, alignSelf: 'center'}}
@@ -79,7 +79,7 @@ export default [
           <Picker.Item label={"Mathematics"} value={"Mathematics"}/>
         </Picker>
         <View style={styles.horizontalRuler}/>
-        <Text style={{left: 20, fontSize: 20, marginBottom: 20}}>Pilih Virtual Class</Text>
+        <Text style={{left: 20, fontSize: 22, marginBottom: 20}}>Pilih Virtual Class</Text>
         {items.map( (value, index) => {
           if (!value.paid) return (
             <TouchableOpacity onPress={() => navigation.navigate('Details', {...value})} key={index}>
@@ -119,8 +119,8 @@ export default [
     const [subject, setSubject] = React.useState("")
 
     return (
-       <ScrollView>
-        <Text style={{top: 10, left: 20, fontSize: 20, marginBottom: 15}}>Pilih Kategori</Text>
+       <ScrollView contentContainerStyle={{flexGrow: 1}}>
+        <Text style={{top: 10, left: 20, fontSize: 22, marginBottom: 15}}>Pilih Kategori</Text>
         <Picker
           selectedValue={subject}
           style={{height: 50, width: Dimensions.get('window').width*0.9, alignSelf: 'center'}}
@@ -129,7 +129,7 @@ export default [
           <Picker.Item label={"Mathematics"} value={"Mathematics"}/>
         </Picker>
         <View style={styles.horizontalRuler}/>
-        <Text style={{left: 20, fontSize: 20, marginBottom: 20}}>Pilih Virtual Class</Text>
+        <Text style={{left: 20, fontSize: 22, marginBottom: 20}}>Pilih Virtual Class</Text>
         {items.map( (value, index) => {
           if (value.paid) return (
             <TouchableOpacity onPress={() => navigation.navigate('Details', {...value})} key={index}>
@@ -176,7 +176,7 @@ export default [
     today = dd + '/' + mm + '/' + yyyy;
 
     return (
-      <ScrollView style={{flex: 1}}>
+      <ScrollView contentContainerStyle={{flexGrow: 1}}>
         <View style={{
           width: Dimensions.get('window').width*0.7, 
           height: Dimensions.get('window').width*0.7*0.75,
@@ -189,7 +189,7 @@ export default [
           {/* Ini isinya image */}
         </View>
 
-        <Text style={{top: 10, left: 20, fontSize: 22}}>Informasi Kelas</Text>
+        <Text style={{left: 20, fontSize: 22, marginTop: 10}}>Informasi Kelas</Text>
         <View style={styles.horizontalRuler}/>
 
         <Text style={styles.leftMediumText}>Nama Guru : {"\n"}
@@ -203,7 +203,7 @@ export default [
         </Text>
         { (paid) ?
             <View>
-              <Text style={{top: 10, left: 20, fontSize: 22, marginTop: 20}}>Berikan penilaian mu!</Text>
+              <Text style={{left: 20, fontSize: 22, marginTop: 30}}>Berikan penilaian mu!</Text>
               <View style={styles.horizontalRuler}/>
 
               <Text style={styles.leftSmallText}>Rating mu: {myRating}</Text>
@@ -247,7 +247,7 @@ export default [
                 <Text style={styles.leftSmallText}>{today}</Text>
               </Text>
 
-              <Text style={{top: 10, left: 20, fontSize: 22, marginTop: 20}}>Metode Pembayaran</Text>
+              <Text style={{left: 20, fontSize: 22, marginTop: 30}}>Metode Pembayaran</Text>
               <View style={styles.horizontalRuler}/>
 
               <View style={{margin: 20, alignItems: 'center'}}>

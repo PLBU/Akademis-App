@@ -20,6 +20,10 @@ export default StyleSheet.create({
     left: 15, 
     top: 15,
   },
+  bigWhiteText: {
+    fontSize: 22,
+    color: 'white'
+  },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -58,10 +62,15 @@ export default StyleSheet.create({
   },
   leftSmallText: {fontSize: 16, left: 10, color: 'gray'},
   leftMediumText: {fontSize: 18, left: 10, marginTop: 5},
+  sectionText: {
+    left: 20,
+    fontSize: 22,
+    marginTop: 30,
+  },
   horizontalRuler: {
     borderBottomColor: theme.SECONDARY_DARK_COLOR,
     borderBottomWidth: 2,
-    margin: 15
+    margin: 10
   },
   backgroundImage: {
     flex: 1,

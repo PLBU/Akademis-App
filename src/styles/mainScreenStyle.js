@@ -64,6 +64,18 @@ export default StyleSheet.create({
     backgroundColor: 'white',
     marginBottom: 35
   },
+  smallCard:{
+    width: 360,
+    height: 90,
+    elevation: 5,
+    borderRadius: 15,
+    alignSelf: 'center',
+    flex: 1,
+    overflow: 'hidden',
+    backgroundColor: 'white',
+    marginBottom: 25,
+    flexDirection: 'row',
+  },
   leftSmallText: {fontSize: 16, left: 10, color: 'gray'},
   leftMediumText: {fontSize: 18, left: 10, marginTop: 5},
   sectionText: {

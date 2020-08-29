@@ -26,6 +26,7 @@ import ProfileScreen from '../screens/ProfileScreen.js'
 import TutorialScreen from '../screens/TutorialScreen.js'
 import AuthScreen from '../screens/AuthScreen.js'
 import VirtualClassScreen from '../screens/VirtualClassScreen.js'
+import TryoutScreen from '../screens/TryoutScreen.js'
 
 //Importing theme
 import theme from '../styles/theme.js'
@@ -34,6 +35,9 @@ const BottomTab = createBottomTabNavigator()
 const AuthStack = createNativeStackNavigator()
 const IntroStack = createNativeStackNavigator()
 const VirtualClassTab = createMaterialTopTabNavigator()
+const TryoutTab = createMaterialTopTabNavigator()
+const VirtualClassStack = createNativeStackNavigator()
+const TryoutStack = createNativeStackNavigator()
 
 const VirtualClassTabComponent = () => (
   <VirtualClassTab.Navigator
@@ -47,18 +51,15 @@ const VirtualClassTabComponent = () => (
   </VirtualClassTab.Navigator>
 )
 
-const VirtualClassStack = createNativeStackNavigator()
-// const TryoutStack = createNativeStackNavigator()
-
 const VirtualClassStackComponent = ({navigation}) => {
   return (
     <VirtualClassStack.Navigator 
-      initialRouteName="Main" 
+      initialRouteName="Main VC" 
       screenOptions={{
         stackAnimation: 'fade'
       }}
     >
-      <VirtualClassStack.Screen name="Main" component={VirtualClassTabComponent}
+      <VirtualClassStack.Screen name="Main VC" component={VirtualClassTabComponent}
         options={{
           headerTopInsetEnabled: false,
           headerCenter: () => <Text style={{fontSize: 24}}>Virtual Class</Text>,
@@ -69,12 +70,12 @@ const VirtualClassStackComponent = ({navigation}) => {
           ),
         }}
       />
-      <VirtualClassStack.Screen name="Details" component={VirtualClassScreen[2]}
+      <VirtualClassStack.Screen name="Details VC" component={VirtualClassScreen[2]}
         options={{
           headerTopInsetEnabled: false,
           headerCenter: () => <Text style={{fontSize: 24}}>Details</Text>,
           headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.navigate('Main')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Main VC')}>
               <Text style={{margin: 15, fontSize: 27}}>&lt;</Text>
             </TouchableOpacity>
           ),
@@ -84,13 +85,41 @@ const VirtualClassStackComponent = ({navigation}) => {
   )
 }
 
-// const TryoutStackComponent = () => {
-//   return (
-//     <TryoutStack.Navigator>
-//       <BottomTab.Screen name="Tryout" component={VirtualClassScreen}/>
-//     </TryoutStack.Navigator>
-//   )
-// }
+const TryoutTabComponent = () => (
+  <TryoutTab.Navigator
+    initialRouteName="Catalogue"
+    tabBarOptions={{
+      indicatorStyle: {backgroundColor: theme.PRIMARY_DARK_COLOR}
+    }}
+  >
+    <TryoutTab.Screen name="Catalogue" component={TryoutScreen[0]}/>
+    <TryoutTab.Screen name="My Tryout" component={TryoutScreen[1]}/>
+    <TryoutTab.Screen name="Finished" component={TryoutScreen[1]}/>
+  </TryoutTab.Navigator>
+)
+
+const TryoutStackComponent = ({navigation}) => {
+  return (
+    <TryoutStack.Navigator
+      initialRouteName="Main"
+      screenOptions={{
+          stackAnimation: 'fade'
+        }}
+    >
+      <TryoutStack.Screen name="Main" component={TryoutTabComponent}
+        options={{
+          headerTopInsetEnabled: false,
+          headerCenter: () => <Text style={{fontSize: 24}}>Tryout</Text>,
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Text style={{margin: 15, fontSize: 27}}>&lt;</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+    </TryoutStack.Navigator>
+  )
+}
 
 export const BottomTabComponent = () => {
   const { authState } = React.useContext(AuthContext)
@@ -141,10 +170,10 @@ export const BottomTabComponent = () => {
         tabBarButton: () => null,
         tabBarVisible: false, // if you don't want to see the tab bar
       }}/>
-    {/* <BottomTab.Screen name="Tryout" component={TryoutStackComponent}  options={{
+    <BottomTab.Screen name="Tryout" component={TryoutStackComponent}  options={{
         tabBarButton: () => null,
         tabBarVisible: false, // if you don't want to see the tab bar
-      }}/> */}
+      }}/>
   </BottomTab.Navigator>
 )}
 

@@ -7,6 +7,7 @@ import {
   StatusBar,
   Dimensions,
   TouchableOpacity,
+  Alert
 } from 'react-native';
 import { Picker } from '@react-native-community/picker';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -89,7 +90,7 @@ export default [
         {availableClasses.filter( ({ subject }) => (subjectPicker === "") ? true : (subject === subjectPicker))
           .map( (value, index) => {
             return (
-              <TouchableOpacity onPress={() => navigation.navigate('Details', {...value})} key={index}>
+              <TouchableOpacity onPress={() => navigation.navigate('Details VC', {...value})} key={index}>
                 <View style={styles.mediumCardWithDesc}>
                   <View style={{height: 50, flexDirection: 'row', backgroundColor: theme.PRIMARY_DARK_COLOR}}>
                     <Text style={{fontSize: 20, color: 'white', alignSelf: 'center', left: 15}}>{value.subject}</Text>
@@ -154,7 +155,7 @@ export default [
         {availableClasses.filter( ({ subject }) => (subjectPicker === "") ? true : (subject === subjectPicker))
           .map( (value, index) => {
             return (
-              <TouchableOpacity onPress={() => navigation.navigate('Details', {...value})} key={index}>
+              <TouchableOpacity onPress={() => navigation.navigate('Details VC', {...value})} key={index}>
                 <View style={styles.mediumCardWithDesc}>
                   <View style={{height: 50, flexDirection: 'row', backgroundColor: theme.PRIMARY_DARK_COLOR}}>
                     <Text style={{fontSize: 20, color: 'white', alignSelf: 'center', left: 15}}>{value.subject}</Text>
@@ -231,8 +232,13 @@ export default [
         <Text style={styles.leftMediumText}>Deskripsi : {"\n"}
           <Text style={styles.leftSmallText}>{desc}</Text>
         </Text>
+        
         { (paid) ?
             <View>
+              <Text style={styles.leftMediumText}>Kode Google Classroom : {"\n"}
+                <Text style={styles.leftSmallText}>Test123tesT</Text>
+              </Text>
+
               <Text style={{left: 20, fontSize: 22, marginTop: 30}}>Berikan penilaian mu!</Text>
               <View style={styles.horizontalRuler}/>
 
@@ -248,7 +254,10 @@ export default [
                 halfStar={<MaterialIcon name={'star-half'} size={50} color={theme.PRIMARY_ACCENT_COLOR}/>}
               />
               <View style={{margin: 20, alignItems: 'center'}}>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+                <TouchableOpacity style={styles.button} onPress={() => {
+                    Alert.alert("Sukses", "Penilaian berasil diunggah")
+                    navigation.goBack()
+                }}>
                   <Text style={styles.buttonText}>Unggah Penilaian</Text>
                 </TouchableOpacity>
               </View>
@@ -281,10 +290,16 @@ export default [
               <View style={styles.horizontalRuler}/>
 
               <View style={{margin: 20, alignItems: 'center'}}>
-                <TouchableOpacity style={styles.button} onPress={ () => navigation.goBack()}>
+                <TouchableOpacity style={styles.button} onPress={ () => {
+                    Alert.alert("Sukses", "Pembayaran berhasil")
+                    navigation.goBack()
+                }}>
                   <Text style={styles.buttonText}>Beli dengan diamond</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={ () => navigation.goBack()}>
+                <TouchableOpacity style={styles.button} onPress={ () => {
+                    Alert.alert("Sukses", "Pembayaran berhasil")
+                    navigation.goBack()
+                }}>
                   <Text style={styles.buttonText}>Beli via share ke media sosial</Text>
                 </TouchableOpacity>
               </View>

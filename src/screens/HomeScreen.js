@@ -30,7 +30,7 @@ export default ({navigation}) => {
   const [carouselItems, setCarouselItems] = React.useState([])
 
   const handleScroll = (e) => {
-    const THRESHOLD = 5
+    const THRESHOLD = 64
     const moveY = posY - e.nativeEvent.contentOffset.y
     setPosY(e.nativeEvent.contentOffset.y)
     // console.log(moveY)

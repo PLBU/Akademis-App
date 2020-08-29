@@ -27,11 +27,11 @@ export default [
 
     const loginValidation = () => {
       if (email.length === 0 || password.length === 0) {
-        setValidationText('Please fill all the field')
+        setValidationText('Tolong isi semua informasi')
       } else if (!(email.includes('@') && email.includes('.') ) ) {
-        setValidationText('Please use a valid email address')
+        setValidationText('Tolong gunakan alamat email yang valid')
       } else if (password.length < 8) {
-        setValidationText('The password length should be more than 8')
+        setValidationText('Panjang password seharusnya lebih dari 8')
       } else {
         logIn(email, password)
       }
@@ -188,11 +188,20 @@ export default [
               roundness: 10,
             }}
           />
-          <Text style={{color: 'red', marginBottom: 16}}>
-            {(passwordConfirm === password) ? null : 'Make sure your password confirmation is right'}
+          <Text style={{color: 'orangered', marginBottom: 16}}>
+            {(passwordConfirm === password) ? null : 'Pastikan konfirmasi passwordmu benar'}
           </Text>
           <TouchableOpacity 
-            style={styles.button} 
+            style={
+              (name.length !== 0 && 
+              username.length !== 0 && 
+              email.length !== 0 && 
+              email.includes('@') && 
+              email.includes('.') &&
+              password === passwordConfirm &&
+              password.length >= 8) 
+              ? styles.button 
+              : styles.disabledButton} 
             onPress={() => register(name, username, email, password)}
             disabled={
               !(name.length !== 0 && 
@@ -239,6 +248,14 @@ const styles = StyleSheet.create({
   },
   withMarginBottom: {
       marginBottom: 16,
+  },
+  disabledButton: {
+    alignItems: "center",
+    opacity: 0.3,
+    backgroundColor: theme.PRIMARY_ACCENT_COLOR,
+    padding: 15,
+    borderRadius: 15,
+    width: 300,
   },
   button: {
     alignItems: "center",

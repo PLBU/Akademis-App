@@ -6,7 +6,6 @@ import {
     FlatList,
     TouchableOpacity
 } from 'react-native'
-import MultipleChoice from 'react-native-multiple-choice-picker'
 
 //Importing theme
 import theme from '../styles/theme.js'
@@ -179,10 +178,10 @@ export default () => {
 
             <View style={styles.bigCard}>
                 <Text style={styles.leftSmallMediumText}>{items.data[activeScreen].question}</Text>
-                <MultipleChoice
-                    direction={'column'}
-                    choices={['Football', 'Badminton', 'Basketball', 'Tennis']}
-                />
+                <Text style={styles.leftSmallMediumText}>{items.data[activeScreen].choice1}</Text>
+                <Text style={styles.leftSmallMediumText}>{items.data[activeScreen].choice2}</Text>
+                <Text style={styles.leftSmallMediumText}>{items.data[activeScreen].choice3}</Text>
+                <Text style={styles.leftSmallMediumText}>{items.data[activeScreen].choice4}</Text>
             </View>
 
             <View style={{flexDirection: 'row', flex: 1}}>

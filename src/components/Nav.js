@@ -27,6 +27,7 @@ import TutorialScreen from '../screens/TutorialScreen.js'
 import AuthScreen from '../screens/AuthScreen.js'
 import VirtualClassScreen from '../screens/VirtualClassScreen.js'
 import TryoutScreen from '../screens/TryoutScreen.js'
+import TryoutConductScreen from '../screens/TryoutConductScreen.js'
 
 //Importing theme
 import theme from '../styles/theme.js'
@@ -90,23 +91,22 @@ const TryoutTabComponent = () => (
     initialRouteName="Catalogue"
     tabBarOptions={{
       indicatorStyle: {backgroundColor: theme.PRIMARY_DARK_COLOR}
-    }}
+    }}  
   >
     <TryoutTab.Screen name="Catalogue" component={TryoutScreen[0]}/>
     <TryoutTab.Screen name="My Tryout" component={TryoutScreen[1]}/>
-    <TryoutTab.Screen name="Finished" component={TryoutScreen[1]}/>
   </TryoutTab.Navigator>
 )
 
 const TryoutStackComponent = ({navigation}) => {
   return (
     <TryoutStack.Navigator
-      initialRouteName="Main"
+      initialRouteName="Main Tryout"
       screenOptions={{
           stackAnimation: 'fade'
         }}
     >
-      <TryoutStack.Screen name="Main" component={TryoutTabComponent}
+      <TryoutStack.Screen name="Main Tryout" component={TryoutTabComponent}
         options={{
           headerTopInsetEnabled: false,
           headerCenter: () => <Text style={{fontSize: 24}}>Tryout</Text>,
@@ -115,6 +115,23 @@ const TryoutStackComponent = ({navigation}) => {
               <Text style={{margin: 15, fontSize: 27}}>&lt;</Text>
             </TouchableOpacity>
           ),
+        }}
+      />
+      <TryoutStack.Screen name="Details Tryout" component={TryoutScreen[2]}
+        options={{
+          headerTopInsetEnabled: false,
+          headerCenter: () => <Text style={{fontSize: 24}}>Details</Text>,
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('Main Tryout')}>
+              <Text style={{margin: 15, fontSize: 27}}>&lt;</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <TryoutStack.Screen name="Conduct Tryout" component={TryoutConductScreen}
+        options={{
+          headerTopInsetEnabled: false,
+          headerShown: false
         }}
       />
     </TryoutStack.Navigator>

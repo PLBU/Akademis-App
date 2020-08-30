@@ -32,6 +32,7 @@ export default StyleSheet.create({
   },
   button: {
     alignItems: "center",
+    alignSelf: 'center',
     backgroundColor: theme.PRIMARY_ACCENT_COLOR,
     padding: 15,
     borderRadius: 15,
@@ -41,6 +42,15 @@ export default StyleSheet.create({
   },
   buttonText: {
     fontSize: 18
+  },
+  middleItemCard:{
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    borderRadius: 15,
+    elevation: 5,
+    overflow: 'hidden',
   },
   largeCardWithDesc: {
     width: 360,
@@ -76,8 +86,17 @@ export default StyleSheet.create({
     marginBottom: 25,
     flexDirection: 'row',
   },
+  bigCard: {
+    elevation: 5,
+    padding: 15,
+    borderRadius: 15,
+    margin: 15,
+    overflow: 'hidden',
+    backgroundColor: 'white'
+  },
   leftSmallText: {fontSize: 16, left: 10, color: 'gray'},
   leftMediumText: {fontSize: 18, left: 10, marginTop: 5},
+  leftSmallMediumText: {fontSize: 17, left: 10},
   sectionText: {
     left: 20,
     fontSize: 22,

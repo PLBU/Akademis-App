@@ -6,6 +6,7 @@ import {
     FlatList,
     TouchableOpacity
 } from 'react-native'
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 //Importing theme
 import theme from '../styles/theme.js'
@@ -26,16 +27,16 @@ const items = {
         },
         {
             id: '2',
-            question: 'What is 1 + 1?',
-            choice1: '2',
-            choice2: '4',
-            choice3: '5',
-            choice4: '3',
+            question: 'If one plus one is 2, then the mathematical expression of this semantic statement with the syntax of romanian mathematical term should be?',
+            choice1: '2 * 2 = 3',
+            choice2: '2 ? 3 : 1',
+            choice3: '1 + 1 = 2',
+            choice4: '5 * 5 / 5',
         },
         {
             id: '3',
             question: 'What is 1 + 1?',
-            choice1: '2',
+            choice1: 'This is so damn hard, that I need to answer it so damn bad so I should pick this coice otherwise the whole world could be doomed with the power of mighty stones of the arcadian survivor within the avatar state',
             choice2: '4',
             choice3: '5',
             choice4: '3',
@@ -138,21 +139,36 @@ const items = {
         },
 ]}
 
-export default () => {
+export default ({navigation}) => {
     const [activeScreen, setActiveScreen] = React.useState(0)
+    const [number1, setNumber1] = React.useState(0)
 
     const _renderItem = ({item}) => (
         <TouchableOpacity onPress={() => setActiveScreen(item.id-1)}>
-            <View style={{
-                height: 40, 
-                width: 40, 
-                borderColor: theme.PRIMARY_DARK_COLOR, 
-                borderWidth: 2,
-                borderRadius: 100,
-                margin: 10,
-                alignItems: 'center',
-                justifyContent: 'center'
-            }}>
+            <View style={ 
+                (activeScreen === item.id-1) ? 
+                    {
+                        height: 40, 
+                        width: 40, 
+                        borderColor: theme.PRIMARY_ACCENT_COLOR, 
+                        borderWidth: 2,
+                        borderRadius: 100,
+                        margin: 10,
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }
+                :
+                    {
+                        height: 40, 
+                        width: 40, 
+                        borderColor: theme.PRIMARY_DARK_COLOR, 
+                        borderWidth: 2,
+                        borderRadius: 100,
+                        margin: 10,
+                        alignItems: 'center',
+                        justifyContent: 'center' 
+                    }
+            }>
                 <Text style={{fontSize: 18}}>{item.id}</Text>
             </View>
         </TouchableOpacity>
@@ -177,11 +193,67 @@ export default () => {
             <View style={styles.horizontalRuler}/>
 
             <View style={styles.bigCard}>
-                <Text style={styles.leftSmallMediumText}>{items.data[activeScreen].question}</Text>
-                <Text style={styles.leftSmallMediumText}>{items.data[activeScreen].choice1}</Text>
-                <Text style={styles.leftSmallMediumText}>{items.data[activeScreen].choice2}</Text>
-                <Text style={styles.leftSmallMediumText}>{items.data[activeScreen].choice3}</Text>
-                <Text style={styles.leftSmallMediumText}>{items.data[activeScreen].choice4}</Text>
+                <Text style={[styles.mediumLargeText, {margin: 10,}]}>{items.data[activeScreen].question}</Text>
+                
+                {/* Choice1 */}
+                <TouchableOpacity style={styles.multipleChoice} onPress={() => setNumber1(1)}>
+                    { (number1 === 1) ? 
+                        <MaterialCommunityIcon name='checkbox-blank-circle' color={theme.PRIMARY_DARK_COLOR} size={23}/>
+                        :
+                        <MaterialCommunityIcon name='checkbox-blank-circle-outline' color='black' size={23}/>
+                    }
+                    <Text style={
+                        (number1 === 1) ? 
+                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: theme.PRIMARY_DARK_COLOR}]
+                            :
+                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: 'black'}]}
+                    >{items.data[activeScreen].choice1}</Text>
+                </TouchableOpacity>
+
+                {/* Choice2 */}
+                <TouchableOpacity style={styles.multipleChoice} onPress={() => setNumber1(2)}>
+                    { (number1 === 2) ? 
+                        <MaterialCommunityIcon name='checkbox-blank-circle' color={theme.PRIMARY_DARK_COLOR} size={23}/>
+                        :
+                        <MaterialCommunityIcon name='checkbox-blank-circle-outline' color='black' size={23}/>
+                    }
+                    <Text style={
+                        (number1 === 2) ? 
+                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: theme.PRIMARY_DARK_COLOR}]
+                            :
+                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: 'black'}]}
+                    >{items.data[activeScreen].choice2}</Text>
+                </TouchableOpacity>
+
+                {/* Choice3 */}
+                <TouchableOpacity style={styles.multipleChoice} onPress={() => setNumber1(3)}>
+                    { (number1 === 3) ? 
+                        <MaterialCommunityIcon name='checkbox-blank-circle' color={theme.PRIMARY_DARK_COLOR} size={23}/>
+                        :
+                        <MaterialCommunityIcon name='checkbox-blank-circle-outline' color='black' size={23}/>
+                    }
+                    <Text style={
+                        (number1 === 3) ? 
+                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: theme.PRIMARY_DARK_COLOR}]
+                            :
+                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: 'black'}]}
+                    >{items.data[activeScreen].choice3}</Text>
+                </TouchableOpacity>
+
+                {/* Choice4 */}
+                <TouchableOpacity style={styles.multipleChoice} onPress={() => setNumber1(4)}>
+                    { (number1 === 4) ? 
+                        <MaterialCommunityIcon name='checkbox-blank-circle' color={theme.PRIMARY_DARK_COLOR} size={23}/>
+                        :
+                        <MaterialCommunityIcon name='checkbox-blank-circle-outline' color='black' size={23}/>
+                    }
+                    <Text style={
+                        (number1 === 4) ? 
+                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: theme.PRIMARY_DARK_COLOR}]
+                            :
+                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: 'black'}]}
+                    >{items.data[activeScreen].choice4}</Text>
+                </TouchableOpacity>
             </View>
 
             <View style={{flexDirection: 'row', flex: 1}}>
@@ -189,9 +261,19 @@ export default () => {
                     <Text style={styles.buttonText}>{items.time}</Text>
                 </View>
                 <View style={{flex: 0.75}}>
-                    <TouchableOpacity style={[styles.button, {width: 240, marginBottom: 0, margin: 15}]} onPress={() => setActiveScreen(activeScreen + 1)}>
-                        <Text style={styles.buttonText}>Selanjutnya</Text>
-                    </TouchableOpacity>
+                    { !(activeScreen + 1 === items.data.length) ?
+                        <TouchableOpacity style={[styles.button, {width: 240, marginBottom: 0, margin: 15}]} onPress={() => setActiveScreen(activeScreen + 1)}>
+                            <Text style={styles.buttonText}>
+                                Selanjutnya
+                            </Text>
+                        </TouchableOpacity>
+                        :
+                        <TouchableOpacity style={[styles.button, {width: 240, marginBottom: 0, margin: 15}]} onPress={() => navigation.navigate('Main Tryout')}>
+                            <Text style={styles.buttonText}>
+                                Selesai
+                            </Text>
+                        </TouchableOpacity>
+                    }
                 </View>
             </View>
         </ScrollView>

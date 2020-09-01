@@ -141,12 +141,19 @@ const items = {
 
 export default ({navigation}) => {
     const [activeScreen, setActiveScreen] = React.useState(0)
-    const [number1, setNumber1] = React.useState(0)
+    const [answers, setAnswers] = React.useState(new Array (items.length))
+
+    const updateAnswers = (index, value) => {
+        let answersCopy = [...answers]
+
+        answersCopy[index] = value
+        setAnswers(answersCopy)
+    }
 
     const _renderItem = ({item}) => (
         <TouchableOpacity onPress={() => setActiveScreen(item.id-1)}>
             <View style={ 
-                (activeScreen === item.id-1) ? 
+                [(activeScreen === item.id-1) ? 
                     {
                         height: 40, 
                         width: 40, 
@@ -167,9 +174,14 @@ export default ({navigation}) => {
                         margin: 10,
                         alignItems: 'center',
                         justifyContent: 'center' 
-                    }
+                    }, 
+                (answers[item.id-1] !== undefined) ? {backgroundColor: theme.SECONDARY_DARK_COLOR}
+                :{backgroundColor: 'white'}
+                ]
             }>
-                <Text style={{fontSize: 18}}>{item.id}</Text>
+                <Text style={[{fontSize: 18},
+                    (answers[item.id-1] !== undefined) ? {color: 'white'} : {color: 'black'}
+                ]}>{item.id}</Text>
             </View>
         </TouchableOpacity>
     )
@@ -196,14 +208,16 @@ export default ({navigation}) => {
                 <Text style={[styles.mediumLargeText, {margin: 10,}]}>{items.data[activeScreen].question}</Text>
                 
                 {/* Choice1 */}
-                <TouchableOpacity style={styles.multipleChoice} onPress={() => setNumber1(1)}>
-                    { (number1 === 1) ? 
+                <TouchableOpacity style={styles.multipleChoice} 
+                    onPress={() => updateAnswers(activeScreen, 1)}
+                >
+                    { (answers[activeScreen] === 1) ? 
                         <MaterialCommunityIcon name='checkbox-blank-circle' color={theme.PRIMARY_DARK_COLOR} size={23}/>
                         :
                         <MaterialCommunityIcon name='checkbox-blank-circle-outline' color='black' size={23}/>
                     }
                     <Text style={
-                        (number1 === 1) ? 
+                        (answers[activeScreen] === 1) ? 
                             [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: theme.PRIMARY_DARK_COLOR}]
                             :
                             [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: 'black'}]}
@@ -211,14 +225,16 @@ export default ({navigation}) => {
                 </TouchableOpacity>
 
                 {/* Choice2 */}
-                <TouchableOpacity style={styles.multipleChoice} onPress={() => setNumber1(2)}>
-                    { (number1 === 2) ? 
+                <TouchableOpacity style={styles.multipleChoice} 
+                    onPress={() => updateAnswers(activeScreen, 2)}
+                >
+                    { (answers[activeScreen] === 2) ? 
                         <MaterialCommunityIcon name='checkbox-blank-circle' color={theme.PRIMARY_DARK_COLOR} size={23}/>
                         :
                         <MaterialCommunityIcon name='checkbox-blank-circle-outline' color='black' size={23}/>
                     }
                     <Text style={
-                        (number1 === 2) ? 
+                        (answers[activeScreen] === 2) ? 
                             [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: theme.PRIMARY_DARK_COLOR}]
                             :
                             [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: 'black'}]}
@@ -226,14 +242,16 @@ export default ({navigation}) => {
                 </TouchableOpacity>
 
                 {/* Choice3 */}
-                <TouchableOpacity style={styles.multipleChoice} onPress={() => setNumber1(3)}>
-                    { (number1 === 3) ? 
+                <TouchableOpacity style={styles.multipleChoice} 
+                    onPress={() => updateAnswers(activeScreen, 3)}
+                >
+                    { (answers[activeScreen] === 3) ? 
                         <MaterialCommunityIcon name='checkbox-blank-circle' color={theme.PRIMARY_DARK_COLOR} size={23}/>
                         :
                         <MaterialCommunityIcon name='checkbox-blank-circle-outline' color='black' size={23}/>
                     }
                     <Text style={
-                        (number1 === 3) ? 
+                        (answers[activeScreen] === 3) ? 
                             [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: theme.PRIMARY_DARK_COLOR}]
                             :
                             [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: 'black'}]}
@@ -241,14 +259,16 @@ export default ({navigation}) => {
                 </TouchableOpacity>
 
                 {/* Choice4 */}
-                <TouchableOpacity style={styles.multipleChoice} onPress={() => setNumber1(4)}>
-                    { (number1 === 4) ? 
+                <TouchableOpacity style={styles.multipleChoice} 
+                    onPress={() => updateAnswers(activeScreen, 4)}
+                >
+                    { (answers[activeScreen] === 4) ? 
                         <MaterialCommunityIcon name='checkbox-blank-circle' color={theme.PRIMARY_DARK_COLOR} size={23}/>
                         :
                         <MaterialCommunityIcon name='checkbox-blank-circle-outline' color='black' size={23}/>
                     }
                     <Text style={
-                        (number1 === 4) ? 
+                        (answers[activeScreen] === 4) ? 
                             [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: theme.PRIMARY_DARK_COLOR}]
                             :
                             [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: 'black'}]}
@@ -268,7 +288,9 @@ export default ({navigation}) => {
                             </Text>
                         </TouchableOpacity>
                         :
-                        <TouchableOpacity style={[styles.button, {width: 240, marginBottom: 0, margin: 15}]} onPress={() => navigation.navigate('Main Tryout')}>
+                        <TouchableOpacity style={[styles.button, {width: 240, marginBottom: 0, margin: 15}]} 
+                            onPress={() => {navigation.navigate('Main Tryout')
+                            console.log(answers)}}>
                             <Text style={styles.buttonText}>
                                 Selesai
                             </Text>

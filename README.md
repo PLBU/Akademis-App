@@ -4,7 +4,7 @@
 3. Virtual Class API
 4. Notifikasi, Pertanyaan VC, Tunjukin link, Ikutin yang di website
 5. Tryout API
-6. Kerjain Tryoutnya, (Bagian integrasi state semua nomor)
+6. Kerjain Tryoutnya, (Bagian cek jawaban)
 
 ## NOTE
 1. Password required in PUT METHOD for Profile Update (Ini tgg JWT)

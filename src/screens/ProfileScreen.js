@@ -41,6 +41,7 @@ export default ({navigation}) => {
   const [loading, setLoading] = React.useState(false)
 
   const getUserProfile = () => {
+    setLoading(true)
     axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
       .then( res => {
         console.log("Ini dari getUserProfile")
@@ -54,6 +55,7 @@ export default ({navigation}) => {
         setLoading(false)
       })
       .catch (e => {
+        setLoading(false)
         console.log(e)
       })
   }

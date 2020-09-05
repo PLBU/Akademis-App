@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
-  Button
+  Button,
 } from 'react-native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -72,15 +72,31 @@ const VirtualClassStackComponent = ({navigation}) => {
         }}
       />
       <VirtualClassStack.Screen name="Details VC" component={VirtualClassScreen[2]}
-        options={{
+        options={({route}) => ({
           headerTopInsetEnabled: false,
-          headerCenter: () => <Text style={{fontSize: 24}}>Details</Text>,
+          headerCenter: () => <Text style={{fontSize: 24}}>{route.params.judul}</Text>,
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.navigate('Main VC')}>
               <Text style={{margin: 15, fontSize: 27}}>&lt;</Text>
             </TouchableOpacity>
           ),
-        }}
+        })}
+      />
+      <VirtualClassStack.Screen name="Details Paid VC" component={VirtualClassScreen[3]}
+        options={ ({ route }) => ({
+          headerTopInsetEnabled: false,
+          headerCenter: () => <Text style={{fontSize: 24}}>{route.params.judul}</Text>,
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('Main VC')}>
+              <Text style={{margin: 15, fontSize: 27}}>&lt;</Text>
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity onPress={route.params?.notif}>
+              <Icon name="notifications" size={30} color={theme.PRIMARY_DARK_COLOR}/>
+            </TouchableOpacity>
+          )
+        })}
       />
     </VirtualClassStack.Navigator>
   )

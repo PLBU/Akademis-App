@@ -131,4 +131,8 @@ export default StyleSheet.create({
     overflow: 'hidden',
     borderRadius: 25,
   },
+  overlay: {
+     ...StyleSheet.absoluteFillObject,
+     backgroundColor: 'rgba(0,0,0,0.5)'
+   }
 });

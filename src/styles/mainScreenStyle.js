@@ -132,7 +132,7 @@ export default StyleSheet.create({
     borderRadius: 25,
   },
   overlay: {
-     ...StyleSheet.absoluteFillObject,
-     backgroundColor: 'rgba(0,0,0,0.5)'
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.3)',
    }
 });

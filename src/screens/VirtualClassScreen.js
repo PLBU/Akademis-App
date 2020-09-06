@@ -17,6 +17,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import axios from 'react-native-axios';
 import { Table, Row, Rows } from 'react-native-table-component';
+import { Overlay } from 'react-native-elements';
 
 //Context
 import { AuthContext } from '../components/Context.js'
@@ -351,6 +352,7 @@ export default [
     const [teacher, setTeacher] = React.useState({})
     const [session, setSession] = React.useState([])
     const [rating, setRating] = React.useState(null)
+    const [notifList, setNotifList] = React.useState([])
     const [notifVisible, setNotifVisible] = React.useState(false);
 
     const getClass = () => {
@@ -369,25 +371,45 @@ export default [
         .catch( e => console.log(e) )
     }
 
+    const getNotif = () => {
+      axios.get(`https://dev.akademis.id/api/notif?event_id=${id}`)
+        .then( res => {
+          console.log(res.data.data.data)
+          let arr = []
+
+          res.data.data.data.forEach( element => arr.push(element.notif) )
+          setNotifList(arr)
+        })
+        .catch( e => consol.log(e) )
+    }
+
     const _notif = () => setNotifVisible(true)
 
     React.useEffect( () => {
       getClass()
+      getNotif()
       navigation.setParams({notif: _notif})
     }, [])
 
     return (
       <ScrollView contentContainerStyle={{flexGrow: 1,}}>
 
-        <Modal
+        <Overlay
           animationType="fade"
-          transparent={true}
-          visible={notifVisible}
+          fullscreen={false}
+          isVisible={notifVisible}
           onRequestClose={() => {
             setNotifVisible(false)
           }}
+          onBackdropPress={() => {
+            setNotifVisible(false)
+          }}
+          overlayStyle={styles.overlay}
         >
           <View style={styles.centeredView}>
+            <TouchableOpacity onPress={() => setNotifVisible(false)} style={{position: 'absolute', top: 10, right: 10}}>
+              <FontAwesomeIcon name='close' size={35} color='white'/>
+            </TouchableOpacity>
             <View style={{
               width: Dimensions.get('window').width*0.8, 
               backgroundColor: 'white',
@@ -396,16 +418,25 @@ export default [
               alignItems: 'center',
               margin: 20,
               borderRadius: 25,
-              overflow: 'hidden'
+              overflow: 'hidden',
+              flex: 0.4
               }}
             >
               <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%'}}>
-                <Text style={[styles.bigWhiteText, {margin: 10}]}>Notifications</Text>
+                <Text style={[styles.bigWhiteText, {margin: 10, left: 15}]}>Notifications</Text>
               </View>
-              <View style={{height: 100}} />
+              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ width: Dimensions.get('window').width*0.8, alignItems: 'center', padding: 20}}>
+                {(notifList.length == 0) ? 
+                  <Text style={{fontSize: 17}}> Belum ada notifikasi dari guru mu </Text> 
+                  :
+                  notifList.map( (value, index) => 
+                    <Text style={{fontSize: 17}} key={index}>{value}</Text>
+                  )
+                } 
+              </ScrollView>
             </View>
           </View>
-        </Modal>
+        </Overlay>
 
         <View style={{
           width: Dimensions.get('window').width*0.7, 
@@ -490,9 +521,6 @@ export default [
             <Text style={styles.buttonText}>Unggah Penilaian</Text>
           </TouchableOpacity>
         </View>
-
-        {(notifVisible) ? <View style={styles.overlay}/> : null}
-
       </ScrollView>
     )
   },

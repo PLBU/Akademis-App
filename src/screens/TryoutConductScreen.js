@@ -4,7 +4,8 @@ import {
     ScrollView,
     Text,
     FlatList,
-    TouchableOpacity
+    TouchableOpacity,
+    Alert
 } from 'react-native'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -15,7 +16,7 @@ import theme from '../styles/theme.js'
 import styles from '../styles/mainScreenStyle.js';
 
 const items = {
-    time: 120,
+    time: 60,
     data: [
         {
             id: '1',
@@ -136,18 +137,51 @@ const items = {
             choice2: '4',
             choice3: '5',
             choice4: '3',
-        },
-]}
+        }
+    ],
+    answers: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,]
+}
 
 export default ({navigation}) => {
     const [activeScreen, setActiveScreen] = React.useState(0)
-    const [answers, setAnswers] = React.useState(new Array (items.length))
+    const [answers, setAnswers] = React.useState(Array.from(Array(items.data.length), () => 0) )
+    const [keyAnswers, setKeyAnswers] = React.useState(new Array (items.data.length) )
+    const [timer, setTimer] = React.useState({HH: -1, MM: -1, SS: -1})
+    var timeState
 
     const updateAnswers = (index, value) => {
         let answersCopy = [...answers]
 
         answersCopy[index] = value
         setAnswers(answersCopy)
+    }
+
+    const finished = () => {
+        Alert.alert('Skor anda:', `Anda benar ${getScore()}/15`)
+        navigation.navigate('Main Tryout')
+        console.log(answers)
+        console.log(keyAnswers)
+    }
+
+    const getScore = () => {
+        var correctAns = 0
+
+        answers.forEach( (i) => {
+            if (answers[i] === keyAnswers[i] ) correctAns++
+        })
+
+        return correctAns
+    }
+
+    const countdown = () => {
+        setTimer( (prevState) => {
+            if (prevState.HH === 0 && prevState.MM === 0 && prevState.SS === 0) finished()
+
+            return ({
+            HH: prevState.HH - Math.floor( ( 59 - prevState.MM + 59 - prevState.SS )/(59*2) ),
+            MM: (prevState.MM + Math.floor( (59 - prevState.SS)/59)*59)%60, 
+            SS: (prevState.SS + 59)%60
+        })})
     }
 
     const _renderItem = ({item}) => (
@@ -175,16 +209,33 @@ export default ({navigation}) => {
                         alignItems: 'center',
                         justifyContent: 'center' 
                     }, 
-                (answers[item.id-1] !== undefined) ? {backgroundColor: theme.SECONDARY_DARK_COLOR}
+                (answers[item.id-1] !== 0) ? {backgroundColor: theme.SECONDARY_DARK_COLOR}
                 :{backgroundColor: 'white'}
                 ]
             }>
                 <Text style={[{fontSize: 18},
-                    (answers[item.id-1] !== undefined) ? {color: 'white'} : {color: 'black'}
+                    (answers[item.id-1] !== 0) ? {color: 'white'} : {color: 'black'}
                 ]}>{item.id}</Text>
             </View>
         </TouchableOpacity>
     )
+
+    React.useEffect(() => {
+        var hours = Math.floor(items.time/60)
+        var minutes = items.time%60
+        var seconds = (items.time*60) % 60
+
+        setKeyAnswers(items.answers)
+        setTimer({
+            HH: hours,
+            MM: minutes,
+            SS: seconds
+        })
+
+        timeState = setInterval(countdown, 1000)
+
+        return () => clearInterval(timeState)
+    }, [])
 
     return(
         <ScrollView>
@@ -278,7 +329,7 @@ export default ({navigation}) => {
 
             <View style={{flexDirection: 'row', flex: 1}}>
                 <View style={[styles.middleItemCard, {flex: 0.25, margin: 15, padding: 15}]}>
-                    <Text style={styles.buttonText}>{items.time}</Text>
+                    <Text style={styles.buttonText}>{("0" + timer.HH).slice(-2)}:{("0" + timer.MM).slice(-2)}:{("0" + timer.SS).slice(-2)}</Text>
                 </View>
                 <View style={{flex: 0.75}}>
                     { !(activeScreen + 1 === items.data.length) ?
@@ -289,8 +340,7 @@ export default ({navigation}) => {
                         </TouchableOpacity>
                         :
                         <TouchableOpacity style={[styles.button, {width: 240, marginBottom: 0, margin: 15}]} 
-                            onPress={() => {navigation.navigate('Main Tryout')
-                            console.log(answers)}}>
+                            onPress={finished}>
                             <Text style={styles.buttonText}>
                                 Selesai
                             </Text>

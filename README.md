@@ -1,9 +1,9 @@
 ## TODO
 1. PUT METHOD Fetching for Profile Avatar (onChange)
 2. Google Account user integration with database (Need API to add user without password, login user without password, check if user exist)
-3. Virtual Class Edit  (Pertanyaan VC, Ikutin yang di website) <NOW/>
 4. Tryout API
 5. Tryout save score
+6. Grafik nilai di Proflie <NEXT/>
 
 ## NOTE
 1. Password required in PUT METHOD for Profile Update (Ini tgg JWT)

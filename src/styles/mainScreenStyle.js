@@ -134,5 +134,14 @@ export default StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.3)',
-   }
+   },
+  disabledButton: {
+    alignItems: "center",
+    opacity: 0.3,
+    backgroundColor: theme.PRIMARY_ACCENT_COLOR,
+    padding: 15,
+    borderRadius: 15,
+    marginBottom: 20,
+    width: 300,
+  },
 });

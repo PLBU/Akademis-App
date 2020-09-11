@@ -4,11 +4,13 @@ import {
   StyleSheet,
   View,
   Text,
+  TextInput,
   StatusBar,
   Dimensions,
   TouchableOpacity,
   Alert,
   Modal,
+  TouchableHighlight
 } from 'react-native';
 import { Picker } from '@react-native-community/picker';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -347,6 +349,8 @@ export default [
   //Details Paid Class
   ({ route, navigation }) => {
     const { id } = route.params
+    const { authState } = React.useContext(AuthContext)
+
     const [myRating, setMyRating] = React.useState(0)
     const [data, setData] = React.useState({})
     const [teacher, setTeacher] = React.useState({})
@@ -354,6 +358,8 @@ export default [
     const [rating, setRating] = React.useState(null)
     const [notifList, setNotifList] = React.useState([])
     const [notifVisible, setNotifVisible] = React.useState(false);
+    const [questionVisible, setQuestionVisible] = React.useState(false);
+    const [questionText, setQuestionText] = React.useState(null)
 
     const getClass = () => {
       axios.get(`https://dev.akademis.id/api/class/${id}`)
@@ -383,145 +389,224 @@ export default [
         .catch( e => consol.log(e) )
     }
 
-    const _notif = () => setNotifVisible(true)
+    const postQuestion = () => {
+      axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
+        .then( res => {
+          axios.post('https://dev.akademis.id/api/tanya',{
+            "user_email": res.data.data.email,
+            "event_id": id,
+            "pertanyaan": questionText
+          })
+            .then( res1 => {
+              console.log(res1)
+            })
+        })
+        .catch(e => console.log(e) )
+    }
 
     React.useEffect( () => {
       getClass()
       getNotif()
-      navigation.setParams({notif: _notif})
+      navigation.setParams({notif: () => setNotifVisible(true) })
     }, [])
 
     return (
-      <ScrollView contentContainerStyle={{flexGrow: 1,}}>
+      <View style={{flex: 1}}>
+        <ScrollView contentContainerStyle={{flexGrow: 1,}}>
 
-        <Overlay
-          animationType="fade"
-          fullscreen={false}
-          isVisible={notifVisible}
-          onRequestClose={() => {
-            setNotifVisible(false)
-          }}
-          onBackdropPress={() => {
-            setNotifVisible(false)
-          }}
-          overlayStyle={styles.overlay}
-        >
-          <View style={styles.centeredView}>
-            <TouchableOpacity onPress={() => setNotifVisible(false)} style={{position: 'absolute', top: 10, right: 10}}>
-              <FontAwesomeIcon name='close' size={35} color='white'/>
-            </TouchableOpacity>
-            <View style={{
-              width: Dimensions.get('window').width*0.8, 
-              backgroundColor: 'white',
-              elevation: 5,
-              alignSelf: 'center',
-              alignItems: 'center',
-              margin: 20,
-              borderRadius: 25,
-              overflow: 'hidden',
-              flex: 0.4
-              }}
-            >
-              <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%'}}>
-                <Text style={[styles.bigWhiteText, {margin: 10, left: 15}]}>Notifications</Text>
+          {/* Notif */}
+          <Overlay
+            animationType="fade"
+            fullscreen={false}
+            isVisible={notifVisible}
+            onRequestClose={() => {
+              setNotifVisible(false)
+            }}
+            overlayStyle={styles.overlay}
+          >
+            <View style={styles.centeredView}>
+              <TouchableOpacity onPress={() => setNotifVisible(false)} style={{position: 'absolute', top: 10, right: 10}}>
+                <FontAwesomeIcon name='close' size={35} color='white'/>
+              </TouchableOpacity>
+              <View style={{
+                width: Dimensions.get('window').width*0.8, 
+                backgroundColor: 'white',
+                elevation: 5,
+                alignSelf: 'center',
+                alignItems: 'center',
+                margin: 20,
+                borderRadius: 25,
+                overflow: 'hidden',
+                flex: 0.4
+                }}
+              >
+                <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%'}}>
+                  <Text style={[styles.bigWhiteText, {margin: 10, left: 15}]}>Notifications</Text>
+                </View>
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ width: Dimensions.get('window').width*0.8, alignItems: 'center', padding: 20}}>
+                  {(notifList.length == 0) ? 
+                    <Text style={{fontSize: 17}}> Belum ada notifikasi dari guru mu </Text> 
+                    :
+                    notifList.map( (value, index) => 
+                      <Text style={{fontSize: 17}} key={index}>{value}</Text>
+                    )
+                  } 
+                </ScrollView>
               </View>
-              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ width: Dimensions.get('window').width*0.8, alignItems: 'center', padding: 20}}>
-                {(notifList.length == 0) ? 
-                  <Text style={{fontSize: 17}}> Belum ada notifikasi dari guru mu </Text> 
-                  :
-                  notifList.map( (value, index) => 
-                    <Text style={{fontSize: 17}} key={index}>{value}</Text>
-                  )
-                } 
-              </ScrollView>
+            </View>
+          </Overlay>
+
+          {/* Question to Teachers */}
+          <Overlay
+            animationType="fade"
+            fullscreen={true}
+            isVisible={questionVisible}
+            onRequestClose={() => {
+              setQuestionVisible(false)
+            }}
+            overlayStyle={styles.overlay}
+          >
+            <View style={{position: 'absolute', left: 0, right: 0, top: 0, justifyContent: 'center', alignItems: 'center', flex: 1}}>
+              <TouchableOpacity onPress={() => setQuestionVisible(false)} style={{position: 'absolute', top: 10, right: 10}}>
+                <FontAwesomeIcon name='close' size={35} color='white'/>
+              </TouchableOpacity>
+              <View style={{
+                width: Dimensions.get('window').width*0.8, 
+                backgroundColor: 'white',
+                elevation: 5,
+                alignSelf: 'center',
+                alignItems: 'center',
+                margin: 20,
+                borderRadius: 25,
+                overflow: 'hidden',
+                flex: 0.25,
+                position: 'absolute',
+                top: Dimensions.get('window').height*0.25
+                }}
+              >
+                <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%'}}>
+                  <Text style={[styles.bigWhiteText, {margin: 10, left: 15}]}>Beri pertanyaan pada gurumu!</Text>
+                </View>
+                <View style={{ width: Dimensions.get('window').width*0.8, alignItems: 'center'}}>
+                  <TextInput 
+                    style={{fontSize: 16, padding: 20, height: 100, width: '90%', borderColor: 'lightgray', borderWidth: 1, borderRadius: 15, margin: 25}}
+                    multiline={true}
+                    numberOfLines={2}
+                    onChangeText={(text) => setQuestionText(text)}
+                    value={questionText}
+                    placeholder="  Isi pertanyaanmu di sini"
+                  />
+                  <TouchableOpacity style={(questionText) ? styles.button : styles.disabledButton} disabled={(questionText) ? false : true} onPress={() => {
+                      postQuestion()
+                      Alert.alert("Sukses", "Pertanyaan berhasil diunggah")
+                      setQuestionVisible(false)
+                  }}>
+                    <Text style={styles.buttonText}>Unggah Pertanyaan</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Overlay>
+
+          <View style={{
+            width: Dimensions.get('window').width*0.7, 
+            height: Dimensions.get('window').width*0.7*0.75,
+            backgroundColor: theme.SECONDARY_DARK_COLOR,
+            alignSelf: 'center',
+            margin: 20,
+            borderRadius: 25,
+            }}
+          >
+            {/* Ini isinya image */}
+          </View>
+
+          <Text style={{left: 20, fontSize: 22, marginTop: 10}}>Informasi Kelas</Text>
+          <View style={styles.horizontalRuler}/>
+
+          <View style={{width: Dimensions.get('window').width*0.95, alignSelf: 'center'}}>
+            <Text style={styles.leftMediumText}>Kategori : {"\n"}
+              <Text style={styles.leftSmallText}>{data.kategori}</Text>
+            </Text>
+            <Text style={styles.leftMediumText}>Pelajaran : {"\n"}
+              <Text style={styles.leftSmallText}>{data.pelajaran}</Text>
+            </Text>
+            <Text style={styles.leftMediumText}>Tanggal : {"\n"}
+              <Text style={styles.leftSmallText}>{data.date_start} hingga {data.date_end}</Text>
+            </Text>
+            <Text style={styles.leftMediumText}>Deskripsi : {"\n"}
+              <Text style={styles.leftSmallText}>{data.deskripsi}</Text>
+            </Text>
+            <View style={{flexDirection: 'row', alignItems:'center'}}>
+              <Text style={styles.leftMediumText}>Harga : {data.harga}{"   "}</Text>
+              <FontAwesomeIcon name="diamond" color={theme.PRIMARY_ACCENT_COLOR} size={18}/>
             </View>
           </View>
-        </Overlay>
 
-        <View style={{
-          width: Dimensions.get('window').width*0.7, 
-          height: Dimensions.get('window').width*0.7*0.75,
-          backgroundColor: theme.SECONDARY_DARK_COLOR,
-          alignSelf: 'center',
-          margin: 20,
-          borderRadius: 25,
-          }}
-        >
-          {/* Ini isinya image */}
-        </View>
+          <Text style={styles.sectionText}>Sesi Live Teaching</Text>
+          <View style={styles.horizontalRuler}/>
 
-        <Text style={{left: 20, fontSize: 22, marginTop: 10}}>Informasi Kelas</Text>
-        <View style={styles.horizontalRuler}/>
-
-        <View style={{width: Dimensions.get('window').width*0.95, alignSelf: 'center'}}>
-          <Text style={styles.leftMediumText}>Kategori : {"\n"}
-            <Text style={styles.leftSmallText}>{data.kategori}</Text>
-          </Text>
-          <Text style={styles.leftMediumText}>Pelajaran : {"\n"}
-            <Text style={styles.leftSmallText}>{data.pelajaran}</Text>
-          </Text>
-          <Text style={styles.leftMediumText}>Tanggal : {"\n"}
-            <Text style={styles.leftSmallText}>{data.date_start} hingga {data.date_end}</Text>
-          </Text>
-          <Text style={styles.leftMediumText}>Deskripsi : {"\n"}
-            <Text style={styles.leftSmallText}>{data.deskripsi}</Text>
-          </Text>
-          <View style={{flexDirection: 'row', alignItems:'center'}}>
-            <Text style={styles.leftMediumText}>Harga : {data.harga}{"   "}</Text>
-            <FontAwesomeIcon name="diamond" color={theme.PRIMARY_ACCENT_COLOR} size={18}/>
+          <View style={{width: Dimensions.get('window').width*0.95, alignSelf: 'center'}}>
+            <Table style={{marginHorizontal: 10}}>
+              <Row data={['Tanggal', 'Waktu', 'Link']} textStyle={{fontSize: 17, margin: 2.5}}/>
+              {session.map( (value, index) =>
+                <Row data={[value.tanggal, String(value.time_start) + " - " + String(value.time_end), value.link]} key={index} textStyle={{fontSize: 15, margin: 2.5, color:'grey'}}/>
+              )}
+            </Table>
           </View>
+
+          <Text style={styles.sectionText}>Tentang Gurumu</Text>
+          <View style={styles.horizontalRuler}/>
+
+          <View style={{width: Dimensions.get('window').width*0.95, alignSelf: 'center'}}>
+            <Text style={styles.leftMediumText}>Nama Guru : {"\n"}
+              <Text style={styles.leftSmallText}>{teacher.nama}</Text>
+            </Text>
+            <Text style={styles.leftMediumText}>Rating Guru : {"\n"}
+              <Text style={styles.leftSmallText}>{(rating) ? rating : "Masih belum ada rating"}</Text>
+            </Text>
+            <Text style={styles.leftMediumText}>About me : {"\n"}
+              <Text style={styles.leftSmallText}>{teacher.deskripsi}</Text>
+            </Text>
+          </View>
+
+          <Text style={styles.sectionText}>Berikan penilaian mu!</Text>
+          <View style={styles.horizontalRuler}/>
+
+          <Text style={styles.leftSmallText}>Rating mu: {myRating}</Text>
+          <Stars
+            default={0}
+            count={5}
+            half={true}
+            starSize={50}
+            update={ (value) => setMyRating(value) }
+            fullStar={<MaterialIcon name={'star'} size={50} color={theme.PRIMARY_ACCENT_COLOR}/>}
+            emptyStar={<MaterialIcon name={'star-border'} size={50} color={theme.PRIMARY_ACCENT_COLOR}/>}
+            halfStar={<MaterialIcon name={'star-half'} size={50} color={theme.PRIMARY_ACCENT_COLOR}/>}
+          />
+
+          <View style={{margin: 20, alignItems: 'center'}}>
+            <TouchableOpacity style={styles.button} onPress={() => {
+                Alert.alert("Sukses", "Penilaian berhasil diunggah")
+                navigation.goBack()
+            }}>
+              <Text style={styles.buttonText}>Unggah Penilaian</Text>
+            </TouchableOpacity>
+          </View>
+        
+        </ScrollView>
+        <View style={{position: 'absolute', right: 25, bottom: 25, height: 65, width: 65, borderRadius: 75, overflow: 'hidden', elevation: 8}}>
+          <TouchableHighlight 
+              activeOpacity={0.5}
+              underlayColor='white'
+              onPress={() => setQuestionVisible(true) }
+              style={{ height: 65, width: 65}}
+            >
+              <View style={{height: 65, width: 65, backgroundColor: theme.PRIMARY_DARK_COLOR, justifyContent: 'center', alignItems: 'center'}} >
+                  <MaterialIcon name='question-answer' size={35} color='white'/>
+              </View>
+          </TouchableHighlight>
         </View>
-
-        <Text style={styles.sectionText}>Sesi Live Teaching</Text>
-        <View style={styles.horizontalRuler}/>
-
-        <View style={{width: Dimensions.get('window').width*0.95, alignSelf: 'center'}}>
-          <Table style={{marginHorizontal: 10}}>
-            <Row data={['Tanggal', 'Waktu', 'Link']} textStyle={{fontSize: 17, margin: 2.5}}/>
-            {session.map( (value, index) =>
-              <Row data={[value.tanggal, String(value.time_start) + " - " + String(value.time_end), value.link]} key={index} textStyle={{fontSize: 15, margin: 2.5, color:'grey'}}/>
-            )}
-          </Table>
-        </View>
-
-        <Text style={styles.sectionText}>Tentang Gurumu</Text>
-        <View style={styles.horizontalRuler}/>
-
-        <View style={{width: Dimensions.get('window').width*0.95, alignSelf: 'center'}}>
-          <Text style={styles.leftMediumText}>Nama Guru : {"\n"}
-            <Text style={styles.leftSmallText}>{teacher.nama}</Text>
-          </Text>
-          <Text style={styles.leftMediumText}>Rating Guru : {"\n"}
-            <Text style={styles.leftSmallText}>{(rating) ? rating : "Masih belum ada rating"}</Text>
-          </Text>
-          <Text style={styles.leftMediumText}>About me : {"\n"}
-            <Text style={styles.leftSmallText}>{teacher.deskripsi}</Text>
-          </Text>
-        </View>
-
-        <Text style={styles.sectionText}>Berikan penilaian mu!</Text>
-        <View style={styles.horizontalRuler}/>
-
-        <Text style={styles.leftSmallText}>Rating mu: {myRating}</Text>
-        <Stars
-          default={0}
-          count={5}
-          half={true}
-          starSize={50}
-          update={ (value) => setMyRating(value) }
-          fullStar={<MaterialIcon name={'star'} size={50} color={theme.PRIMARY_ACCENT_COLOR}/>}
-          emptyStar={<MaterialIcon name={'star-border'} size={50} color={theme.PRIMARY_ACCENT_COLOR}/>}
-          halfStar={<MaterialIcon name={'star-half'} size={50} color={theme.PRIMARY_ACCENT_COLOR}/>}
-        />
-        <View style={{margin: 20, alignItems: 'center'}}>
-          <TouchableOpacity style={styles.button} onPress={() => {
-              Alert.alert("Sukses", "Penilaian berasil diunggah")
-              navigation.goBack()
-          }}>
-            <Text style={styles.buttonText}>Unggah Penilaian</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+      </View>
     )
   },
 ]

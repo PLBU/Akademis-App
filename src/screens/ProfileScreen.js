@@ -14,7 +14,7 @@ import {
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { Picker } from '@react-native-community/picker';
 import axios from 'react-native-axios';
-import { LineChart } from "react-native-chart-kit";
+import { BarChart } from "react-native-chart-kit";
 
 //Context
 import { AuthContext } from '../components/Context.js'
@@ -40,6 +40,20 @@ export default ({navigation}) => {
   const [major, setMajor] = React.useState(null)
   const [changed, setChanged] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
+
+  const items = {
+      labels: ["SosHum", "Kimia", "B. Inggris", "B. Indonesia"],
+      datasets: [
+        {
+          data: [
+            95,
+            100,
+            60,
+            55
+          ]
+        }
+      ]
+  }
 
   const getUserProfile = () => {
     setLoading(true)
@@ -92,7 +106,7 @@ export default ({navigation}) => {
   }
 
   const handleScroll = (e) => {
-    const THRESHOLD = 5
+    const THRESHOLD = 64
     const moveY = posY - e.nativeEvent.contentOffset.y
     setPosY(e.nativeEvent.contentOffset.y)
     // console.log(moveY)
@@ -125,7 +139,7 @@ export default ({navigation}) => {
   )
   else return (
     <ScrollView 
-      // onScroll={(e) => handleScroll(e)} 
+      onScroll={(e) => handleScroll(e)} 
       contentContainerStyle={{flexGrow: 1}}>
       <View style={{
         height: 150, 
@@ -194,51 +208,34 @@ export default ({navigation}) => {
         </View>
       </View>
 
-      <Text style={styles.sectionText}>Analisis Nilaimu Belakangan Ini</Text>
+      <Text style={styles.sectionText}>Statistik Nilaimu</Text>
       <View style={styles.horizontalRuler}/>
 
       <View style={[styles.centeredView, {marginVertical: 20}]}>
-      <LineChart
-        data={{
-          labels: ["January", "February", "March", "April", "May", "June"],
-          datasets: [
-            {
-              data: [
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100
-              ]
-            }
-          ]
-        }}
-        width={Dimensions.get("window").width*0.85} // from react-native
-        height={220}
-        yAxisInterval={1} // optional, defaults to 1
-        chartConfig={{
-          backgroundColor: "white",
-          backgroundGradientFrom: theme.PRIMARY_DARK_COLOR,
-          backgroundGradientTo: theme.SECONDARY_DARK_COLOR,
-          decimalPlaces: 2, // optional, defaults to 2dp
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          style: {
-            borderRadius: 20,
-          },
-          propsForDots: {
-            r: "6",
-            strokeWidth: "2",
-            stroke: theme.PRIMARY_ACCENT_COLOR
-          }
-        }}
-        bezier
-        style={{
-          marginVertical: 8,
-          borderRadius: 16
-        }}
-      />
+        <BarChart
+          data={items}
+          width={Dimensions.get("window").width*0.85} // from react-native
+          height={250}
+          fromZero
+          showValuesOnTopOfBars	
+          yAxisInterval={1} // optional, defaults to 1
+          chartConfig={{
+            backgroundGradientFrom: theme.SECONDARY_DARK_COLOR,
+            backgroundGradientTo: theme.SECONDARY_DARK_COLOR,
+            decimalPlaces: 2, // optional, defaults to 2dp
+            color: () => 'white',
+            labelColor: () => 'white',
+            style: {
+              borderRadius: 20,
+            },
+            
+          }}
+          style={{
+            marginVertical: 8,
+            borderRadius: 16,
+            elevation: 5,
+          }}
+        />
       </View>
       {changed &&
         <TouchableOpacity style={[styles.button, {alignSelf: 'center'}]} onPress={() => saveChanges()}>

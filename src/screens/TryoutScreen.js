@@ -255,7 +255,7 @@ export default [
         { (paid) ?
             <View>
               <TouchableOpacity style={[styles.button, {marginTop: 30}]} onPress={() => {
-                  navigation.navigate('Conduct Tryout')
+                  navigation.navigate('Conduct Tryout', {name: name})
               }}>
                 { (finished) ? 
                 <Text style={styles.buttonText}>Lihat Tryout</Text> : 

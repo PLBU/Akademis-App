@@ -134,21 +134,22 @@ const TryoutStackComponent = ({navigation}) => {
         }}
       />
       <TryoutStack.Screen name="Details Tryout" component={TryoutScreen[2]}
-        options={{
+        options={ ({ route }) => ({
           headerTopInsetEnabled: false,
-          headerCenter: () => <Text style={{fontSize: 24}}>Details</Text>,
+          headerCenter: () => <Text style={{fontSize: 24}}>{route.params.name}</Text>,
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.navigate('Main Tryout')}>
               <Text style={{margin: 15, fontSize: 27}}>&lt;</Text>
             </TouchableOpacity>
           ),
-        }}
+        })}
       />
       <TryoutStack.Screen name="Conduct Tryout" component={TryoutConductScreen}
-        options={{
+        options={({ route }) => ({
           headerTopInsetEnabled: false,
-          headerShown: false
-        }}
+          headerCenter: () => <Text style={{fontSize: 24}}>{route.params.name}</Text>,
+          headerLeft: () => null,
+        })}
       />
     </TryoutStack.Navigator>
   )

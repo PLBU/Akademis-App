@@ -208,6 +208,11 @@ export default ({navigation}) => {
         </View>
       </View>
 
+      {changed &&
+      <TouchableOpacity style={[styles.button, {alignSelf: 'center'}]} onPress={() => saveChanges()}>
+        <Text style={styles.buttonText}>Save</Text>
+      </TouchableOpacity>}
+
       <Text style={styles.sectionText}>Statistik Nilaimu</Text>
       <View style={styles.horizontalRuler}/>
 
@@ -237,10 +242,7 @@ export default ({navigation}) => {
           }}
         />
       </View>
-      {changed &&
-        <TouchableOpacity style={[styles.button, {alignSelf: 'center'}]} onPress={() => saveChanges()}>
-          <Text style={styles.buttonText}>Save</Text>
-        </TouchableOpacity>}
+      
       <TouchableOpacity style={[styles.button, {alignSelf: 'center'}]} onPress={() => logOut()}>
         <Text style={styles.buttonText}>Log out</Text>
       </TouchableOpacity> 

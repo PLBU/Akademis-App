@@ -5,7 +5,8 @@ import {
     Text,
     FlatList,
     TouchableOpacity,
-    Alert
+    Alert,
+    BackHandler
 } from 'react-native'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -157,17 +158,28 @@ export default ({navigation}) => {
     }
 
     const finished = () => {
-        Alert.alert('Skor anda:', `Anda benar ${getScore()}/15`)
-        navigation.navigate('Main Tryout')
-        console.log(answers)
-        console.log(keyAnswers)
+        Alert.alert("Anda sudah yakin ingin menyelesaikan tryout ini?", "Masih terdapat waktu untuk mengerjakan tryout ini", [
+            {
+                text: 'Yakin',
+                onPress: () => {
+                    Alert.alert('Skor anda:', `Anda benar ${getScore()}/15`)
+                    navigation.navigate('Main Tryout')
+                    console.log(answers)
+                    console.log(keyAnswers)
+                }
+            },
+            {
+                text: 'Tidak',
+                onPress: () => null
+            }
+        ])
     }
 
     const getScore = () => {
         var correctAns = 0
 
-        answers.forEach( (i) => {
-            if (answers[i] === keyAnswers[i] ) correctAns++
+        answers.forEach( (item, index) => {
+            if (item === keyAnswers[index] ) correctAns++
         })
 
         return correctAns
@@ -175,7 +187,12 @@ export default ({navigation}) => {
 
     const countdown = () => {
         setTimer( (prevState) => {
-            if (prevState.HH === 0 && prevState.MM === 0 && prevState.SS === 0) finished()
+            if (prevState.HH === 0 && prevState.MM === 0 && prevState.SS === 0) {
+                Alert.alert('Skor anda:', `Anda benar ${getScore()}/15`)
+                navigation.navigate('Main Tryout')
+                console.log(answers)
+                console.log(keyAnswers)
+            }
 
             return ({
             HH: prevState.HH - Math.floor( ( 59 - prevState.MM + 59 - prevState.SS )/(59*2) ),
@@ -220,11 +237,27 @@ export default ({navigation}) => {
         </TouchableOpacity>
     )
 
+    const handleBackButtonClick = () => {
+        Alert.alert("Anda yakin ingin keluar?", "Jawaban anda tidak disimpan jika anda belum menyelesaikan tryout ini", [
+            {
+                text: 'Yakin',
+                onPress: () => navigation.goBack()
+            },
+            {
+                text: 'Tidak',
+                onPress: () => null
+            }
+        ])
+
+        return true
+    }
+
     React.useEffect(() => {
         var hours = Math.floor(items.time/60)
         var minutes = items.time%60
         var seconds = (items.time*60) % 60
 
+        BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick)
         setKeyAnswers(items.answers)
         setTimer({
             HH: hours,
@@ -234,7 +267,11 @@ export default ({navigation}) => {
 
         timeState = setInterval(countdown, 1000)
 
-        return () => clearInterval(timeState)
+        // componentWillUnmount
+        return () => {
+            clearInterval(timeState)
+            BackHandler.removeEventListener('hardwareBackPress', handleBackButtonClick)
+        }
     }, [])
 
     return(

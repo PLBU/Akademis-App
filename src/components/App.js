@@ -30,6 +30,7 @@ import {
   statusCodes,
 } from '@react-native-community/google-signin';
 import { enableScreens } from 'react-native-screens';
+import 'react-native-gesture-handler'
 
 //Context
 import { AuthContext } from './Context.js'

@@ -56,10 +56,10 @@ export default [
           <Text style={styles.sectionTitle}> 
             Selamat Datang!
           </Text>
-          <Text style={{fontSize: 25, color: theme.PRIMARY_DARK_COLOR, marginBottom: 32}} >
+          <Text style={{fontSize: 23, color: theme.PRIMARY_DARK_COLOR, marginBottom: 32}} >
             Calon Mahasiswa Baru PTN 2021
           </Text>
-          <Text style={{fontSize: 20, color: theme.PRIMARY_DARK_COLOR, marginBottom: 32}}>
+          <Text style={{fontSize: 18, color: theme.PRIMARY_DARK_COLOR, marginBottom: 32}}>
             Silakan masuk untuk melanjutkan
           </Text>
           <TextInput 
@@ -92,7 +92,7 @@ export default [
           >
             <Text style={{fontSize: 18,}}>Masuk</Text>
           </TouchableOpacity> 
-          <Text style={{color: 'gray', margin: 15}}> Atau dengan metode lain </Text>
+          <Text style={{color: 'gray', marginVertical: 20}}> Atau dengan metode lain </Text>
           <GoogleSigninButton
             style={{ width: 300, height: 65,}}
             size={GoogleSigninButton.Size.Wide}
@@ -235,7 +235,7 @@ export default [
 
 const styles = StyleSheet.create({
   sectionTitle: {
-    fontSize: 40,
+    fontSize: 30,
     fontWeight: '900',
     color: theme.PRIMARY_DARK_COLOR,
     textAlign: 'center',

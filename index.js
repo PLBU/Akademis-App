@@ -2,11 +2,12 @@
  * @format
  */
 
-import {AppRegistry} from 'react-native';
+import {AppRegistry, Text} from 'react-native';
 import App from './src/components/App.js';
 import {name as appName} from './app.json';
 import {
   setCustomView,
+  setCustomScrollView,
   setCustomTextInput,
   setCustomText,
   setCustomImage,
@@ -19,7 +20,15 @@ const customTextProps = {
   }
 };
 
+const customScrollViewProps = {
+  style: {
+    backgroundColor: 'white'
+  }
+}
+
 console.disableYellowBox = true;
 
 setCustomText(customTextProps);
+Text.defaultProps.allowFontScaling = false;
+
 AppRegistry.registerComponent(appName, () => App);

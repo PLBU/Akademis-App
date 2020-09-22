@@ -276,10 +276,10 @@ export default ({navigation}) => {
 
     return(
         <ScrollView>
-            <Text style={styles.sectionText}>Daftar Nomor</Text>
-            <View style={styles.horizontalRuler}/>
+            {/* <Text style={styles.sectionText}>Daftar Nomor</Text>
+            <View style={styles.horizontalRuler}/> */}
 
-            <View style={{backgroundColor: 'white', padding: 5, margin: 15, borderRadius: 25, overflow: 'hidden', elevation: 5}}>
+            <View style={{backgroundColor: 'white', padding: 5, margin: 15, marginVertical: 25, borderRadius: 25, overflow: 'hidden', elevation: 5}}>
                 <FlatList
                     horizontal={true}
                     data={items.data}
@@ -289,7 +289,7 @@ export default ({navigation}) => {
                 />
             </View>
 
-            <Text style={styles.sectionText}>Pertanyaan Nomor {items.data[activeScreen].id}</Text>
+            <Text style={styles.sectionText}>Soal No. {items.data[activeScreen].id}</Text>
             <View style={styles.horizontalRuler}/>
 
             <View style={styles.bigCard}>

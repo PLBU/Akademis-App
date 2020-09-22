@@ -106,7 +106,10 @@ const TryoutTabComponent = () => (
   <TryoutTab.Navigator
     initialRouteName="Catalogue"
     tabBarOptions={{
-      indicatorStyle: {backgroundColor: theme.PRIMARY_DARK_COLOR}
+      indicatorStyle: {backgroundColor: 'white'},
+      style: {backgroundColor: theme.PRIMARY_DARK_COLOR},
+      activeTintColor: 'white',
+      inactiveTintColor: 'white',
     }}  
   >
     <TryoutTab.Screen name="Catalogue" component={TryoutScreen[0]}/>
@@ -119,16 +122,19 @@ const TryoutStackComponent = ({navigation}) => {
     <TryoutStack.Navigator
       initialRouteName="Main Tryout"
       screenOptions={{
-          stackAnimation: 'fade'
+          stackAnimation: 'fade',
+          headerStyle: {
+            backgroundColor: theme.PRIMARY_DARK_COLOR,
+          }
         }}
     >
       <TryoutStack.Screen name="Main Tryout" component={TryoutTabComponent}
         options={{
           headerTopInsetEnabled: false,
-          headerCenter: () => <Text style={{fontSize: 24}}>Tryout</Text>,
+          headerCenter: () => <Text style={{fontSize: 24, color: 'white'}}>Tryout</Text>,
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={{margin: 15, fontSize: 27}}>&lt;</Text>
+              <Text style={{margin: 15, fontSize: 27, color: 'white'}}>&lt;</Text>
             </TouchableOpacity>
           ),
         }}

@@ -84,13 +84,13 @@ export default () => {
 
 const styles = StyleSheet.create({
   sectionTitle: {
-    fontSize: 30,
+    fontSize: 27,
     color: 'white',
     position: 'absolute',
     top: 25,
   },
   descriptions: {
-    fontSize: 18,
+    fontSize: 17,
     color: 'white',
     textAlign: 'center',
     margin: 25

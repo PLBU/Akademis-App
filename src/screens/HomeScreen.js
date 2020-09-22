@@ -8,7 +8,8 @@ import {
   Dimensions,
   Image,
   ImageBackground,
-  TouchableOpacity
+  TouchableOpacity,
+  FlatList
 } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import axios from 'react-native-axios';
@@ -28,6 +29,23 @@ export default ({navigation}) => {
   const [posY, setPosY] = React.useState(0)
   const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
   const [carouselItems, setCarouselItems] = React.useState([])
+
+  const listItems = [
+    {
+      id: 1,
+      name: 'Tryout',
+      image: null,
+      header: 'Ikut Tryout gak pake ribet',
+      subHeader: 'Kamu bisa mengerjakan soal Try Out kapanpun dan dimanapun. Yuk daftar sekarang!',
+    },
+    {
+      id: 2,
+      name: 'Virtual Class',
+      image: null,
+      header: 'Virtual Class mantabs',
+      subHeader: 'Ya kali gak join kelas kece yang bikin auto paham materi. Gaskeun!',
+    }
+  ]
 
   const handleScroll = (e) => {
     const THRESHOLD = 64
@@ -88,11 +106,27 @@ export default ({navigation}) => {
     )
   }
 
+  const _renderList = ({item}) => 
+    <TouchableOpacity onPress={() => navigation.navigate(item.name)}>
+      <View style={styles.largeCardWithDesc}>
+        <View style={{backgroundColor: theme.SECONDARY_DARK_COLOR, height: 9/16*Dimensions.get('window').width*0.9}}>
+          {/* Ini harusnya isinya image */}
+        </View>
+        <View style={{backgroundColor: 'white', height:300-9/16*Dimensions.get('window').width*0.9}}>
+          <Text style={{marginLeft: 15, marginTop: 10, fontSize: 20}}>
+            {item.header}
+          </Text>
+          <Text style={{marginLeft: 15, fontSize: 15}}>
+            {item.subHeader}
+          </Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+
   return (
-    <ScrollView onScroll={(e) => handleScroll(e)} contentContainerStyle={{ flexGrow: 1}}>
-      <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 180}}>
+    <ScrollView onScroll={(e) => handleScroll(e)} contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white'}}>
+      <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 180, borderBottomLeftRadius: 50, borderBottomRightRadius: 50,}}>
         <Text style={styles.titleText}>Akademis Inspiration</Text>
-        <Icon name="bell-circle" style={{position: 'absolute', right: 20, top: 20,}} color={theme.PRIMARY_ACCENT_COLOR} size={35} />
       </View>
 
       <View style={{marginTop: -100}}>
@@ -123,37 +157,12 @@ export default ({navigation}) => {
         />
       </View>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Tryout')}>
-        <View style={styles.largeCardWithDesc}>
-          <View style={{backgroundColor: theme.SECONDARY_DARK_COLOR, height: 9/16*360}}>
-            {/* Ini harusnya isinya image */}
-          </View>
-          <View style={{backgroundColor: 'white', height:300-9/16*300}}>
-            <Text style={{marginLeft: 15, marginTop: 10, fontSize: 20}}>
-              Ikut Tryout gak pake ribet
-            </Text>
-            <Text style={{marginLeft: 15, fontSize: 15}}>
-              Kamu bisa mengerjakan soal Try Out kapanpun dan dimanapun. Yuk daftar sekarang!
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => navigation.navigate('Virtual Class')}>
-        <View style={styles.largeCardWithDesc}>
-          <View style={{backgroundColor: theme.SECONDARY_DARK_COLOR, height: 9/16*360}}>
-            {/* Ini harusnya isinya image */}
-          </View>
-          <View style={{backgroundColor: 'white', height:300-9/16*300}}>
-            <Text style={{marginLeft: 15, marginTop: 10, fontSize: 20}}>
-              Virtual Class mantabs
-            </Text>
-            <Text style={{marginLeft: 15, fontSize: 15}}>
-              Ya kali gak join kelas kece yang bikin auto paham materi. Gaskeun!
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
+      <FlatList
+        data={listItems}
+        renderItem={_renderList}
+        keyExtractor={ (item) => item.id}
+        showsVerticalScrollIndicator={false}
+      />
 
       <View style={{height: 150}}/>
 

@@ -53,7 +53,7 @@ export default StyleSheet.create({
     overflow: 'hidden',
   },
   largeCardWithDesc: {
-    width: 360,
+    width: Dimensions.get('window').width*0.9,
     height: 300,
     elevation: 5,
     borderRadius: 25,

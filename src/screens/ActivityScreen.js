@@ -123,7 +123,7 @@ export default ({navigation}) => {
           data={items}
           renderItem={_renderItem}
           keyExtractor={ (item) => item.id}
-          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
         />
         :
         <View style={[styles.centeredView, {marginTop: 25}]}>

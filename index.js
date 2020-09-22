@@ -15,7 +15,7 @@ import {
 
 const customTextProps = {
   style: {
-    fontFamily: 'Alata-Regular'
+    fontFamily: 'Rubik-Regular'
   }
 };
 

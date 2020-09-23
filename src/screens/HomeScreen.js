@@ -16,9 +16,6 @@ import axios from 'react-native-axios';
 import { Thumbnail } from 'react-native-thumbnail-video';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-//Images
-import landscape from '../images/landscape-vector.jpg'
-
 //Styles
 import styles from '../styles/mainScreenStyle.js';
 

@@ -6,6 +6,7 @@ import {
   Text,
   StatusBar,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import { AuthContext } from '../components/Context.js'
 import {

@@ -6,7 +6,8 @@ import {
   Text,
   StatusBar,
   FlatList,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from 'react-native';
 import {
   Colors,
@@ -18,6 +19,10 @@ import styles from '../styles/mainScreenStyle.js';
 
 //Importing theme
 import theme from '../styles/theme.js'
+
+//Importing images
+import diamond from '../assets/icons/diamond-colored.png'
+import diamond10 from '../assets/icons/diamond-10.png'
 
 export default ({navigation}) => {
   const [posY, setPosY] = React.useState(0)
@@ -87,14 +92,17 @@ export default ({navigation}) => {
 
   const _renderItem = ({item}) => (
       <TouchableOpacity onPress={() => console.log(item.value)}>
-          <View style={styles.smallCard}>
-            <View style={{flex: 0.75, justifyContent: 'center'}}>
-              <Text style={{fontSize: 19, left: 20}}>{item.name}</Text>
-              <Text style={{fontSize: 17, left: 20, color: 'gray'}}>{item.harga}</Text>
+          <View style={styles.squareCard}>
+            <View style={{flex: 0.6, justifyContent: 'center', alignItems: 'center'}}>
+              <Image source={diamond10} style={{width: 50, height: 65, marginVertical: 20}}/>
+              <View style={{flexDirection: 'row', alignItems:'center'}}>
+                <Text style={{fontSize: 15, color: 'gray'}}>{item.value}</Text>
+                <Image source={diamond} style={{width: 18, height: 18}}/>
+              </View>
             </View>
-            <View style={{flex: 0.25, backgroundColor: theme.SECONDARY_DARK_COLOR, flexDirection: 'row', justifyContent: 'center', alignItems:'center'}}>
-              <FontAwesomeIcon name="diamond" color={theme.PRIMARY_ACCENT_COLOR} size={20}/>
-              <Text style={{fontSize: 18, color: 'white'}}>{" "}{item.value}</Text>
+            <View style={{flex: 0.4, justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={{fontSize: 17}}>{item.name}</Text>
+              <Text style={{fontSize: 15, color: 'gray'}}>{item.harga}</Text>
             </View>
           </View>
       </TouchableOpacity>
@@ -118,7 +126,7 @@ export default ({navigation}) => {
   }
 
   return (
-    <ScrollView onScroll={(e) => handleScroll(e)}>
+    <ScrollView onScroll={(e) => handleScroll(e)} style={styles.bgAll}>
       <View style={{
         height: 125, 
         backgroundColor: theme.PRIMARY_DARK_COLOR, 
@@ -130,13 +138,15 @@ export default ({navigation}) => {
       >
         <Text style={styles.titleText}>Beli Diamond</Text>
         <View style={{flexDirection: 'row', alignItems:'center', position: 'absolute', top: 20, right: 20}}>
-          <FontAwesomeIcon name="diamond" color={theme.PRIMARY_ACCENT_COLOR} size={22}/>
+          <Image source={diamond} style={{width: 30, height: 30}}/>
           <Text style={{fontSize: 22, color: 'white'}}>{" "}123</Text>
         </View>
       </View>
       <FlatList
-        style={{marginTop: -50,}}
+        style={{marginTop: -70, marginHorizontal: 20}}
         data={items}
+        numColumns={2}
+        columnWrapperStyle={{justifyContent: 'space-between'}}
         renderItem={_renderItem}
         keyExtractor={ (item) => item.id}
         showsHorizontalScrollIndicator={false}

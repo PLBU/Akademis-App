@@ -103,7 +103,7 @@
       }, [])
 
       return (
-        <ScrollView contentContainerStyle={{flexGrow: 1}}>
+        <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
           <Text style={{top: 10, left: 20, fontSize: 22, marginBottom: 15}}>Pilih Kategori</Text>
           <View style={[styles.pickerContainerStyle, {marginTop: 10, marginBottom: 10}]}>
             <Picker
@@ -135,7 +135,7 @@
                     </View>
                     <Text style={styles.leftSmallText}>Kategori : {value.kategori}</Text>                
                     <Text style={styles.leftSmallText}>Pelajaran : {value.pelajaran}</Text>                
-                    <Text style={styles.leftSmallText}>Kapasistas : {value.kapasitas}</Text>
+                    <Text style={styles.leftSmallText}>Kapasitas : {value.kapasitas}</Text>
                     <Text style={styles.leftSmallText}>Tanggal : {value.date_start} hingga {value.date_end}</Text>
                   </View>
                 </TouchableOpacity>
@@ -181,7 +181,7 @@
       }, [])
 
       return (
-        <ScrollView contentContainerStyle={{flexGrow: 1}}>
+        <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
           <Text style={{top: 10, left: 20, fontSize: 22, marginBottom: 15}}>Pilih Kategori</Text>
           <View style={[styles.pickerContainerStyle, {marginTop: 10, marginBottom: 10}]}>
             <Picker
@@ -213,7 +213,7 @@
                     </View>
                     <Text style={styles.leftSmallText}>Kategori : {value.kategori}</Text>                
                     <Text style={styles.leftSmallText}>Pelajaran : {value.pelajaran}</Text>                
-                    <Text style={styles.leftSmallText}>Kapasistas : {value.kapasitas}</Text>
+                    <Text style={styles.leftSmallText}>Kapasitas : {value.kapasitas}</Text>
                     <Text style={styles.leftSmallText}>Tanggal : {value.date_start} hingga {value.date_end}</Text>
                   </View>
                 </TouchableOpacity>
@@ -260,7 +260,7 @@
       }, [])
 
       return (
-        <ScrollView contentContainerStyle={{flexGrow: 1}}>
+        <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
           <View style={{
             width: Dimensions.get('window').width*0.7, 
             height: Dimensions.get('window').width*0.7*0.75,
@@ -411,7 +411,7 @@
       }, [])
 
       return (
-        <View style={{flex: 1}}>
+        <View style={[{flex: 1}, styles.bgAll]}>
           <ScrollView contentContainerStyle={{flexGrow: 1,}}>
 
             {/* Notif */}
@@ -485,7 +485,7 @@
                   }}
                 >
                   <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%'}}>
-                    <Text style={[styles.bigWhiteText, {margin: 10, left: 15}]}>Beri pertanyaan pada gurumu!</Text>
+                    <Text style={[styles.mediumWhiteText, {margin: 10, left: 15}]}>Beri pertanyaan pada gurumu!</Text>
                   </View>
                   <View style={{ width: Dimensions.get('window').width*0.8, alignItems: 'center'}}>
                     <TextInput 

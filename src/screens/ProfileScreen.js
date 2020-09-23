@@ -140,7 +140,7 @@ export default ({navigation}) => {
   else return (
     <ScrollView 
       onScroll={(e) => handleScroll(e)} 
-      contentContainerStyle={{flexGrow: 1}}>
+      contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
       <View style={{
         height: 150, 
         backgroundColor: theme.PRIMARY_DARK_COLOR, 
@@ -152,7 +152,7 @@ export default ({navigation}) => {
         {avatar ? 
           <Image source={avatar} style={{width: 100, height: 100}}/>
           :
-          <Image source={require('../images/profile-icon.png')} style={{width: 100, height: 100}}/>
+          <Image source={require('../assets/images/profile-icon.png')} style={{width: 100, height: 100}}/>
         }
         <Text style={styles.bigWhiteText}>Halo, {name}</Text>
       </View>

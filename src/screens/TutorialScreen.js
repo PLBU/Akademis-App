@@ -14,6 +14,11 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 //Importing context
 import { AuthContext } from '../components/Context.js'
 
+//Importing images
+import tutorialImage1 from '../assets/images/tutorial-rating-gelap.png'
+import tutorialImage2 from '../assets/images/tutorial-virtual-class-gelap.png'
+import tutorialImage3 from '../assets/images/tutorial-soal-to-gelap.png'
+
 //Importing theme
 import theme from '../styles/theme.js'
 
@@ -25,27 +30,27 @@ export default () => {
       key: '1',
       title: 'Tutorial Fitur Utama 1',
       text: 'Berikan gambaran umum mengenai kelebihan, keunikan, atau manfaat yang akan dirasakan user ketika menggunakan fitur ini',
-      image: null
+      image: tutorialImage1
     },
     {
       key: '2',
       title: 'Tutorial Fitur Utama 2',
       text: 'Berikan gambaran umum mengenai kelebihan, keunikan, atau manfaat yang akan dirasakan user ketika menggunakan fitur ini',
-      image: null
+      image: tutorialImage2
     },
     {
       key: '3',
       title: 'Tutorial Fitur Utama 3',
       text: 'Berikan gambaran umum mengenai kelebihan, keunikan, atau manfaat yang akan dirasakan user ketika menggunakan fitur ini',
-      image: null
+      image: tutorialImage3
     }
   ]
 
   const _renderItem = ({ item }) => {
     return (
       <View style={{flex: 1}}>
-        <View style={{flex: 0.5}}>
-          <Image source={item.image}/>
+        <View style={{flex: 0.5, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
+          <Image source={item.image} style={{width: '100%', height: '90%'}}/>
         </View>
         <View style={{
                 flex: 0.5, 

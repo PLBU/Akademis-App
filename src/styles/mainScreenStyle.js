@@ -8,6 +8,13 @@ import {
 import theme from '../styles/theme.js'
 
 export default StyleSheet.create({
+  headerText:{
+    color: 'white',
+    fontSize: 24,
+  },
+  bgAll: {
+    backgroundColor: 'white'
+  },
   sectionTitle: {
     fontSize: 24,
     fontWeight: '600',
@@ -25,6 +32,10 @@ export default StyleSheet.create({
     fontSize: 22,
     color: 'white'
   },
+  mediumWhiteText: {
+    fontSize: 19,
+    color: 'white'
+  },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -37,7 +48,7 @@ export default StyleSheet.create({
     padding: 15,
     borderRadius: 15,
     elevation: 5,
-    width: 300,
+    width: Dimensions.get('window').width*0.75,
     marginBottom: 20,
   },
   buttonText: {
@@ -64,8 +75,8 @@ export default StyleSheet.create({
     marginBottom: 50
   },
   mediumCardWithDesc: {
-    width: 360,
-    height: 180,
+    width: Dimensions.get('window').width*0.9,
+    height: 150,
     elevation: 5,
     borderRadius: 25,
     alignSelf: 'center',
@@ -75,7 +86,7 @@ export default StyleSheet.create({
     marginBottom: 35
   },
   smallCard:{
-    width: 360,
+    width: Dimensions.get('window').width*0.9,
     height: 90,
     elevation: 5,
     borderRadius: 15,
@@ -87,8 +98,8 @@ export default StyleSheet.create({
     flexDirection: 'row',
   },
   squareCard:{
-    width: 85,
-    height: 100,
+    width: Dimensions.get('window').width*0.36,
+    height: Dimensions.get('window').width*0.45,
     elevation: 5,
     borderRadius: 25,
     alignItems: 'center',
@@ -96,12 +107,11 @@ export default StyleSheet.create({
     flex: 1,
     overflow: 'hidden',
     backgroundColor: 'white',
-    marginHorizontal: 15,
-    marginVertical: 5,
+    margin: 20
   },
   bigCard: {
     elevation: 5,
-    padding: 15,
+    padding: 20,
     borderRadius: 15,
     margin: 15,
     overflow: 'hidden',
@@ -155,6 +165,6 @@ export default StyleSheet.create({
     padding: 15,
     borderRadius: 15,
     marginBottom: 20,
-    width: 300,
+    width: Dimensions.get('window').width*0.75,
   },
 });

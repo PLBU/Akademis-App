@@ -63,7 +63,7 @@ export default [
     const availableTryouts = items.filter( ({paid}) => (paid === false))
 
     return (
-      <ScrollView contentContainerStyle={{flexGrow: 1}}>
+      <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
         <Text style={{top: 10, left: 20, fontSize: 22, marginBottom: 15}}>Pilih Kategori</Text>
         <View style={[styles.pickerContainerStyle, {marginTop: 10, marginBottom: 10}]}>
           <Picker
@@ -141,7 +141,7 @@ export default [
     const finishedTryouts = items.filter( ({paid, finished}) => (paid === true && finished === true) )
 
     return (
-      <ScrollView contentContainerStyle={{flexGrow: 1}}>
+      <ScrollView contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
         <Text style={{top: 10, left: 20, fontSize: 22, marginBottom: 15}}>Pilih Kategori</Text>
         <View style={[styles.pickerContainerStyle, {marginTop: 10, marginBottom: 10}]}>
           <Picker
@@ -221,7 +221,7 @@ export default [
     today = dd + '/' + mm + '/' + yyyy;
 
     return (
-      <ScrollView contentContainerStyle={{flexGrow: 1}}>
+      <ScrollView contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
         <View style={{
           width: Dimensions.get('window').width*0.7, 
           height: Dimensions.get('window').width*0.7*0.75,
@@ -258,7 +258,7 @@ export default [
                   navigation.navigate('Conduct Tryout', {name: name})
               }}>
                 { (finished) ? 
-                <Text style={styles.buttonText}>Lihat Tryout</Text> : 
+                <Text style={styles.buttonText}>Lihat Pembahasan</Text> : 
                 <Text style={styles.buttonText}>Mulai Tryout</Text>
                 }
               </TouchableOpacity>

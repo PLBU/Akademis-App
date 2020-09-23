@@ -6,7 +6,8 @@ import {
     FlatList,
     TouchableOpacity,
     Alert,
-    BackHandler
+    BackHandler,
+    Dimensions,
 } from 'react-native'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -275,7 +276,7 @@ export default ({navigation}) => {
     }, [])
 
     return(
-        <ScrollView>
+        <ScrollView style={styles.bgAll}>
             {/* <Text style={styles.sectionText}>Daftar Nomor</Text>
             <View style={styles.horizontalRuler}/> */}
 
@@ -365,18 +366,18 @@ export default ({navigation}) => {
             </View>
 
             <View style={{flexDirection: 'row', flex: 1}}>
-                <View style={[styles.middleItemCard, {flex: 0.25, margin: 15, padding: 15}]}>
+                <View style={[styles.middleItemCard, {flex: 0.27, margin: 15, padding: 15}]}>
                     <Text style={styles.buttonText}>{("0" + timer.HH).slice(-2)}:{("0" + timer.MM).slice(-2)}:{("0" + timer.SS).slice(-2)}</Text>
                 </View>
-                <View style={{flex: 0.75}}>
+                <View style={{flex: 0.73}}>
                     { !(activeScreen + 1 === items.data.length) ?
-                        <TouchableOpacity style={[styles.button, {width: 240, marginBottom: 0, margin: 15}]} onPress={() => setActiveScreen(activeScreen + 1)}>
+                        <TouchableOpacity style={[styles.button, {width: Dimensions.get('window').width*0.55, marginBottom: 0, margin: 15}]} onPress={() => setActiveScreen(activeScreen + 1)}>
                             <Text style={styles.buttonText}>
                                 Selanjutnya
                             </Text>
                         </TouchableOpacity>
                         :
-                        <TouchableOpacity style={[styles.button, {width: 240, marginBottom: 0, margin: 15}]} 
+                        <TouchableOpacity style={[styles.button, {width: Dimensions.get('window').width*0.55, marginBottom: 0, margin: 15}]} 
                             onPress={finished}>
                             <Text style={styles.buttonText}>
                                 Selesai

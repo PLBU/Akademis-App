@@ -32,6 +32,9 @@ import TryoutConductScreen from '../screens/TryoutConductScreen.js'
 //Importing theme
 import theme from '../styles/theme.js'
 
+//Importing style
+import styles from '../styles/mainScreenStyle.js'
+
 const BottomTab = createBottomTabNavigator()
 const AuthStack = createNativeStackNavigator()
 const IntroStack = createNativeStackNavigator()
@@ -40,12 +43,19 @@ const TryoutTab = createMaterialTopTabNavigator()
 const VirtualClassStack = createNativeStackNavigator()
 const TryoutStack = createNativeStackNavigator()
 
+const BackButton = () => (
+  <Text style={{margin: 15, fontSize: 27, color: 'white'}}>&lt;</Text>
+)
+
 const VirtualClassTabComponent = () => (
   <VirtualClassTab.Navigator
     initialRouteName="Catalogue"
     tabBarOptions={{
-      indicatorStyle: {backgroundColor: theme.PRIMARY_DARK_COLOR}
-    }}
+      indicatorStyle: {backgroundColor: 'white'},
+      style: {backgroundColor: theme.PRIMARY_DARK_COLOR},
+      activeTintColor: 'white',
+      inactiveTintColor: 'white',
+    }}  
   >
     <VirtualClassTab.Screen name="Catalogue" component={VirtualClassScreen[0]}/>
     <VirtualClassTab.Screen name="My Class" component={VirtualClassScreen[1]}/>
@@ -57,16 +67,19 @@ const VirtualClassStackComponent = ({navigation}) => {
     <VirtualClassStack.Navigator 
       initialRouteName="Main VC" 
       screenOptions={{
-        stackAnimation: 'fade'
+        stackAnimation: 'fade',
+        headerStyle: {
+          backgroundColor: theme.PRIMARY_DARK_COLOR,
+        }
       }}
     >
       <VirtualClassStack.Screen name="Main VC" component={VirtualClassTabComponent}
         options={{
           headerTopInsetEnabled: false,
-          headerCenter: () => <Text style={{fontSize: 24}}>Virtual Class</Text>,
+          headerCenter: () => <Text style={styles.headerText}>Virtual Class</Text>,
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={{margin: 15, fontSize: 27}}>&lt;</Text>
+              <BackButton/>
             </TouchableOpacity>
           ),
         }}
@@ -74,10 +87,10 @@ const VirtualClassStackComponent = ({navigation}) => {
       <VirtualClassStack.Screen name="Details VC" component={VirtualClassScreen[2]}
         options={({route}) => ({
           headerTopInsetEnabled: false,
-          headerCenter: () => <Text style={{fontSize: 24}}>{route.params.judul}</Text>,
+          headerCenter: () => <Text style={styles.headerText}>{route.params.judul}</Text>,
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.navigate('Main VC')}>
-              <Text style={{margin: 15, fontSize: 27}}>&lt;</Text>
+              <BackButton/>
             </TouchableOpacity>
           ),
         })}
@@ -85,15 +98,15 @@ const VirtualClassStackComponent = ({navigation}) => {
       <VirtualClassStack.Screen name="Details Paid VC" component={VirtualClassScreen[3]}
         options={ ({ route }) => ({
           headerTopInsetEnabled: false,
-          headerCenter: () => <Text style={{fontSize: 24}}>{route.params.judul}</Text>,
+          headerCenter: () => <Text style={styles.headerText}>{route.params.judul}</Text>,
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.navigate('Main VC')}>
-              <Text style={{margin: 15, fontSize: 27}}>&lt;</Text>
+              <BackButton/>
             </TouchableOpacity>
           ),
           headerRight: () => (
             <TouchableOpacity onPress={route.params?.notif}>
-              <Icon name="notifications" size={30} color={theme.PRIMARY_DARK_COLOR}/>
+              <Icon name="notifications" size={30} color={theme.PRIMARY_ACCENT_COLOR}/>
             </TouchableOpacity>
           )
         })}
@@ -125,16 +138,17 @@ const TryoutStackComponent = ({navigation}) => {
           stackAnimation: 'fade',
           headerStyle: {
             backgroundColor: theme.PRIMARY_DARK_COLOR,
+            borderRadius: 25
           }
         }}
     >
       <TryoutStack.Screen name="Main Tryout" component={TryoutTabComponent}
         options={{
           headerTopInsetEnabled: false,
-          headerCenter: () => <Text style={{fontSize: 24, color: 'white'}}>Tryout</Text>,
+          headerCenter: () => <Text style={styles.headerText}>Tryout</Text>,
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={{margin: 15, fontSize: 27, color: 'white'}}>&lt;</Text>
+              <BackButton/>
             </TouchableOpacity>
           ),
         }}
@@ -142,10 +156,10 @@ const TryoutStackComponent = ({navigation}) => {
       <TryoutStack.Screen name="Details Tryout" component={TryoutScreen[2]}
         options={ ({ route }) => ({
           headerTopInsetEnabled: false,
-          headerCenter: () => <Text style={{fontSize: 24}}>{route.params.name}</Text>,
+          headerCenter: () => <Text style={styles.headerText}>{route.params.name}</Text>,
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.navigate('Main Tryout')}>
-              <Text style={{margin: 15, fontSize: 27}}>&lt;</Text>
+              <BackButton/>
             </TouchableOpacity>
           ),
         })}
@@ -153,7 +167,7 @@ const TryoutStackComponent = ({navigation}) => {
       <TryoutStack.Screen name="Conduct Tryout" component={TryoutConductScreen}
         options={({ route }) => ({
           headerTopInsetEnabled: false,
-          headerCenter: () => <Text style={{fontSize: 24}}>{route.params.name}</Text>,
+          headerCenter: () => <Text style={styles.headerText}>{route.params.name}</Text>,
           headerLeft: () => null,
         })}
       />

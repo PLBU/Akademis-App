@@ -104,7 +104,7 @@ export default ({navigation}) => {
   }
 
   return (
-    <ScrollView onScroll={(e) => handleScroll(e)}>
+    <ScrollView onScroll={(e) => handleScroll(e)} style={styles.bgAll}>
       <View style={{
         height: 125, 
         backgroundColor: theme.PRIMARY_DARK_COLOR, 

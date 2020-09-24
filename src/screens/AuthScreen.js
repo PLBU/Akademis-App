@@ -14,6 +14,7 @@ import {
   GoogleSignin,
 } from '@react-native-community/google-signin';
 import { TextInput } from 'react-native-paper';
+import { RFValue } from "react-native-responsive-fontsize";
 
 //Importing theme
 import theme from '../styles/theme.js'
@@ -57,10 +58,10 @@ export default [
           <Text style={styles.sectionTitle}> 
             Selamat Datang!
           </Text>
-          <Text style={{fontSize: 23, color: theme.PRIMARY_DARK_COLOR, marginBottom: 32}} >
+          <Text style={{fontSize: RFValue(23), color: theme.PRIMARY_DARK_COLOR, marginBottom: 32}} >
             Calon Mahasiswa Baru PTN 2021
           </Text>
-          <Text style={{fontSize: 18, color: theme.PRIMARY_DARK_COLOR, marginBottom: 32}}>
+          <Text style={{fontSize: RFValue(18), color: theme.PRIMARY_DARK_COLOR, marginBottom: 32}}>
             Silakan masuk untuk melanjutkan
           </Text>
           <TextInput 
@@ -129,7 +130,7 @@ export default [
       <View style={styles.centeredView}>
         <View style={styles.centeredView}>
           <Text style={[styles.sectionTitle, {marginBottom: 8}]}>Mari daftar! </Text>
-          <Text style={{fontSize: 20, color: theme.PRIMARY_DARK_COLOR, marginBottom: 32}}>
+          <Text style={{fontSize: RFValue(20), color: theme.PRIMARY_DARK_COLOR, marginBottom: 32}}>
             Tolong isi keterangan personal anda
           </Text>
           <TextInput 

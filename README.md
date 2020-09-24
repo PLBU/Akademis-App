@@ -3,11 +3,12 @@
 2. Google Account user integration with database (Need API to add user without password, login user without password, check if user exist)
 4. Tryout API
 5. Tryout save score
-6. Fully Responsive Design <NOW/> Masalah d store, tutorial, sama text keknya musti responsive jga
 7. Add Illustration
+8. Change alert to modal
 9. Table Score in Profile Pic
 10. Ranking in Tryout
-11. Change icon
+11. Change App Logo
+12. Store API
 
 ## NOTE
 1. Password required in PUT METHOD for Profile Update (Ini tgg JWT)

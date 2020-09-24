@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
+import { RFValue } from "react-native-responsive-fontsize";
 
 //Importing theme
 import theme from '../styles/theme.js'
@@ -107,7 +108,7 @@ export default StyleSheet.create({
     flex: 1,
     overflow: 'hidden',
     backgroundColor: 'white',
-    margin: 20
+    margin: RFValue(15)
   },
   bigCard: {
     elevation: 5,

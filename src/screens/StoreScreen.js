@@ -13,6 +13,7 @@ import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import { RFValue } from "react-native-responsive-fontsize";
 
 //Importing style
 import styles from '../styles/mainScreenStyle.js';
@@ -21,7 +22,7 @@ import styles from '../styles/mainScreenStyle.js';
 import theme from '../styles/theme.js'
 
 //Importing images
-import diamond from '../assets/icons/diamond-colored.png'
+import diamond from '../assets/icons/diamond-currency.png'
 import diamond10 from '../assets/icons/diamond-10.png'
 
 export default ({navigation}) => {
@@ -101,8 +102,8 @@ export default ({navigation}) => {
               </View>
             </View>
             <View style={{flex: 0.4, justifyContent: 'center', alignItems: 'center'}}>
-              <Text style={{fontSize: 17}}>{item.name}</Text>
-              <Text style={{fontSize: 15, color: 'gray'}}>{item.harga}</Text>
+              <Text style={{fontSize: RFValue(14)}}>{item.name}</Text>
+              <Text style={{fontSize: RFValue(14), color: 'gray'}}>{item.harga}</Text>
             </View>
           </View>
       </TouchableOpacity>

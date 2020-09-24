@@ -7,7 +7,8 @@ import {
   StatusBar,
   Dimensions,
   TouchableOpacity,
-  Alert
+  Alert,
+  Image
 } from 'react-native';
 import { Picker } from '@react-native-community/picker';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -20,6 +21,9 @@ import styles from '../styles/mainScreenStyle.js';
 
 //Importing theme
 import theme from '../styles/theme.js'
+
+//Importing images
+import diamond from '../assets/icons/diamond-currency.png'
 
 const items = [
   {
@@ -86,7 +90,7 @@ export default [
               <TouchableOpacity onPress={() => navigation.navigate('Details Tryout', {...value})} key={index}>
                 <View style={styles.smallCard}>
                   <View style={{flex: 0.25, backgroundColor: theme.PRIMARY_DARK_COLOR, flexDirection: 'row', justifyContent: 'center', alignItems:'center'}}>
-                    <FontAwesomeIcon name="diamond" color={theme.PRIMARY_ACCENT_COLOR} size={18}/>
+                    <Image source={diamond} style={{width: 22, height: 22}}/>
                     <Text style={{fontSize: 17, color: 'white'}}>{" "}{value.price}</Text>
                   </View>
                   <View style={{flex: 0.75, justifyContent: 'center'}}>
@@ -113,7 +117,7 @@ export default [
             <TouchableOpacity onPress={() => navigation.navigate('Details Tryout', {...value})} key={index}>
               <View style={styles.smallCard}>
                 <View style={{flex: 0.25, backgroundColor: theme.PRIMARY_DARK_COLOR, flexDirection: 'row', justifyContent: 'center', alignItems:'center'}}>
-                  <FontAwesomeIcon name="diamond" color={theme.PRIMARY_ACCENT_COLOR} size={18}/>
+                  <Image source={diamond} style={{width: 22, height: 22}}/>
                   <Text style={{fontSize: 17, color: 'white'}}>{" "}{value.price}</Text>
                 </View>
                 <View style={{flex: 0.75, justifyContent: 'center'}}>
@@ -249,7 +253,7 @@ export default [
           </Text>
           <View style={{flexDirection: 'row', alignItems:'center'}}>
             <Text style={styles.leftMediumText}>Harga : {price}{"   "}</Text>
-            <FontAwesomeIcon name="diamond" color={theme.PRIMARY_ACCENT_COLOR} size={18}/>
+            <Image source={diamond} style={{width: 22, height: 22}}/>
           </View>
         </View>
         { (paid) ?

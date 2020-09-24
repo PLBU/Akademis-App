@@ -15,9 +15,9 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { AuthContext } from '../components/Context.js'
 
 //Importing images
-import tutorialImage1 from '../assets/images/tutorial-rating-gelap.png'
-import tutorialImage2 from '../assets/images/tutorial-virtual-class-gelap.png'
-import tutorialImage3 from '../assets/images/tutorial-soal-to-gelap.png'
+import tutorialImage1 from '../assets/images/tutorial-soal-to-gelap.png'
+import tutorialImage2 from '../assets/images/tutorial-rating-gelap.png'
+import tutorialImage3 from '../assets/images/tutorial-virtual-class-gelap.png'
 
 //Importing theme
 import theme from '../styles/theme.js'
@@ -28,20 +28,20 @@ export default () => {
   const slides = [
     {
       key: '1',
-      title: 'Tutorial Fitur Utama 1',
-      text: 'Berikan gambaran umum mengenai kelebihan, keunikan, atau manfaat yang akan dirasakan user ketika menggunakan fitur ini',
+      title: 'Apa si itu Akademis.id?',
+      text: 'Akademis.id merupakan platform tryout online yang selalu memberikan soal-soal yang berkualitas, up to date, dan tentunya menantang untuk dikerjakan.',
       image: tutorialImage1
     },
     {
       key: '2',
-      title: 'Tutorial Fitur Utama 2',
-      text: 'Berikan gambaran umum mengenai kelebihan, keunikan, atau manfaat yang akan dirasakan user ketika menggunakan fitur ini',
+      title: 'TERPERCAYA',
+      text: 'Platform ini sudah dipercaya oleh lebih dari 150.000 siswa pejuang perguruan tinggi di Indonesia dan mendapat rating 9.2/10 berdasarkan survei yang diberikan kepada para pengguna tersebut.',
       image: tutorialImage2
     },
     {
       key: '3',
-      title: 'Tutorial Fitur Utama 3',
-      text: 'Berikan gambaran umum mengenai kelebihan, keunikan, atau manfaat yang akan dirasakan user ketika menggunakan fitur ini',
+      title: 'INOVATIF',
+      text: 'Akademis.id hadir dengan fitur baru Akademis Virtual Class yaitu media yang mempertemukan kamu dengan teacher-teacher terbaik dari seluruh Indonesia yang akan memberikan berbagai macam materi yang bisa kamu pilih sesuai dengan keinginanmu!',
       image: tutorialImage3
     }
   ]
@@ -50,7 +50,7 @@ export default () => {
     return (
       <View style={{flex: 1}}>
         <View style={{flex: 0.5, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
-          <Image source={item.image} style={{width: '100%', height: '90%'}}/>
+          <Image source={item.image} style={{width: '100%', height: '85%'}}/>
         </View>
         <View style={{
                 flex: 0.5, 

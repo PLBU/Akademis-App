@@ -15,12 +15,17 @@ import Carousel, { Pagination } from 'react-native-snap-carousel';
 import axios from 'react-native-axios';
 import { Thumbnail } from 'react-native-thumbnail-video';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { RFValue } from "react-native-responsive-fontsize";
 
 //Styles
 import styles from '../styles/mainScreenStyle.js';
 
 //Importing theme
 import theme from '../styles/theme.js'
+
+//Importing images
+import tryoutImage from '../assets/images/try-out-bg-terang.png'
+import virtualClassImage from '../assets/images/virtual-class-bg-terang.png'
 
 export default ({navigation}) => {
   const [posY, setPosY] = React.useState(0)
@@ -31,14 +36,14 @@ export default ({navigation}) => {
     {
       id: 1,
       name: 'Tryout',
-      image: null,
+      image: tryoutImage,
       header: 'Ikut Tryout gak pake ribet',
       subHeader: 'Kamu bisa mengerjakan soal Try Out kapanpun dan dimanapun. Yuk daftar sekarang!',
     },
     {
       id: 2,
       name: 'Virtual Class',
-      image: null,
+      image: virtualClassImage,
       header: 'Virtual Class mantabs',
       subHeader: 'Ya kali gak join kelas kece yang bikin auto paham materi. Gaskeun!',
     }
@@ -85,6 +90,7 @@ export default ({navigation}) => {
           height: (Dimensions.get('window').width*0.8)*9/16,
           elevation: 5,
           marginBottom: 3.5,
+          overflow: 'hidden'
           }}>
         { (item.youtube === undefined) ?
             <ImageBackground source={item.image} style={styles.backgroundImage}>
@@ -106,8 +112,8 @@ export default ({navigation}) => {
   const _renderList = ({item}) => 
     <TouchableOpacity onPress={() => navigation.navigate(item.name)}>
       <View style={styles.largeCardWithDesc}>
-        <View style={{backgroundColor: theme.SECONDARY_DARK_COLOR, height: 9/16*Dimensions.get('window').width*0.9}}>
-          {/* Ini harusnya isinya image */}
+        <View style={{height: 9/16*Dimensions.get('window').width*0.9}}>
+          <ImageBackground source={item.image} style={[styles.backgroundImage]} />
         </View>
         <View style={{backgroundColor: 'white', height:300-9/16*Dimensions.get('window').width*0.9}}>
           <Text style={{marginLeft: 15, marginTop: 10, fontSize: 20}}>

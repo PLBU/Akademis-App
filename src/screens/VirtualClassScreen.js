@@ -11,7 +11,8 @@ import {
   Alert,
   Modal,
   TouchableHighlight,
-  Image
+  Image,
+  ImageBackground
 } from 'react-native';
 import { Picker } from '@react-native-community/picker';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -21,6 +22,7 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import axios from 'react-native-axios';
 import { Table, Row, Rows } from 'react-native-table-component';
 import { Overlay } from 'react-native-elements';
+import { RFValue } from "react-native-responsive-fontsize";
 
 //Context
 import { AuthContext } from '../components/Context.js'
@@ -33,6 +35,9 @@ import theme from '../styles/theme.js'
 
 //Importing images
 import diamond from '../assets/icons/diamond-currency.png'
+import vcImage from '../assets/images/virtual-class-bg-gelap.png'
+import vcPurchaseImage from '../assets/images/purchase-virtual-class-bg-gelap.png'
+import notFoundImage from '../assets/images/image-not-found-bg-terang.png'
 
 var items = [
   {
@@ -150,6 +155,7 @@ export default [
           null 
         :
           <View style={styles.centeredView}>
+            <Image source={notFoundImage} style={{width: RFValue(300), height: RFValue(225)}}/>
             <Text style={{fontSize: 20}}>Maaf, tidak ada kelas yang tersedia</Text>
           </View>
       }
@@ -228,6 +234,7 @@ export default [
           null 
         :
           <View style={styles.centeredView}>
+            <Image source={notFoundImage} style={{width: RFValue(300), height: RFValue(225)}}/>
             <Text style={{fontSize: 20}}>Maaf, tidak ada kelas yang tersedia</Text>
           </View>
       }
@@ -271,10 +278,11 @@ export default [
           backgroundColor: theme.SECONDARY_DARK_COLOR,
           alignSelf: 'center',
           margin: 20,
+          overflow: 'hidden',
           borderRadius: 25,
           }}
         >
-          {/* Ini isinya image */}
+          <ImageBackground source={vcPurchaseImage} style={styles.backgroundImage} />
         </View>
 
         <Text style={{left: 20, fontSize: 22, marginTop: 10}}>Informasi Kelas</Text>
@@ -519,9 +527,10 @@ export default [
             alignSelf: 'center',
             margin: 20,
             borderRadius: 25,
+            overflow: 'hidden',
             }}
           >
-            {/* Ini isinya image */}
+            <ImageBackground source={vcImage} style={styles.backgroundImage} />
           </View>
 
           <Text style={{left: 20, fontSize: 22, marginTop: 10}}>Informasi Kelas</Text>

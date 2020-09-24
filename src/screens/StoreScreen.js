@@ -23,7 +23,16 @@ import theme from '../styles/theme.js'
 
 //Importing images
 import diamond from '../assets/icons/diamond-currency.png'
-import diamond10 from '../assets/icons/diamond-10.png'
+import diamond2 from '../assets/icons/diamond-2-revised.png'
+import diamond3 from '../assets/icons/diamond-3-revised.png'
+import diamond5 from '../assets/icons/diamond-5-revised.png'
+import diamond8 from '../assets/icons/diamond-8-revised.png'
+import diamond10 from '../assets/icons/diamond-10-revised.png'
+import diamond20 from '../assets/icons/diamond-20-revised.png'
+import diamond30 from '../assets/icons/diamond-30-revised.png'
+import diamond40 from '../assets/icons/diamond-40-revised.png'
+import diamond80 from '../assets/icons/diamond-80-revised.png'
+import diamond100 from '../assets/icons/diamond-100-revised.png'
 
 export default ({navigation}) => {
   const [posY, setPosY] = React.useState(0)
@@ -33,61 +42,71 @@ export default ({navigation}) => {
       id: 1,
       value: 2,
       name: "Paket Biasa",
-      harga: "Rp10.000"
+      harga: "Rp10.000",
+      image: diamond2,
     },
     {
       id: 2,
       value: 3,
       name: "Paket Biasa+",
-      harga: "Rp12.000"
+      harga: "Rp12.000",
+      image: diamond3,
     },
     {
       id: 3,
       value: 5,
       name: "Paket Belajar",
-      harga: "Rp22.000"
+      harga: "Rp22.000",
+      image: diamond5,
     },
     {
       id: 4,
       value: 8,
       name: "Paket Belajar+",
-      harga: "Rp35.000"
+      harga: "Rp35.000",
+      image: diamond8,
     },
     {
       id: 5,
       value: 10,
       name: "Paket Latihan",
-      harga: "Rp45.000"
+      harga: "Rp45.000",
+      image: diamond10,
     },
     {
       id: 6,
       value: 20,
       name: "Paket Latihan+",
-      harga: "Rp90.000"
+      harga: "Rp90.000",
+      image: diamond20,
     },
     {
       id: 7,
       value: 30,
       name: "Paket IMBA",
-      harga: "Rp135.000"
+      harga: "Rp135.000",
+      image: diamond30,
     },
     {
       id: 8,
       value: 40,
       name: "Paket IMBA+",
-      harga: "Rp185.000"
+      harga: "Rp185.000",
+      image: diamond40,
     },
     {
       id: 9,
       value: 80,
       name: "Paket Luar Biasa",
-      harga: "Rp375.000"
+      harga: "Rp375.000",
+      image: diamond80,
     },
     {
       id: 10,
       value: 100,
       name: "Paket Istimewa",
-      harga: "Rp450.000"
+      harga: "Rp450.000",
+      image: diamond100,
     },
   ]
 
@@ -95,7 +114,7 @@ export default ({navigation}) => {
       <TouchableOpacity onPress={() => console.log(item.value)}>
           <View style={styles.squareCard}>
             <View style={{flex: 0.6, justifyContent: 'center', alignItems: 'center'}}>
-              <Image source={diamond10} style={{width: 50, height: 65, marginVertical: 20}}/>
+              <Image source={item.image} style={{width: RFValue(90), height: RFValue(90), marginTop: RFValue(15)}}/>
               <View style={{flexDirection: 'row', alignItems:'center'}}>
                 <Text style={{fontSize: 15, color: 'gray'}}>{item.value}</Text>
                 <Image source={diamond} style={{width: 18, height: 18}}/>

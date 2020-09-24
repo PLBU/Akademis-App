@@ -153,7 +153,6 @@ export default StyleSheet.create({
     flex: 1,
     resizeMode: 'cover', // or 'stretch'
     overflow: 'hidden',
-    borderRadius: 25,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,

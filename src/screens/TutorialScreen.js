@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Icon from 'react-native-vector-icons/FontAwesome'
+import { RFValue } from "react-native-responsive-fontsize";
 
 //Importing context
 import { AuthContext } from '../components/Context.js'
@@ -50,7 +51,7 @@ export default () => {
     return (
       <View style={{flex: 1}}>
         <View style={{flex: 0.5, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
-          <Image source={item.image} style={{width: '100%', height: '85%'}}/>
+          <Image source={item.image} style={{width: RFValue(400), height: RFValue(300)}}/>
         </View>
         <View style={{
                 flex: 0.5, 

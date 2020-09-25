@@ -53,7 +53,7 @@ export default StyleSheet.create({
     marginBottom: 20,
   },
   buttonText: {
-    fontSize: 18
+    fontSize: RFValue(17)
   },
   middleItemCard:{
     alignSelf: 'center',

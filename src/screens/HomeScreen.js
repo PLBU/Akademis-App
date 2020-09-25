@@ -26,6 +26,7 @@ import theme from '../styles/theme.js'
 //Importing images
 import tryoutImage from '../assets/images/try-out-bg-terang.png'
 import virtualClassImage from '../assets/images/virtual-class-bg-terang.png'
+import logo from '../assets/images/logo-akademis.png'
 
 export default ({navigation}) => {
   const [posY, setPosY] = React.useState(0)
@@ -100,7 +101,7 @@ export default ({navigation}) => {
             :
             <Thumbnail 
               url={item.youtube} 
-              containerStyle={[styles.backgroundImage, styles.centeredView]} 
+              containerStyle={styles.centeredView}
               imageHeight={(Dimensions.get('window').width*0.8)*9/16} 
               imageWidth={Dimensions.get('window').width*0.8}
             />    
@@ -128,11 +129,12 @@ export default ({navigation}) => {
 
   return (
     <ScrollView onScroll={(e) => handleScroll(e)} contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white'}}>
-      <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 180, borderBottomLeftRadius: 50, borderBottomRightRadius: 50,}}>
-        <Text style={styles.titleText}>Akademis Inspiration</Text>
+      <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 180, borderBottomLeftRadius: 50, borderBottomRightRadius: 50, flexDirection: 'row'}}>
+        <Image source={logo} style={{width: RFValue(30), height: RFValue(30), top: 10, left: 15}}/>
+        <Text style={{fontSize: RFValue(30), color: 'white', top: RFValue(10), left: RFValue(25)}}>Akademis.id</Text>
       </View>
 
-      <View style={{marginTop: -100}}>
+      <View style={{marginTop: RFValue(-110) }}>
         <Carousel
           layout={"default"}
           data={carouselItems}

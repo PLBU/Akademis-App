@@ -7,7 +7,6 @@
 8. Change alert to modal
 9. Table Score in Profile Pic
 10. Ranking in Tryout
-11. Change App Logo
 12. Store API
 
 ## NOTE

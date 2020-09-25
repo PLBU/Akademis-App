@@ -38,6 +38,7 @@ import diamond from '../assets/icons/diamond-currency.png'
 import vcImage from '../assets/images/virtual-class-bg-gelap.png'
 import vcPurchaseImage from '../assets/images/purchase-virtual-class-bg-gelap.png'
 import notFoundImage from '../assets/images/image-not-found-bg-terang.png'
+import buySuccessImage from '../assets/images/pembelian-sukses-bg-terang.png'
 
 var items = [
   {
@@ -249,6 +250,7 @@ export default [
     const [teacher, setTeacher] = React.useState({})
     const [session, setSession] = React.useState([])
     const [rating, setRating] = React.useState(null)
+    const [buySuccessModal, setBuySuccessModal] = React.useState(false)
 
     const getClass = () => {
       axios.get(`https://dev.akademis.id/api/class/${id}`)
@@ -272,6 +274,43 @@ export default [
 
     return (
       <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
+        {/* Modal pembelian berhasil */}
+        <Overlay
+          animationType="fade"
+          fullscreen={true}
+          isVisible={buySuccessModal}
+          onRequestClose={() => {
+            setBuySuccessModal(false)
+          }}
+          overlayStyle={styles.overlay}
+        >
+          <View style={styles.centeredView}>
+            <View style={{
+              width: Dimensions.get('window').width*0.8, 
+              backgroundColor: 'white',
+              elevation: 5,
+              alignItems: 'center',
+              margin: 20,
+              borderRadius: 25,
+              overflow: 'hidden',
+              }}
+            >
+              <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%'}}>
+                <Text style={[styles.mediumWhiteText, {margin: 10, left: 15}]}>Pembelian berhasil!</Text>
+              </View>
+              <View style={{ width: Dimensions.get('window').width*0.8, alignItems: 'center'}}>
+                <Image source={buySuccessImage} style={{width: RFValue(200), height: RFValue(150) }}/>
+                <TouchableOpacity 
+                  style={[styles.button, {width: RFValue(270) } ]} 
+                  onPress={() => {setBuySuccessModal(false), navigation.goBack() } }
+                >
+                  <Text style={styles.buttonText}>Oke mantap</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Overlay>
+
         <View style={{
           width: Dimensions.get('window').width*0.7, 
           height: Dimensions.get('window').width*0.7*0.75,
@@ -342,14 +381,12 @@ export default [
 
         <View style={{margin: 20, alignItems: 'center'}}>
           <TouchableOpacity style={styles.button} onPress={ () => {
-              Alert.alert("Sukses", "Pembayaran berhasil")
-              navigation.goBack()
+              setBuySuccessModal(true)
           }}>
             <Text style={styles.buttonText}>Beli dengan diamond</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={ () => {
-              Alert.alert("Sukses", "Pembayaran berhasil")
-              navigation.goBack()
+              setBuySuccessModal(true)
           }}>
             <Text style={styles.buttonText}>Beli via share ke media sosial</Text>
           </TouchableOpacity>
@@ -364,6 +401,7 @@ export default [
     const { authState } = React.useContext(AuthContext)
 
     const [myRating, setMyRating] = React.useState(0)
+    const [kritik, setKritik] = React.useState()
     const [data, setData] = React.useState({})
     const [teacher, setTeacher] = React.useState({})
     const [session, setSession] = React.useState([])
@@ -411,9 +449,37 @@ export default [
           })
             .then( res1 => {
               console.log(res1)
+              Alert.alert("Sukses", "Pertanyaan berhasil diunggah")
+              setQuestionVisible(false)
             })
         })
-        .catch(e => console.log(e) )
+        .catch(e => {
+          console.log(e)
+          Alert.alert("Gagal", "Pertanyaan gagal diunggah")
+          setQuestionVisible(false)
+        })
+    }
+
+    const postReview = () => {
+      axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
+        .then( res => {
+          axios.post('https://dev.akademis.id/api/review',{
+            "user_email": res.data.data.email,
+            "event_id": id,
+            "teacher_id": teacher.id,
+            "kualitas": myRating,
+            "kritik": kritik
+          })
+            .then( res1 => {
+              console.log(res1)
+              Alert.alert("Sukses", "Penilaian berhasil diunggah")
+              navigation.goBack()
+            })
+        })
+        .catch(e => {
+          console.log(e)
+          Alert.alert("Gagal", "Penilaian gagal diunggah")
+        })
     }
 
     React.useEffect( () => {
@@ -460,7 +526,9 @@ export default [
                     <Text style={{fontSize: 17}}> Belum ada notifikasi dari guru mu </Text> 
                     :
                     notifList.map( (value, index) => 
-                      <Text style={{fontSize: 17}} key={index}>{value}</Text>
+                      <View style={{borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 0.5, borderRadius: 25, width: RFValue(270), paddingVertical: RFValue(10), justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{fontSize: 17}} key={index}>{value}</Text>
+                      </View>
                     )
                   } 
                 </ScrollView>
@@ -508,11 +576,10 @@ export default [
                     value={questionText}
                     placeholder="  Isi pertanyaanmu di sini"
                   />
-                  <TouchableOpacity style={(questionText) ? styles.button : styles.disabledButton} disabled={(questionText) ? false : true} onPress={() => {
-                      postQuestion()
-                      Alert.alert("Sukses", "Pertanyaan berhasil diunggah")
-                      setQuestionVisible(false)
-                  }}>
+                  <TouchableOpacity 
+                    style={(questionText) ? [styles.button, {width: RFValue(270)}] : [styles.disabledButton, {width: RFValue(270)}]} 
+                    disabled={(questionText) ? false : true} 
+                    onPress={() => postQuestion() }>
                     <Text style={styles.buttonText}>Unggah Pertanyaan</Text>
                   </TouchableOpacity>
                 </View>
@@ -585,7 +652,14 @@ export default [
           <Text style={styles.sectionText}>Berikan penilaian mu!</Text>
           <View style={styles.horizontalRuler}/>
 
-          <Text style={styles.leftSmallText}>Rating mu: {myRating}</Text>
+          <TextInput 
+            style={{fontSize: 16, padding: 20, height: 100, width: '90%', borderColor: 'lightgray', borderWidth: 1, borderRadius: 15, margin: 20}}
+            multiline={true}
+            numberOfLines={2}
+            onChangeText={(text) => setKritik(text)}
+            value={kritik}
+            placeholder="Isi saran dan kritikmu di sini"
+          />
           <Stars
             default={0}
             count={5}
@@ -598,10 +672,7 @@ export default [
           />
 
           <View style={{margin: 20, alignItems: 'center'}}>
-            <TouchableOpacity style={styles.button} onPress={() => {
-                Alert.alert("Sukses", "Penilaian berhasil diunggah")
-                navigation.goBack()
-            }}>
+            <TouchableOpacity style={styles.button} onPress={() => postReview() }>
               <Text style={styles.buttonText}>Unggah Penilaian</Text>
             </TouchableOpacity>
           </View>

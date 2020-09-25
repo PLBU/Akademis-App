@@ -164,6 +164,17 @@ const TryoutStackComponent = ({navigation}) => {
           ),
         })}
       />
+      <TryoutStack.Screen name="Details Paid Tryout" component={TryoutScreen[3]}
+        options={ ({ route }) => ({
+          headerTopInsetEnabled: false,
+          headerCenter: () => <Text style={styles.headerText}>{route.params.name}</Text>,
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('Main Tryout')}>
+              <BackButton/>
+            </TouchableOpacity>
+          ),
+        })}
+      />
       <TryoutStack.Screen name="Conduct Tryout" component={TryoutConductScreen}
         options={({ route }) => ({
           headerTopInsetEnabled: false,

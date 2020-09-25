@@ -8,8 +8,11 @@ import {
     Alert,
     BackHandler,
     Dimensions,
+    Image
 } from 'react-native'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Overlay } from 'react-native-elements';
+import { RFValue } from "react-native-responsive-fontsize";
 
 //Importing theme
 import theme from '../styles/theme.js'
@@ -17,8 +20,12 @@ import theme from '../styles/theme.js'
 //Styles
 import styles from '../styles/mainScreenStyle.js';
 
+//Images
+import unsureImage from '../assets/images/confirm-jawaban-bg-terang.png'
+import timesUpImage from '../assets/images/waktu-habis-bg-terang.png'
+
 const items = {
-    time: 60,
+    time: 1,
     data: [
         {
             id: '1',
@@ -149,6 +156,8 @@ export default ({navigation}) => {
     const [answers, setAnswers] = React.useState(Array.from(Array(items.data.length), () => 0) )
     const [keyAnswers, setKeyAnswers] = React.useState(new Array (items.data.length) )
     const [timer, setTimer] = React.useState({HH: -1, MM: -1, SS: -1})
+    const [finishedModal, setFinishedModal] = React.useState(false)
+    const [timesUpModal, setTimesUpModal] = React.useState(false)
     var timeState
 
     const updateAnswers = (index, value) => {
@@ -159,21 +168,10 @@ export default ({navigation}) => {
     }
 
     const finished = () => {
-        Alert.alert("Anda sudah yakin ingin menyelesaikan tryout ini?", "Masih terdapat waktu untuk mengerjakan tryout ini", [
-            {
-                text: 'Yakin',
-                onPress: () => {
-                    Alert.alert('Skor anda:', `Anda benar ${getScore()}/15`)
-                    navigation.navigate('Main Tryout')
-                    console.log(answers)
-                    console.log(keyAnswers)
-                }
-            },
-            {
-                text: 'Tidak',
-                onPress: () => null
-            }
-        ])
+        Alert.alert('Skor anda:', `Anda benar ${getScore()}/15`)
+        navigation.navigate('Main Tryout')
+        console.log(answers)
+        console.log(keyAnswers)
     }
 
     const getScore = () => {
@@ -188,11 +186,9 @@ export default ({navigation}) => {
 
     const countdown = () => {
         setTimer( (prevState) => {
-            if (prevState.HH === 0 && prevState.MM === 0 && prevState.SS === 0) {
-                Alert.alert('Skor anda:', `Anda benar ${getScore()}/15`)
-                navigation.navigate('Main Tryout')
-                console.log(answers)
-                console.log(keyAnswers)
+            if (prevState.HH === 0 && prevState.MM === 0 && prevState.SS === 1) {
+                setTimesUpModal(true)
+                clearInterval(timeState)
             }
 
             return ({
@@ -277,8 +273,85 @@ export default ({navigation}) => {
 
     return(
         <ScrollView style={styles.bgAll}>
-            {/* <Text style={styles.sectionText}>Daftar Nomor</Text>
-            <View style={styles.horizontalRuler}/> */}
+            {/* Yakin sudah selesai? */}
+            <Overlay
+                animationType="fade"
+                fullscreen={true}
+                isVisible={finishedModal}
+                onRequestClose={() => {
+                    setFinishedModal(false)
+                }}
+                overlayStyle={styles.overlay}
+            >
+                <View style={styles.centeredView}>
+                    <View style={{
+                        width: Dimensions.get('window').width*0.8, 
+                        backgroundColor: 'white',
+                        elevation: 5,
+                        alignItems: 'center',
+                        margin: 20,
+                        borderRadius: 25,
+                        overflow: 'hidden',
+                        }}
+                    >
+                        <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%'}}>
+                            <Text style={[styles.mediumWhiteText, {margin: 10, left: 15}]}>Yakin dengan jawaban anda?</Text>
+                        </View>
+                        <View style={{ width: Dimensions.get('window').width*0.8, alignItems: 'center'}}>
+                            <Image source={unsureImage} style={{width: RFValue(200), height: RFValue(150) }}/>
+                            <TouchableOpacity 
+                            style={[styles.button, {width: RFValue(270) } ]} 
+                            onPress={() => {setFinishedModal(false), finished() } }
+                            >
+                                <Text style={styles.buttonText}>Yakin</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                            style={[styles.button, {width: RFValue(270) } ]} 
+                            onPress={() => {setFinishedModal(false)} }
+                            >
+                                <Text style={styles.buttonText}>Belum nih</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Overlay>
+
+            {/* Waktunya sudah habis */}
+            <Overlay
+                animationType="fade"
+                fullscreen={true}
+                isVisible={timesUpModal}
+                onRequestClose={() => {
+                    finished()
+                }}
+                overlayStyle={styles.overlay}
+            >
+                <View style={styles.centeredView}>
+                    <View style={{
+                        width: Dimensions.get('window').width*0.8, 
+                        backgroundColor: 'white',
+                        elevation: 5,
+                        alignItems: 'center',
+                        margin: 20,
+                        borderRadius: 25,
+                        overflow: 'hidden',
+                        }}
+                    >
+                        <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%'}}>
+                            <Text style={[styles.mediumWhiteText, {margin: 10, left: 15}]}>Yahh waktunya sudah habis nih</Text>
+                        </View>
+                        <View style={{ width: Dimensions.get('window').width*0.8, alignItems: 'center'}}>
+                            <Image source={timesUpImage} style={{width: RFValue(200), height: RFValue(150) }}/>
+                            <TouchableOpacity 
+                                style={[styles.button, {width: RFValue(270) } ]} 
+                                onPress={() => {finished() } }
+                            >
+                                <Text style={styles.buttonText}>Oke de</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Overlay>
 
             <View style={{backgroundColor: 'white', padding: 5, margin: 15, marginVertical: 25, borderRadius: 25, overflow: 'hidden', elevation: 5}}>
                 <FlatList
@@ -378,7 +451,7 @@ export default ({navigation}) => {
                         </TouchableOpacity>
                         :
                         <TouchableOpacity style={[styles.button, {width: Dimensions.get('window').width*0.55, marginBottom: 0, margin: 15}]} 
-                            onPress={finished}>
+                            onPress={() => setFinishedModal(true)}>
                             <Text style={styles.buttonText}>
                                 Selesai
                             </Text>

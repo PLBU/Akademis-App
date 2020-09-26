@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
   Alert,
   Image,
-  ImageBackground
+  ImageBackground,
+  ActivityIndicator
 } from 'react-native';
 import { Picker } from '@react-native-community/picker';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -135,7 +136,7 @@ export default [
         :
           <View style={styles.centeredView}>
             <Image source={notFoundImage} style={{width: RFValue(300), height: RFValue(225)}}/>
-            <Text style={{fontSize: 20}}>Maaf, tidak ada tryout yang tersedia</Text>
+            <Text style={{fontSize: 20, marginBottom: RFValue(15) }}>Maaf, tidak ada tryout yang tersedia</Text>
           </View>
       }
       {/* Tryout Package */}
@@ -163,7 +164,7 @@ export default [
         :
           <View style={styles.centeredView}>
             <Image source={notFoundImage} style={{width: RFValue(300), height: RFValue(225)}}/>
-            <Text style={{fontSize: 20}}>Maaf, tidak ada tryout yang tersedia</Text>
+            <Text style={{fontSize: 20, marginBottom: RFValue(15) }}>Maaf, tidak ada tryout yang tersedia</Text>
           </View>
       } */}
       </ScrollView>
@@ -175,21 +176,18 @@ export default [
     const [availTryouts, setAvailTryouts] = React.useState([])
     const { authState } = React.useContext(AuthContext)
 
-    const unfinishedTryouts = items.filter( ({paid, finished}) => (paid === true && finished === false) )
-    const finishedTryouts = items.filter( ({paid, finished}) => (paid === true && finished === true) )
+    const unfinishedTryouts = availTryouts.filter( ({is_finished}) => (is_finished === "not finished") )
+    const finishedTryouts = availTryouts.filter( ({is_finished}) => (is_finished === "finished") )
 
     const getTryouts = () => {
-      axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
-        .then ( res1 => {
-          axios.get(`https://dev.akademis.id/api/tryout/?user_id=${res1.data.data.email}`)
-            .then(res => {
-              var arr = res.data.data.data
-              setAvailTryouts(arr)
+        axios.get(`https://dev.akademis.id/api/my-tryout/?user_id=${authState?.userToken}`)
+          .then(res => {
+            var arr = res.data.data
+            setAvailTryouts(arr)
 
-              console.log("TRYOUT RESPONSE: ")
-              console.log(arr)
-            })
-        })
+            console.log("MY TRYOUT RESPONSE: ")
+            console.log(arr)
+          })
         .catch(e => console.log(e) )
     }
 
@@ -206,46 +204,45 @@ export default [
             style={styles.pickerStyle}
             onValueChange={ (itemValue) => setSubject(itemValue)}>
             <Picker.Item label={"All"} value={""}/>
-            <Picker.Item label={"Matematika"} value={"Matematika"}/>
-            <Picker.Item label={"Geografi"} value={"Geografi"}/>
-            <Picker.Item label={"Ilmu Pengetahuan Alam"} value={"Ilmu Pengetahuan Alam"}/>
-            <Picker.Item label={"Bahasa Jepang"} value={"Bahasa Jepang"}/>
+            <Picker.Item label={"TPS"} value={"tps"}/>
+            <Picker.Item label={"SAINTEK"} value={"saintek"}/>
+            <Picker.Item label={"SOSHUM"} value={"soshum"}/>
           </Picker>
         </View>
         {/* Unfinished Tryouts */}
         <View style={styles.horizontalRuler}/>
         <Text style={{left: 20, fontSize: 22, marginBottom: 20}}>Tryout yang belum selesai</Text>
-        {unfinishedTryouts.filter( ({ subject }) => (subjectPicker === "") ? true : (subject === subjectPicker))
+        {unfinishedTryouts.filter( ({ tryout }) => (subjectPicker === "") ? true : (tryout.name.toLowerCase().includes(subjectPicker) ) )
           .map( (value, index) => {
             return (
-              <TouchableOpacity onPress={() => navigation.navigate('Details Paid Tryout', {...value})} key={index}>
+              <TouchableOpacity onPress={() => navigation.navigate('Details Unfinished Tryout', {...value.tryout})} key={index}>
                 <View style={styles.smallCard}>
                   <View style={{flex: 0.25, backgroundColor: theme.PRIMARY_DARK_COLOR, flexDirection: 'row', justifyContent: 'center', alignItems:'center'}}>
                     {/* Belum tau mo isi apa */}
                   </View>
                   <View style={{flex: 0.75, justifyContent: 'center'}}>
-                    <Text style={styles.leftSmallMediumText}>{value.name}</Text>
+                    <Text style={styles.leftSmallMediumText}>{value.tryout.name}</Text>
                   </View>
                 </View>
               </TouchableOpacity>
             )
         })
       }
-      { (unfinishedTryouts.find( ({ subject }) => (subjectPicker === "") ? true : (subject === subjectPicker) ) ) ?
+      { (unfinishedTryouts.find( ({ tryout }) => (subjectPicker === "") ? true : (tryout.name.toLowerCase().includes(subjectPicker) ) ) ) ?
           null 
         :
           <View style={styles.centeredView}>
             <Image source={notFoundImage} style={{width: RFValue(300), height: RFValue(225)}}/>
-            <Text style={{fontSize: 20}}>Maaf, tidak ada tryout yang tersedia</Text>
+            <Text style={{fontSize: 20, marginBottom: RFValue(15) }}>Maaf, tidak ada tryout yang tersedia</Text>
           </View>
       }
       {/* Finished Tryouts */}
       <View style={styles.horizontalRuler}/>
         <Text style={{left: 20, fontSize: 22, marginBottom: 20}}>Tryout yang sudah selesai</Text>
-        {finishedTryouts.filter( ({ subject }) => (subjectPicker === "") ? true : (subject === subjectPicker))
+        {finishedTryouts.filter( ({ tryout }) => (subjectPicker === "") ? true : (tryout.name.toLowerCase().includes(subjectPicker) ) )
           .map( (value, index) => {
             return (
-              <TouchableOpacity onPress={() => navigation.navigate('Details Tryout', {...value})} key={index}>
+              <TouchableOpacity onPress={() => navigation.navigate('Details Finished Tryout', {...value})} key={index}>
                 <View style={styles.smallCard}>
                   <View style={{flex: 0.25, backgroundColor: theme.PRIMARY_DARK_COLOR, flexDirection: 'row', justifyContent: 'center', alignItems:'center'}}>
                     {/* Belum tau mo isi */}
@@ -258,12 +255,12 @@ export default [
             )
         })
       }
-      { (finishedTryouts.find( ({ subject }) => (subjectPicker === "") ? true : (subject === subjectPicker) ) ) ?
+      { (finishedTryouts.find( ({ tryout }) => (subjectPicker === "") ? true : (tryout.name.toLowerCase().includes(subjectPicker) ) ) ) ?
           null 
         :
           <View style={styles.centeredView}>
             <Image source={notFoundImage} style={{width: RFValue(300), height: RFValue(225)}}/>
-            <Text style={{fontSize: 20}}>Maaf, tidak ada tryout yang tersedia</Text>
+            <Text style={{fontSize: 20, marginBottom: RFValue(15) }}>Maaf, tidak ada tryout yang tersedia</Text>
           </View>
       }
       </ScrollView>
@@ -433,9 +430,153 @@ export default [
       </ScrollView>
     )
   },
-  //Details Paid Tryout
+  //Details Unfinished Tryout
   ({route, navigation}) => {
-    const { id, name, price, start_at, end_at, finished } = route.params
+    const { id, name, price, start_at, end_at } = route.params
+    const { authState } = React.useContext(AuthContext)
+    
+    const [loading, setLoading] = React.useState(false)
+
+    const [tests, setTests] = React.useState([])
+    const [subTests, setSubTests] = React.useState([[], []])
+    const [activeSections, setActiveSections] = React.useState([])
+    const [buySuccessModal, setBuySuccessModal] = React.useState(false)
+
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+
+    today = dd + '/' + mm + '/' + yyyy;
+
+    const getData = () => {
+      setLoading(true)
+      axios.get(`https://dev.akademis.id/api/tryout/${id}`)
+        .then(res => {
+          var arr = res.data.data.test
+          var newArr = []
+
+          arr.forEach(element => {
+            newArr.push(element.subtest)
+          })
+
+          setTests(arr)
+          setSubTests(newArr)
+
+          console.log("Data response: ")
+          console.log(arr)
+          console.log("Subtest response: ")
+          console.log(newArr)
+
+          setLoading(false)
+        })
+        .catch(e => {console.log(e), setLoading(false) })
+    }
+
+    const isFinished = (nowId) => {
+      if (nowId < 1) return true
+      axios.get(`https://dev.akademis.id/api/answer?user_id=${authState?.userToken}&soal_id=${nowId}`)
+        .then(res => {
+          console.log("Ansewrs: ")
+          console.log(res.data.data)
+
+          if (res.data.data.length === 0) return false
+          else return true
+        })
+        .catch(e => console.log(e) )
+    }
+
+    const _renderHeader = sections => (
+      <View style={{width: RFValue(320), padding: RFValue(10), backgroundColor: theme.PRIMARY_DARK_COLOR, justifyContent: 'center', alignItems: 'center', borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 0.5}}>
+        <Text style={{fontSize: RFValue(17), color: 'white'}}>{sections.name}</Text>
+      </View>
+    )
+
+    const _renderContent = (sections, index) => (
+        subTests[index].map( (value) => (
+          <View style={{marginVertical: 10, justifyContent: 'center', alignItems: 'center', borderColor: theme.SECONDARY_DARK_COLOR, borderRadius: 15, borderWidth: 0.5, padding: 5}}>
+            <Text style={{fontSize: RFValue(15) }}>{value.name}</Text>
+            <Text style={{fontSize: RFValue(14), color: 'gray' }}>Waktu : {value.time} menit</Text>
+
+            { ((!isFinished(value.id) && isFinished(value.id - 1) ) ) ?
+              <TouchableOpacity 
+                style={[styles.button, {marginTop: 20}]} 
+                onPress={() => { navigation.navigate('Conduct Tryout', {...value})}} >
+                  <Text style={styles.buttonText}>Mulai Subtest</Text>
+              </TouchableOpacity>
+              :
+              null
+            }
+          </View>
+        ) )
+    )
+
+    React.useEffect(() => {
+      getData()
+    }, [])
+
+    if (loading === true) return (
+      <View style={{flex:1,justifyContent:'center',alignItems:'center', backgroundColor: 'white'}}>
+          <ActivityIndicator size="large" color="black"/>
+      </View>
+    )
+    else return (
+      <ScrollView contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
+
+        <View style={{
+          width: Dimensions.get('window').width*0.7, 
+          height: Dimensions.get('window').width*0.7*0.75,
+          backgroundColor: theme.SECONDARY_DARK_COLOR,
+          alignSelf: 'center',
+          margin: 20,
+          borderRadius: 25,
+          overflow: 'hidden'
+          }}
+        >
+          {
+            (name.toLowerCase().includes('saintek') ) ?
+              <ImageBackground source={saintekSingleImage} style={styles.backgroundImage}/>
+            : (name.toLowerCase().includes('soshum') ) ?
+              <ImageBackground source={soshumSingleImage} style={styles.backgroundImage}/>
+            : 
+              <ImageBackground source={purchaseToImage} style={styles.backgroundImage}/>
+          }
+        </View>
+
+        <Text style={{left: 20, fontSize: 22, marginTop: 10}}>Informasi Tryout</Text>
+        <View style={styles.horizontalRuler}/>
+
+        <View style={{width: Dimensions.get('window').width*0.95, alignSelf: 'center'}}>
+          <Text style={styles.leftMediumText}>Nama Tryout : {"\n"}
+            <Text style={styles.leftSmallText}>{name}</Text>
+          </Text>
+          <Text style={styles.leftMediumText}>Waktu Tryout : {"\n"}
+            <Text style={styles.leftSmallText}>{start_at}{"\n"}hingga{"\n"}{end_at}</Text>
+          </Text>
+          <Text style={styles.leftMediumText}>Tanggal Pembelian : {"\n"}
+            <Text style={styles.leftSmallText}>{today}</Text>
+          </Text>
+        </View>
+
+        <Text style={{left: 20, fontSize: 22, marginTop: 30}}>Konten Tryout</Text>
+        <View style={styles.horizontalRuler}/>
+
+        <Accordion
+          sections={tests}
+          activeSections={activeSections}
+          renderHeader={_renderHeader}
+          renderContent={_renderContent}
+          onChange={ active => setActiveSections(active) }
+          underlayColor={theme.PRIMARY_ACCENT_COLOR}
+          containerStyle={{width: RFValue(320), alignSelf: 'center', borderRadius: 20, overflow: 'hidden', marginTop: RFValue(10), marginBottom: RFValue(30) }}
+        />
+
+      </ScrollView>
+    )
+  },
+  //Details Finished Tryout
+  ({route, navigation}) => {
+    const { id, name, price, start_at, end_at } = route.params
     const [tests, setTests] = React.useState([])
     const [subTests, setSubTests] = React.useState([[], []])
     const [activeSections, setActiveSections] = React.useState([])
@@ -480,6 +621,11 @@ export default [
           <View style={{marginVertical: 10, justifyContent: 'center', alignItems: 'center', borderColor: theme.SECONDARY_DARK_COLOR, borderRadius: 15, borderWidth: 0.5, padding: 5}}>
             <Text style={{fontSize: RFValue(15) }}>{value.name}</Text>
             <Text style={{fontSize: RFValue(14), color: 'gray' }}>Waktu : {value.time} menit</Text>
+            <TouchableOpacity 
+              style={[styles.button, {marginTop: 20}]} 
+              onPress={() => { navigation.navigate('Conduct Tryout', {...value})}} >
+                <Text style={styles.buttonText}>Lihat Pembahasan</Text>
+            </TouchableOpacity>
           </View>
         ) )
     )
@@ -490,42 +636,6 @@ export default [
 
     return (
       <ScrollView contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
-        {/* Modal pembelian berhasil */}
-        <Overlay
-          animationType="fade"
-          fullscreen={true}
-          isVisible={buySuccessModal}
-          onRequestClose={() => {
-            setBuySuccessModal(false)
-          }}
-          overlayStyle={styles.overlay}
-        >
-          <View style={styles.centeredView}>
-            <View style={{
-              width: Dimensions.get('window').width*0.8, 
-              backgroundColor: 'white',
-              elevation: 5,
-              alignItems: 'center',
-              margin: 20,
-              borderRadius: 25,
-              overflow: 'hidden',
-              }}
-            >
-              <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%'}}>
-                <Text style={[styles.mediumWhiteText, {margin: 10, left: 15}]}>Pembelian berhasil!</Text>
-              </View>
-              <View style={{ width: Dimensions.get('window').width*0.8, alignItems: 'center'}}>
-                <Image source={buySuccessImage} style={{width: RFValue(200), height: RFValue(150) }}/>
-                <TouchableOpacity 
-                  style={[styles.button, {width: RFValue(270) } ]} 
-                  onPress={() => {setBuySuccessModal(false), navigation.goBack() } }
-                >
-                  <Text style={styles.buttonText}>Oke mantap</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Overlay>
 
         <View style={{
           width: Dimensions.get('window').width*0.7, 
@@ -554,10 +664,6 @@ export default [
           <Text style={styles.leftMediumText}>Nama Tryout : {"\n"}
             <Text style={styles.leftSmallText}>{name}</Text>
           </Text>
-          <View style={{flexDirection: 'row', alignItems:'center'}}>
-            <Text style={styles.leftMediumText}>Harga : {price}{"   "}</Text>
-            <Image source={diamond} style={{width: 22, height: 22}}/>
-          </View>
           <Text style={styles.leftMediumText}>Waktu Tryout : {"\n"}
             <Text style={styles.leftSmallText}>{start_at}{"\n"}hingga{"\n"}{end_at}</Text>
           </Text>
@@ -566,7 +672,7 @@ export default [
           </Text>
         </View>
 
-        {/* <Text style={{left: 20, fontSize: 22, marginTop: 30}}>Konten Tryout</Text>
+        <Text style={{left: 20, fontSize: 22, marginTop: 30}}>Konten Tryout</Text>
         <View style={styles.horizontalRuler}/>
 
         <Accordion
@@ -576,19 +682,9 @@ export default [
           renderContent={_renderContent}
           onChange={ active => setActiveSections(active) }
           underlayColor={theme.PRIMARY_ACCENT_COLOR}
-          containerStyle={{width: RFValue(320), alignSelf: 'center', borderRadius: 20, overflow: 'hidden', marginTop: RFValue(10)}}
-        /> */}
+          containerStyle={{width: RFValue(320), alignSelf: 'center', borderRadius: 20, overflow: 'hidden', marginTop: RFValue(10), marginBottom: RFValue(30) }}
+        />
 
-        <View style={{margin: 20, alignItems: 'center'}}>
-          <TouchableOpacity style={[styles.button, {marginTop: 30}]} onPress={() => {
-              navigation.navigate('Conduct Tryout', {name: name})
-            }}>
-              { (finished) ? 
-              <Text style={styles.buttonText}>Lihat Pembahasan</Text> : 
-              <Text style={styles.buttonText}>Mulai Tryout</Text>
-              }
-          </TouchableOpacity>
-        </View>
       </ScrollView>
     )
   }

@@ -124,7 +124,7 @@ export default [
             <Picker.Item label={"Matematika"} value={"Matematika"}/>
             <Picker.Item label={"Geografi"} value={"Geografi"}/>
             <Picker.Item label={"Ilmu Pengetahuan Alam"} value={"Ilmu Pengetahuan Alam"}/>
-            <Picker.Item label={"sbmptn"} value={"sbmptn"}/>
+            <Picker.Item label={"SBMPTN"} value={"sbmptn"}/>
           </Picker>
         </View>
 
@@ -175,7 +175,7 @@ export default [
           var arr = res.data.data.data
           axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
             .then ( res1 => {
-              axios.get(`https://dev.akademis.id/api/myclass?user_email=test1@gmail.com`)
+              axios.get(`https://dev.akademis.id/api/myclass?user_email=${res1.data.data.email}`)
                 .then( res2 => {
                   let arrChecker = []
                   res2.data.data.data.forEach( ({ id_event }) => arrChecker.push(id_event) )

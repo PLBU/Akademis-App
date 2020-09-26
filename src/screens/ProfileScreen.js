@@ -61,6 +61,7 @@ export default ({navigation}) => {
       .then( res => {
         console.log("Ini dari getUserProfile")
         console.log(res)
+        console.log(authState?.userToken)
         setAvatar(res.data.data.avatar)
         setName(res.data.data.name)
         setUsername(res.data.data.username)
@@ -133,13 +134,13 @@ export default ({navigation}) => {
 
 
   if (loading === true) return (
-    <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+    <View style={{flex:1,justifyContent:'center',alignItems:'center', backgroundColor: 'white'}}>
       <ActivityIndicator size="large" color="black"/>
     </View>
   )
   else return (
     <ScrollView 
-      onScroll={(e) => handleScroll(e)} 
+      // onScroll={(e) => handleScroll(e)} 
       contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
       <View style={{
         height: 150, 
@@ -216,7 +217,7 @@ export default ({navigation}) => {
       <Text style={styles.sectionText}>Statistik Nilaimu</Text>
       <View style={styles.horizontalRuler}/>
 
-      {/* <View style={[styles.centeredView, {marginVertical: 20}]}>
+      <View style={[styles.centeredView, {marginVertical: 20}]}>
         <BarChart
           data={items}
           width={Dimensions.get("window").width*0.85} // from react-native
@@ -241,7 +242,7 @@ export default ({navigation}) => {
             elevation: 5,
           }}
         />
-      </View> */}
+      </View>
       
       <TouchableOpacity style={[styles.button, {alignSelf: 'center'}]} onPress={() => logOut()}>
         <Text style={styles.buttonText}>Log out</Text>

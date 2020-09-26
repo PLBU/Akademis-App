@@ -8,11 +8,16 @@ import {
     Alert,
     BackHandler,
     Dimensions,
-    Image
+    Image,
+    ActivityIndicator
 } from 'react-native'
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Overlay } from 'react-native-elements';
 import { RFValue } from "react-native-responsive-fontsize";
+import axios from 'react-native-axios';
+
+//Context
+import { AuthContext } from '../components/Context.js'
 
 //Importing theme
 import theme from '../styles/theme.js'
@@ -24,164 +29,39 @@ import styles from '../styles/mainScreenStyle.js';
 import unsureImage from '../assets/images/confirm-jawaban-bg-terang.png'
 import timesUpImage from '../assets/images/waktu-habis-bg-terang.png'
 
-const items = {
-    time: 1,
-    data: [
-        {
-            id: '1',
-            question: 'What is 1 + 1?',
-            choice1: '2',
-            choice2: '4',
-            choice3: '5',
-            choice4: '3',
-        },
-        {
-            id: '2',
-            question: 'If one plus one is 2, then the mathematical expression of this semantic statement with the syntax of romanian mathematical term should be?',
-            choice1: '2 * 2 = 3',
-            choice2: '2 ? 3 : 1',
-            choice3: '1 + 1 = 2',
-            choice4: '5 * 5 / 5',
-        },
-        {
-            id: '3',
-            question: 'What is 1 + 1?',
-            choice1: 'This is so damn hard, that I need to answer it so damn bad so I should pick this coice otherwise the whole world could be doomed with the power of mighty stones of the arcadian survivor within the avatar state',
-            choice2: '4',
-            choice3: '5',
-            choice4: '3',
-        },
-        {
-            id: '4',
-            question: 'What is 1 + 1?',
-            choice1: '2',
-            choice2: '4',
-            choice3: '5',
-            choice4: '3',
-        },
-        {
-            id: '5',
-            question: 'What is 1 + 1?',
-            choice1: '2',
-            choice2: '4',
-            choice3: '5',
-            choice4: '3',
-        },
-        {
-            id: '6',
-            question: 'What is 1 + 1?',
-            choice1: '2',
-            choice2: '4',
-            choice3: '5',
-            choice4: '3',
-        },
-        {
-            id: '7',
-            question: 'What is 1 + 1?',
-            choice1: '2',
-            choice2: '4',
-            choice3: '5',
-            choice4: '3',
-        },
-        {
-            id: '8',
-            question: 'What is 1 + 1?',
-            choice1: '2',
-            choice2: '4',
-            choice3: '5',
-            choice4: '3',
-        },
-        {
-            id: '9',
-            question: 'What is 1 + 1?',
-            choice1: '2',
-            choice2: '4',
-            choice3: '5',
-            choice4: '3',
-        },
-        {
-            id: '10',
-            question: 'What is 1 + 1?',
-            choice1: '2',
-            choice2: '4',
-            choice3: '5',
-            choice4: '3',
-        },
-        {
-            id: '11',
-            question: 'What is 1 + 1?',
-            choice1: '2',
-            choice2: '4',
-            choice3: '5',
-            choice4: '3',
-        },
-        {
-            id: '12',
-            question: 'What is 1 + 1?',
-            choice1: '2',
-            choice2: '4',
-            choice3: '5',
-            choice4: '3',
-        },
-        {
-            id: '13',
-            question: 'What is 1 + 1?',
-            choice1: '2',
-            choice2: '4',
-            choice3: '5',
-            choice4: '3',
-        },
-        {
-            id: '14',
-            question: 'What is 1 + 1?',
-            choice1: '2',
-            choice2: '4',
-            choice3: '5',
-            choice4: '3',
-        },
-            {
-            id: '15',
-            question: 'What is 1 + 1?',
-            choice1: '2',
-            choice2: '4',
-            choice3: '5',
-            choice4: '3',
-        }
-    ],
-    answers: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,]
-}
+export default ( { route, navigation } ) => {
+    const { id, time } = route.params
+    const { authState } = React.useContext(AuthContext)
+    
+    const [loading, setLoading] = React.useState(false)
 
-export default ({navigation}) => {
     const [activeScreen, setActiveScreen] = React.useState(0)
-    const [answers, setAnswers] = React.useState(Array.from(Array(items.data.length), () => 0) )
-    const [keyAnswers, setKeyAnswers] = React.useState(new Array (items.data.length) )
+
+    const [questions, setQuestions] = React.useState([{number: "", question: "", image: null, opsi: [] } ])
+    const [answers, setAnswers] = React.useState([])
+    const [keyAnswers, setKeyAnswers] = React.useState([])
+
     const [timer, setTimer] = React.useState({HH: -1, MM: -1, SS: -1})
+
     const [finishedModal, setFinishedModal] = React.useState(false)
     const [timesUpModal, setTimesUpModal] = React.useState(false)
+
     var timeState
 
-    const updateAnswers = (index, value) => {
-        let answersCopy = [...answers]
-
-        answersCopy[index] = value
-        setAnswers(answersCopy)
-    }
-
     const finished = () => {
-        Alert.alert('Skor anda:', `Anda benar ${getScore()}/15`)
-        navigation.navigate('Main Tryout')
-        console.log(answers)
-        console.log(keyAnswers)
-    }
-
-    const getScore = () => {
-        var correctAns = 0
-
-        answers.forEach( (item, index) => {
-            if (item === keyAnswers[index] ) correctAns++
+        axios.post(`https://dev.akademis.id/api/answer`, {
+            "soal_id": id,
+            "user_id": authState?.userToken,
+            "option": answers
         })
-
-        return correctAns
+            .then(res => {
+                console.log(res)
+                Alert.alert('Skor anda:', `Anda benar ${getScore()}/${questions.length}`)
+                navigation.navigate('Main Tryout')
+                console.log(answers)
+                console.log(keyAnswers)
+            })
+            .catch(e => console.log(e) )
     }
 
     const countdown = () => {
@@ -199,9 +79,9 @@ export default ({navigation}) => {
     }
 
     const _renderItem = ({item}) => (
-        <TouchableOpacity onPress={() => setActiveScreen(item.id-1)}>
+        <TouchableOpacity onPress={() => setActiveScreen(item.number-1)}>
             <View style={ 
-                [(activeScreen === item.id-1) ? 
+                [(activeScreen === item.number-1) ? 
                     {
                         height: 40, 
                         width: 40, 
@@ -223,13 +103,13 @@ export default ({navigation}) => {
                         alignItems: 'center',
                         justifyContent: 'center' 
                     }, 
-                (answers[item.id-1] !== 0) ? {backgroundColor: theme.SECONDARY_DARK_COLOR}
+                (answers[item.number-1] !== '0') ? {backgroundColor: theme.SECONDARY_DARK_COLOR}
                 :{backgroundColor: 'white'}
                 ]
             }>
                 <Text style={[{fontSize: 18},
-                    (answers[item.id-1] !== 0) ? {color: 'white'} : {color: 'black'}
-                ]}>{item.id}</Text>
+                    (answers[item.number-1] !== '0') ? {color: 'white'} : {color: 'black'}
+                ]}>{item.number}</Text>
             </View>
         </TouchableOpacity>
     )
@@ -249,17 +129,63 @@ export default ({navigation}) => {
         return true
     }
 
+    const updateAnswers = (index, value) => {
+        let answersCopy = [...answers]
+
+        answersCopy[index] = value
+        setAnswers(answersCopy)
+    }
+
+    const getScore = () => {
+        var correctAns = 0
+
+        answers.forEach( (item, index) => {
+            if (item === keyAnswers[index] ) correctAns++
+        })
+
+        return correctAns
+    }
+
+    const getData = () => {
+        setLoading(true)
+        axios.get(`https://dev.akademis.id/api/subtest/${id}`)
+            .then(res => {
+                var arr = res.data.data.soal
+
+                console.log('Questions: ')
+                console.log(arr)
+
+                setQuestions(arr)
+                setAnswers(Array.from(Array(arr.length), () => "0") )
+                setLoading(false)
+            })
+            .catch(e => {console.log(e), setLoading(false) })
+    }
+
+    const getKeyAnswers = () => {
+        axios.get(`https://dev.akademis.id/api/soal?subtest_id=${id}`)
+            .then(res => {
+                var arr = res.data.data
+                var newArr = []
+
+                arr.forEach(element => {
+                    newArr.push(element.correct_option)
+                })
+
+                setKeyAnswers(newArr)
+            })
+            .catch(e => console.log(e) )
+    }
+
     React.useEffect(() => {
-        var hours = Math.floor(items.time/60)
-        var minutes = items.time%60
-        var seconds = (items.time*60) % 60
+        getData()
+        getKeyAnswers()
 
         BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick)
-        setKeyAnswers(items.answers)
         setTimer({
-            HH: hours,
-            MM: minutes,
-            SS: seconds
+            HH: Math.floor(time/60),
+            MM: time%60,
+            SS: (time*60) % 60
         })
 
         timeState = setInterval(countdown, 1000)
@@ -271,7 +197,12 @@ export default ({navigation}) => {
         }
     }, [])
 
-    return(
+    if (loading === true) return (
+        <View style={{flex:1,justifyContent:'center',alignItems:'center', backgroundColor: 'white'}}>
+            <ActivityIndicator size="large" color="black"/>
+        </View>
+    )
+    else return(
         <ScrollView style={styles.bgAll}>
             {/* Yakin sudah selesai? */}
             <Overlay
@@ -281,8 +212,7 @@ export default ({navigation}) => {
                 onRequestClose={() => {
                     setFinishedModal(false)
                 }}
-                overlayStyle={styles.overlay}
-            >
+                overlayStyle={styles.overlay}>
                 <View style={styles.centeredView}>
                     <View style={{
                         width: Dimensions.get('window').width*0.8, 
@@ -324,8 +254,7 @@ export default ({navigation}) => {
                 onRequestClose={() => {
                     finished()
                 }}
-                overlayStyle={styles.overlay}
-            >
+                overlayStyle={styles.overlay}>
                 <View style={styles.centeredView}>
                     <View style={{
                         width: Dimensions.get('window').width*0.8, 
@@ -356,94 +285,55 @@ export default ({navigation}) => {
             <View style={{backgroundColor: 'white', padding: 5, margin: 15, marginVertical: 25, borderRadius: 25, overflow: 'hidden', elevation: 5}}>
                 <FlatList
                     horizontal={true}
-                    data={items.data}
+                    data={questions}
                     renderItem={_renderItem}
                     keyExtractor={ (item) => item.id}
                     showsHorizontalScrollIndicator={false}
                 />
             </View>
 
-            <Text style={styles.sectionText}>Soal No. {items.data[activeScreen].id}</Text>
-            <View style={styles.horizontalRuler}/>
+            { (questions.length === 0) ?
+                null
+                :
+                <View>
+                    <Text style={styles.sectionText}>Soal No. {questions[activeScreen].number}</Text>
+                    <View style={styles.horizontalRuler}/>
 
-            <View style={styles.bigCard}>
-                <Text style={[styles.mediumLargeText, {margin: 10,}]}>{items.data[activeScreen].question}</Text>
-                
-                {/* Choice1 */}
-                <TouchableOpacity style={styles.multipleChoice} 
-                    onPress={() => updateAnswers(activeScreen, 1)}
-                >
-                    { (answers[activeScreen] === 1) ? 
-                        <MaterialCommunityIcon name='checkbox-blank-circle' color={theme.PRIMARY_DARK_COLOR} size={23}/>
-                        :
-                        <MaterialCommunityIcon name='checkbox-blank-circle-outline' color='black' size={23}/>
-                    }
-                    <Text style={
-                        (answers[activeScreen] === 1) ? 
-                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: theme.PRIMARY_DARK_COLOR}]
+                    <View style={styles.bigCard}>
+                        <Text style={[styles.mediumLargeText, {margin: 10,}]}>{questions[activeScreen].question}</Text>
+                        { (questions[activeScreen].image) ?
+                            <Image source={questions[activeScreen].image} />
                             :
-                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: 'black'}]}
-                    >{items.data[activeScreen].choice1}</Text>
-                </TouchableOpacity>
+                            null
+                        }
 
-                {/* Choice2 */}
-                <TouchableOpacity style={styles.multipleChoice} 
-                    onPress={() => updateAnswers(activeScreen, 2)}
-                >
-                    { (answers[activeScreen] === 2) ? 
-                        <MaterialCommunityIcon name='checkbox-blank-circle' color={theme.PRIMARY_DARK_COLOR} size={23}/>
-                        :
-                        <MaterialCommunityIcon name='checkbox-blank-circle-outline' color='black' size={23}/>
-                    }
-                    <Text style={
-                        (answers[activeScreen] === 2) ? 
-                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: theme.PRIMARY_DARK_COLOR}]
-                            :
-                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: 'black'}]}
-                    >{items.data[activeScreen].choice2}</Text>
-                </TouchableOpacity>
-
-                {/* Choice3 */}
-                <TouchableOpacity style={styles.multipleChoice} 
-                    onPress={() => updateAnswers(activeScreen, 3)}
-                >
-                    { (answers[activeScreen] === 3) ? 
-                        <MaterialCommunityIcon name='checkbox-blank-circle' color={theme.PRIMARY_DARK_COLOR} size={23}/>
-                        :
-                        <MaterialCommunityIcon name='checkbox-blank-circle-outline' color='black' size={23}/>
-                    }
-                    <Text style={
-                        (answers[activeScreen] === 3) ? 
-                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: theme.PRIMARY_DARK_COLOR}]
-                            :
-                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: 'black'}]}
-                    >{items.data[activeScreen].choice3}</Text>
-                </TouchableOpacity>
-
-                {/* Choice4 */}
-                <TouchableOpacity style={styles.multipleChoice} 
-                    onPress={() => updateAnswers(activeScreen, 4)}
-                >
-                    { (answers[activeScreen] === 4) ? 
-                        <MaterialCommunityIcon name='checkbox-blank-circle' color={theme.PRIMARY_DARK_COLOR} size={23}/>
-                        :
-                        <MaterialCommunityIcon name='checkbox-blank-circle-outline' color='black' size={23}/>
-                    }
-                    <Text style={
-                        (answers[activeScreen] === 4) ? 
-                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: theme.PRIMARY_DARK_COLOR}]
-                            :
-                            [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: 'black'}]}
-                    >{items.data[activeScreen].choice4}</Text>
-                </TouchableOpacity>
-            </View>
-
+                        {questions[activeScreen].opsi.map( (value, index) => (
+                            <TouchableOpacity style={styles.multipleChoice} 
+                                onPress={() => updateAnswers(activeScreen, value.option)}
+                            >
+                                { (answers[activeScreen] === value.option) ? 
+                                    <MaterialCommunityIcon name='checkbox-blank-circle' color={theme.PRIMARY_DARK_COLOR} size={23}/>
+                                    :
+                                    <MaterialCommunityIcon name='checkbox-blank-circle-outline' color='black' size={23}/>
+                                }
+                                <Text style={
+                                    (answers[activeScreen] === value.option) ? 
+                                        [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: theme.PRIMARY_DARK_COLOR}]
+                                        :
+                                        [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: 'black'}]}
+                                >{value.answer}</Text>
+                            </TouchableOpacity>
+                        ))}
+                        
+                    </View>
+                </View> 
+            }
             <View style={{flexDirection: 'row', flex: 1}}>
                 <View style={[styles.middleItemCard, {flex: 0.27, margin: 15, padding: 15}]}>
                     <Text style={styles.buttonText}>{("0" + timer.HH).slice(-2)}:{("0" + timer.MM).slice(-2)}:{("0" + timer.SS).slice(-2)}</Text>
                 </View>
                 <View style={{flex: 0.73}}>
-                    { !(activeScreen + 1 === items.data.length) ?
+                    { !(activeScreen + 1 === questions.length) ?
                         <TouchableOpacity style={[styles.button, {width: Dimensions.get('window').width*0.55, marginBottom: 0, margin: 15}]} onPress={() => setActiveScreen(activeScreen + 1)}>
                             <Text style={styles.buttonText}>
                                 Selanjutnya
@@ -459,6 +349,7 @@ export default ({navigation}) => {
                     }
                 </View>
             </View>
+
         </ScrollView>
     )
 }

@@ -400,8 +400,8 @@ export default [
     const { id } = route.params
     const { authState } = React.useContext(AuthContext)
 
-    const [myRating, setMyRating] = React.useState(0)
-    const [kritik, setKritik] = React.useState()
+    const [myRating, setMyRating] = React.useState(null)
+    const [kritik, setKritik] = React.useState(null)
     const [data, setData] = React.useState({})
     const [teacher, setTeacher] = React.useState({})
     const [session, setSession] = React.useState([])
@@ -642,7 +642,7 @@ export default [
               <Text style={styles.leftSmallText}>{teacher.nama}</Text>
             </Text>
             <Text style={styles.leftMediumText}>Rating Guru : {"\n"}
-              <Text style={styles.leftSmallText}>{(rating) ? rating : "Masih belum ada rating"}</Text>
+              <Text style={styles.leftSmallText}>{(rating) ? rating.toFixed(1) : "Masih belum ada rating"}</Text>
             </Text>
             <Text style={styles.leftMediumText}>About me : {"\n"}
               <Text style={styles.leftSmallText}>{teacher.deskripsi}</Text>
@@ -663,7 +663,6 @@ export default [
           <Stars
             default={0}
             count={5}
-            half={true}
             starSize={50}
             update={ (value) => setMyRating(value) }
             fullStar={<MaterialIcon name={'star'} size={50} color={theme.PRIMARY_ACCENT_COLOR}/>}
@@ -672,7 +671,10 @@ export default [
           />
 
           <View style={{margin: 20, alignItems: 'center'}}>
-            <TouchableOpacity style={styles.button} onPress={() => postReview() }>
+            <TouchableOpacity 
+              style={(kritik == null || myRating == null) ? styles.disabledButton : styles.button} 
+              disabled={ (kritik == null || myRating == null) ? true : false} 
+              onPress={() => postReview() }>
               <Text style={styles.buttonText}>Unggah Penilaian</Text>
             </TouchableOpacity>
           </View>

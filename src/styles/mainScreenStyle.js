@@ -51,6 +51,7 @@ export default StyleSheet.create({
     elevation: 5,
     width: Dimensions.get('window').width*0.75,
     marginBottom: 20,
+    opacity: 1
   },
   buttonText: {
     fontSize: RFValue(17)

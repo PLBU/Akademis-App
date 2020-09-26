@@ -216,7 +216,7 @@ export default ({navigation}) => {
       <Text style={styles.sectionText}>Statistik Nilaimu</Text>
       <View style={styles.horizontalRuler}/>
 
-      <View style={[styles.centeredView, {marginVertical: 20}]}>
+      {/* <View style={[styles.centeredView, {marginVertical: 20}]}>
         <BarChart
           data={items}
           width={Dimensions.get("window").width*0.85} // from react-native
@@ -241,7 +241,7 @@ export default ({navigation}) => {
             elevation: 5,
           }}
         />
-      </View>
+      </View> */}
       
       <TouchableOpacity style={[styles.button, {alignSelf: 'center'}]} onPress={() => logOut()}>
         <Text style={styles.buttonText}>Log out</Text>

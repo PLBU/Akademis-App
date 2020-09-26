@@ -49,10 +49,13 @@ export default ( { route, navigation } ) => {
     var timeState
 
     const finished = () => {
+        const stringAnswer = answers.join("")
+        
         axios.post(`https://dev.akademis.id/api/answer`, {
             "soal_id": id,
+            "subtest_id": id,
             "user_id": authState?.userToken,
-            "option": answers
+            "option": stringAnswer
         })
             .then(res => {
                 console.log(res)

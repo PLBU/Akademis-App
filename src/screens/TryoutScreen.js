@@ -439,6 +439,7 @@ export default [
 
     const [tests, setTests] = React.useState([])
     const [subTests, setSubTests] = React.useState([[], []])
+    const [isFinished, setIsFinished] = React.useState([{id: 0, finished: true}])
     const [activeSections, setActiveSections] = React.useState([])
     const [buySuccessModal, setBuySuccessModal] = React.useState(false)
 
@@ -456,13 +457,38 @@ export default [
           var arr = res.data.data.test
           var newArr = []
 
-          arr.forEach(element => {
+          arr.forEach( (element) => {
             newArr.push(element.subtest)
           })
 
+          var arrIsFinished = [{id: 0, finished: true}]
+
+          newArr.forEach(element => {
+            element.map( (value) => {
+              axios.get(`https://dev.akademis.id/api/answer?user_id=${authState?.userToken}&soal_id=${value.id}`)
+                .then(res => {
+                  var tempArr = res.data.data
+                  console.log("Ansewrs: ")
+                  console.log(tempArr)
+                  console.log(value.id)
+
+                  if (tempArr.length == 0) arrIsFinished.push({id: value.id, finished: false})
+                  else arrIsFinished.push({id: value.id, finished: true})
+
+                  console.log(arrIsFinished)
+
+                  console.log(arrIsFinished.filter( ( { id } ) => (value.id == id) )[0].finished )
+
+                  setIsFinished(arrIsFinished)
+                })
+                .catch(e => console.log(e) )
+            })
+          })
+            
           setTests(arr)
           setSubTests(newArr)
 
+          console.log(arrIsFinished)
           console.log("Data response: ")
           console.log(arr)
           console.log("Subtest response: ")
@@ -471,19 +497,6 @@ export default [
           setLoading(false)
         })
         .catch(e => {console.log(e), setLoading(false) })
-    }
-
-    const isFinished = (nowId) => {
-      if (nowId < 1) return true
-      axios.get(`https://dev.akademis.id/api/answer?user_id=${authState?.userToken}&soal_id=${nowId}`)
-        .then(res => {
-          console.log("Ansewrs: ")
-          console.log(res.data.data)
-
-          if (res.data.data.length === 0) return false
-          else return true
-        })
-        .catch(e => console.log(e) )
     }
 
     const _renderHeader = sections => (
@@ -498,14 +511,18 @@ export default [
             <Text style={{fontSize: RFValue(15) }}>{value.name}</Text>
             <Text style={{fontSize: RFValue(14), color: 'gray' }}>Waktu : {value.time} menit</Text>
 
-            { ((!isFinished(value.id) && isFinished(value.id - 1) ) ) ?
+            { (isFinished.find( ( { id, finished } ) => (value.id == id && !finished) ) ) ?
               <TouchableOpacity 
                 style={[styles.button, {marginTop: 20}]} 
                 onPress={() => { navigation.navigate('Conduct Tryout', {...value})}} >
                   <Text style={styles.buttonText}>Mulai Subtest</Text>
               </TouchableOpacity>
               :
-              null
+              <TouchableOpacity 
+                style={[styles.disabledButton, {marginTop: 20}]} 
+                disabled={true}>
+                  <Text style={styles.buttonText}>Sudah dikerjakan</Text>
+              </TouchableOpacity>
             }
           </View>
         ) )

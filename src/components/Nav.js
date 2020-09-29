@@ -214,7 +214,7 @@ export const BottomTabComponent = () => {
   >
     <BottomTab.Screen name="Home" component={HomeScreen} 
       options={{
-        tabBarButton: props => <TouchableOpacity {...props} disabled={authState?.isProfileSet ? false : false}/>,
+        tabBarButton: props => <TouchableOpacity {...props} disabled={authState?.isProfileSet ? false : true}/>,
         tabBarIcon: ({color}) => (
             <Icon name="home" style={{marginTop: 9}} color={color} size={30} />
           )
@@ -222,7 +222,7 @@ export const BottomTabComponent = () => {
     />
     <BottomTab.Screen name="Activity" component={ActivityScreen} 
       options={{
-        tabBarButton: props => <TouchableOpacity {...props} disabled={authState?.isProfileSet ? false : false}/>,
+        tabBarButton: props => <TouchableOpacity {...props} disabled={authState?.isProfileSet ? false : true}/>,
         tabBarIcon: ({color}) => (
             <Icon name="assignment" style={{marginTop: 9}} color={color} size={28} />
           )
@@ -230,7 +230,7 @@ export const BottomTabComponent = () => {
     />
     <BottomTab.Screen name="Store" component={StoreScreen}     
       options={{
-        tabBarButton: props => <TouchableOpacity {...props} disabled={authState?.isProfileSet ? false : false}/>,
+        tabBarButton: props => <TouchableOpacity {...props} disabled={authState?.isProfileSet ? false : true}/>,
         tabBarIcon: ({color}) => (
             <Icon name="local-grocery-store" style={{marginTop: 9}} color={color} size={28} />
           )

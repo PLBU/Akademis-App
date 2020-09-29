@@ -9,7 +9,8 @@ import {
   Image,
   ImageBackground,
   TouchableOpacity,
-  FlatList
+  FlatList,
+  ActivityIndicator
 } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import axios from 'react-native-axios';
@@ -32,6 +33,7 @@ export default ({navigation}) => {
   const [posY, setPosY] = React.useState(0)
   const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
   const [carouselItems, setCarouselItems] = React.useState([])
+  const [loading, setLoading] = React.useState(false)
 
   const listItems = [
     {
@@ -68,6 +70,7 @@ export default ({navigation}) => {
   }
 
   React.useEffect( () => {
+    setLoading(true)
     axios.get('https://dev.akademis.id/api/blog')
       .then( res => {
         var a = res.data.data.data
@@ -77,9 +80,11 @@ export default ({navigation}) => {
 
         console.log("WOI: ")
         console.log(carouselItems)
+        setLoading(false)
       })
       .catch( err => {
         console.log(err)
+        setLoading(false)
       })
   }, [] )
 
@@ -126,8 +131,13 @@ export default ({navigation}) => {
         </View>
       </View>
     </TouchableOpacity>
-
-  return (
+  
+  if (loading === true) return (
+    <View style={{flex:1,justifyContent:'center',alignItems:'center', backgroundColor: 'white'}}>
+      <ActivityIndicator size="large" color="black"/>
+    </View>
+  )
+  else return (
     <ScrollView onScroll={(e) => handleScroll(e)} contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white'}}>
       <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 180, borderBottomLeftRadius: 50, borderBottomRightRadius: 50, flexDirection: 'row'}}>
         <Image source={logo} style={{width: RFValue(30), height: RFValue(30), top: 10, left: 15}}/>

@@ -94,13 +94,13 @@ export default [
           >
             <Text style={{fontSize: 18,}}>Masuk</Text>
           </TouchableOpacity> 
-          <Text style={{color: 'gray', marginVertical: 20}}> Atau dengan metode lain </Text>
+          {/* <Text style={{color: 'gray', marginVertical: 20}}> Atau dengan metode lain </Text>
           <GoogleSigninButton
             style={{ width: 300, height: 65,}}
             size={GoogleSigninButton.Size.Wide}
             color={GoogleSigninButton.Color.Light}
             onPress={ () => _signIn()}
-            disabled={false} />
+            disabled={false} /> */}
         </View>
         <View>
           <Text

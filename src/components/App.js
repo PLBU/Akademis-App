@@ -47,18 +47,21 @@ const App = () => {
         return {
           ...prevState,
           userToken: action.token,
+          password: action.password,
           isLoading: false,
         };
       case 'LOGIN': 
         return {
           ...prevState,
           userToken: action.token,
+          password: action.password,
           isLoading: false,
         };
       case 'LOGOUT': 
         return {
           ...prevState,
           userToken: null,
+          password: null,
           isLoading: false,
           isProfileSet: false,
         };
@@ -66,6 +69,7 @@ const App = () => {
         return {
           ...prevState,
           userToken: action.token,
+          password: action.password,
           isLoading: false,
         };
       case 'LOADING':
@@ -89,6 +93,11 @@ const App = () => {
           ...prevState,
           isProfileSet: true,
         }
+      case 'SET DIAMOND':
+      return {
+        ...prevState,
+        diamond: action.diamond
+      }
     }
   }
 
@@ -97,45 +106,58 @@ const App = () => {
     {
       isLoading: true,
       userToken: null,
+      password: null,
       introDone: false,
       isProfileSet: false,
+      diamond: null,
     });
 
   //Global context that can be used on other screen
   const authContext = React.useMemo( () => ({
       logIn: (email, password) => {
         dispatch({type: 'LOADING'})
-        axios.post('https://dev.akademis.id/api/user/login', {
-          "email": email,
-          "password": password
-        })
-          .then(async res => {
-            const userToken = String(res.data.data.id)
-            if (res.data.data.ptn && res.data.data.jurusan) dispatch({type: 'PROFILE SET'})
+        try {
+          console.log("API call in login function")
+          axios.post('https://dev.akademis.id/api/user/login', {
+            "email": email,
+            "password": password
+          })
+            .then(async res => {
+              const userToken = String(res.data.data.id)
+              if (res.data.data.ptn && res.data.data.jurusan) dispatch({type: 'PROFILE SET'})
 
-            try {
-              await AsyncStorage.setItem('userToken', userToken)
-            } catch (e) {
-              {
+              try {
+                await AsyncStorage.setItem('userToken', userToken)
+                await AsyncStorage.setItem('userPass', password)
+              } catch (e) {
+                console.log("Error dari async storage: ")
                 console.error(e)
                 dispatch({type: 'STOP LOADING'})
+
+                throw e
               }
-            }
 
-            dispatch({type: 'LOGIN', token: userToken})
-          })
-          .catch(err => {
-            Alert.alert("Error", err.response.data.message)
-            console.log(err.response.data.message)
-            dispatch({type: 'STOP LOADING'})
+              dispatch({type: 'LOGIN', token: userToken, password: password})
+            })
+            .catch(err => {
+              Alert.alert("Error", err.response.data.message)
+              console.log(err.response.data.message)
+              dispatch({type: 'STOP LOADING'})
 
-            // Email & pass required, using @, and ., pass minimum 8 chars
-          })
+              throw(err)
+              // Email & pass required, using @, and ., pass minimum 8 chars
+            })
+        } catch (e) {
+          Alert.alert("Server dalam maintainance", "Kami meminta maaf atas ketidaknyamanan ini")
+          console.log(e.response)
+          dispatch({type: 'STOP LOADING'})
+        }
       },
       logOut: async () => {
         try {
           dispatch({type: 'LOADING'})
           await AsyncStorage.removeItem('userToken')
+          await AsyncStorage.removeItem('userPass')
         } catch (e) {
           {
             console.error(e)
@@ -156,6 +178,7 @@ const App = () => {
             const userToken = String(res.data.message.id) //Need an id in res.data.data or token
 
             try {
+              await AsyncStorage.setItem('userPass', password)
               await AsyncStorage.setItem('userToken', userToken)
             } catch (e) {
               {
@@ -164,7 +187,7 @@ const App = () => {
               }
             }
 
-            dispatch({type: 'REGISTER', token: userToken})
+            dispatch({type: 'REGISTER', token: userToken, password: password})
           })
           .catch(error => {
             if (typeof error.json === "function") {
@@ -186,37 +209,59 @@ const App = () => {
           })
       },
       //sign in function using Google Account
-      _signIn: async () => {
-        try {
-          dispatch({type: 'LOADING'})
+      // _signIn: async () => {
+      //   try {
+      //     dispatch({type: 'LOADING'})
 
-          await GoogleSignin.hasPlayServices()
+      //     await GoogleSignin.hasPlayServices()
 
-          const userInfo = await GoogleSignin.signIn()
-          const userToken = userInfo.idToken
+      //     const userInfo = await GoogleSignin.signIn()
+      //     const userToken = userInfo.idToken
 
-          await AsyncStorage.setItem('userToken', userToken)
+      //     await AsyncStorage.setItem('userToken', userToken)
 
-          // console.log(userToken)
-          // console.log(userInfo.user.name)
+      //     // console.log(userToken)
+      //     // console.log(userInfo.user.name)
 
-          dispatch({type: 'LOGIN', token: userToken})
-        } catch (error) {
-          // if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-          //   // user cancelled the login flow
-          // } else if (error.code === statusCodes.IN_PROGRESS) {
-          //   // operation (e.g. sign in) is in progress already
-          // } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-          //   // play services not available or outdated
-          // } else {
-          //   // some other error happened
-          // }
-          dispatch({type: 'STOP LOADING'})
-          console.log(error)
-        }
-      },
+      //     dispatch({type: 'LOGIN', token: userToken})
+      //   } catch (error) {
+      //     // if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+      //     //   // user cancelled the login flow
+      //     // } else if (error.code === statusCodes.IN_PROGRESS) {
+      //     //   // operation (e.g. sign in) is in progress already
+      //     // } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+      //     //   // play services not available or outdated
+      //     // } else {
+      //     //   // some other error happened
+      //     // }
+      //     dispatch({type: 'STOP LOADING'})
+      //     console.log(error)
+      //   }
+      // },
       _introDone: () => dispatch({type: 'INTRO DONE'}),
       _setProfile: () => dispatch({type: 'PROFILE SET'}),
+      _setDiamond: async (diamondValue) => {
+        const userToken = await AsyncStorage.getItem('userToken')
+
+        axios.get(`https://dev.akademis.id/api/user/${userToken}`)
+          .then(res1 => {
+            axios.put(`https://dev.akademis.id/api/user/${userToken}`,{
+              "name": res1.data.data.name,
+              "email": res1.data.data.email,
+              "password": authState?.password,
+              "username": res1.data.data.username,
+              "ptn": res1.data.data.ptn,
+              "jurusan": res1.data.data.jurusan,
+              "diamond": diamondValue
+            })
+              .then(res => {
+                console.log(res.data)
+                dispatch({type: 'SET DIAMOND', diamond: diamondValue})
+              })
+              .catch(e => console.log(e.response))
+          })
+          .catch(e => console.log(e.response))
+      },
       authState,
     }), [authState])
 
@@ -225,22 +270,26 @@ const App = () => {
     SplashScreen.hide();
     InteractionManager.runAfterInteractions( async () => {
       let userToken = null
+      let userPass = null
 
       try {
         userToken = await AsyncStorage.getItem('userToken')
-        console.log(userToken)
+        userPass = await AsyncStorage.getItem('userPass')
+        console.log("Ini dari App.js pertama kali: " + userToken)
 
-        if (userToken === null) {
+        if (userToken === null && userPass == null) {
           dispatch({type: 'STOP LOADING'})
         } else {
           axios.get(`https://dev.akademis.id/api/user/${userToken}`)
             .then( res => {
               if (res.data.data.ptn && res.data.data.jurusan) dispatch({type: 'PROFILE SET'})
-              dispatch({type: 'RETRIEVE_TOKEN', token: userToken})
+              dispatch({type: 'RETRIEVE_TOKEN', token: userToken, password: userPass})
             })
             .catch ( (e) => {
               console.log(e)
               dispatch({type: 'STOP LOADING'})
+
+              throw e
             })
         }
       } catch (e) {

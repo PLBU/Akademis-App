@@ -87,6 +87,8 @@ export const universities = [
 ]
 
 export const majors = {
+  "null":
+    ['Choose your university first'],
   "UNIVERSITAS SYIAH KUALA" :
     ['PENDIDIKAN DOKTER HEWAN',
     'TEKNIK SIPIL',

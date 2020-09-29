@@ -12,7 +12,8 @@ import {
   Modal,
   TouchableHighlight,
   Image,
-  ImageBackground
+  ImageBackground,
+  ActivityIndicator
 } from 'react-native';
 import { Picker } from '@react-native-community/picker';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -23,6 +24,7 @@ import axios from 'react-native-axios';
 import { Table, Row, Rows } from 'react-native-table-component';
 import { Overlay } from 'react-native-elements';
 import { RFValue } from "react-native-responsive-fontsize";
+import { useIsFocused } from '@react-navigation/native'
 
 //Context
 import { AuthContext } from '../components/Context.js'
@@ -40,53 +42,11 @@ import vcPurchaseImage from '../assets/images/purchase-virtual-class-bg-gelap.pn
 import notFoundImage from '../assets/images/image-not-found-bg-terang.png'
 import buySuccessImage from '../assets/images/pembelian-sukses-bg-terang.png'
 
-var items = [
-  {
-    subject: "Matematika",
-    teacher: "Robbinson",
-    rating: 5,
-    paid: false,
-    price: '15',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer bibendum ligula nec eros finibus.'
-  },
-  {
-    subject: "Geografi",
-    teacher: "Michale",
-    rating: 3,
-    paid: true,
-    price: '25',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer bibendum ligula nec eros finibus.'
-  },
-  {
-    subject: "Bahasa Jepang",
-    teacher: "Harumi",
-    rating: 5,
-    paid: true,
-    price: '5',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer bibendum ligula nec eros finibus.'
-  },
-  {
-    subject: "Matematika",
-    teacher: "Jacson",
-    rating: 4,
-    paid: false,
-    price: '175',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer bibendum ligula nec eros finibus.'
-  },
-  {
-    subject: "Ilmu Pengetahuan Alam",
-    teacher: "Oliver",
-    rating: 3.5,
-    paid: false,
-    price: '225',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer bibendum ligula nec eros finibus.'
-  },
-]
-
 export default [
   //Catalogue
   ({navigation}) => {
     const { authState } = React.useContext(AuthContext)
+    const isFocused = useIsFocused()
     const [subjectPicker, setSubject] = React.useState("")
     const [availableClasses, setAvailableClasses] = React.useState([])
 
@@ -110,7 +70,7 @@ export default [
 
     React.useEffect( () => {
       getClasses()
-    }, [])
+    }, [isFocused])
 
     return (
       <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
@@ -166,6 +126,7 @@ export default [
   //My Class
   ({navigation}) => {
     const { authState } = React.useContext(AuthContext)
+    const isFocused = useIsFocused()
     const [subjectPicker, setSubject] = React.useState("")
     const [availableClasses, setAvailableClasses] = React.useState([])
 
@@ -189,7 +150,7 @@ export default [
 
     React.useEffect( () => {
       getMyClasses()
-    }, [])
+    }, [isFocused])
 
     return (
       <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
@@ -217,10 +178,6 @@ export default [
                 <View style={styles.mediumCardWithDesc}>
                   <View style={{height: 50, flexDirection: 'row', backgroundColor: theme.PRIMARY_DARK_COLOR}}>
                     <Text style={{fontSize: 20, color: 'white', alignSelf: 'center', left: 15}}>{value.judul}</Text>
-                    <View style={{flexDirection: 'row', alignItems:'center', alignSelf: 'center', position: 'absolute', right: 15}}>
-                      <Image source={diamond} style={{width: 22, height: 22}}/>
-                      <Text style={{fontSize: 17, color: 'white'}}>{" "}{value.harga}</Text>
-                    </View>
                   </View>
                   <Text style={styles.leftSmallText}>Kategori : {value.kategori}</Text>                
                   <Text style={styles.leftSmallText}>Pelajaran : {value.pelajaran}</Text>                
@@ -245,14 +202,37 @@ export default [
   //Details
   ({ route, navigation }) => {
     const { id } = route.params
+    const { authState, _setDiamond } = React.useContext(AuthContext)
+
     const [myRating, setMyRating] = React.useState(0)
     const [data, setData] = React.useState({})
     const [teacher, setTeacher] = React.useState({})
     const [session, setSession] = React.useState([])
     const [rating, setRating] = React.useState(null)
     const [buySuccessModal, setBuySuccessModal] = React.useState(false)
+    const [loading, setLoading] = React.useState(false)
+
+    const buyClass = () => {
+      setLoading(true)
+      axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
+        .then ( res1 => {
+          axios.post(`https://dev.akademis.id/api/myclass?user_id=${authState?.userToken}`, {
+            "email": res1.data.data.email,
+            "event_id": id
+          })
+            .then(res => {
+              console.log(res.data)
+              setBuySuccessModal(true)
+              setLoading(false)
+              _setDiamond(res.data.data.user_diamond)
+            })
+            .catch(e => {console.log(e.response), setLoading(false), console.log("FAILED")})
+        })
+        .catch(e => {console.log(e.response), setLoading(false), console.log("FAILED")})
+    }
 
     const getClass = () => {
+      setLoading(true)
       axios.get(`https://dev.akademis.id/api/class/${id}`)
         .then( res => {
           const reviews = res.data.data.reviews
@@ -264,15 +244,21 @@ export default [
           setTeacher(res.data.data.teacher)
           setSession(res.data.data.sesi)
           if (reviews.length > 0) setRating(sumRating/reviews.length)
+          setLoading(false)
         })
-        .catch( e => console.log(e) )
+        .catch( e => {console.log(e), setLoading(false) } )
     }
 
     React.useEffect( () => {
       getClass();
     }, [])
 
-    return (
+    if (loading === true) return (
+      <View style={{flex:1,justifyContent:'center',alignItems:'center', backgroundColor: 'white'}}>
+        <ActivityIndicator size="large" color="black"/>
+      </View>
+    )
+    else return (
       <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
         {/* Modal pembelian berhasil */}
         <Overlay
@@ -282,8 +268,7 @@ export default [
           onRequestClose={() => {
             setBuySuccessModal(false)
           }}
-          overlayStyle={styles.overlay}
-        >
+          overlayStyle={styles.overlay}>
           <View style={styles.centeredView}>
             <View style={{
               width: Dimensions.get('window').width*0.8, 
@@ -380,15 +365,13 @@ export default [
         <View style={styles.horizontalRuler}/>
 
         <View style={{margin: 20, alignItems: 'center'}}>
-          <TouchableOpacity style={styles.button} onPress={ () => {
-              setBuySuccessModal(true)
-          }}>
-            <Text style={styles.buttonText}>Beli dengan diamond</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={ () => {
-              setBuySuccessModal(true)
-          }}>
-            <Text style={styles.buttonText}>Beli via share ke media sosial</Text>
+          <TouchableOpacity 
+            style={(authState?.diamond >= (data.harga)) ? styles.button : styles.disabledButton} 
+            onPress={ () => buyClass()} 
+            disabled={(authState?.diamond >= (data.harga)) ? false : true}>
+            <Text style={styles.buttonText} >
+              { (authState?.diamond >= (data.harga)) ? "Beli dengan diamond" : "Diamond anda tidak cukup"}
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -500,8 +483,7 @@ export default [
             onRequestClose={() => {
               setNotifVisible(false)
             }}
-            overlayStyle={styles.overlay}
-          >
+            overlayStyle={styles.overlay}>
             <View style={styles.centeredView}>
               <TouchableOpacity onPress={() => setNotifVisible(false)} style={{position: 'absolute', top: 10, right: 10}}>
                 <FontAwesomeIcon name='close' size={35} color='white'/>

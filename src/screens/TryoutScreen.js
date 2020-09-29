@@ -21,6 +21,7 @@ import { RFValue } from "react-native-responsive-fontsize";
 import axios from 'react-native-axios';
 import Accordion from 'react-native-collapsible/Accordion';
 import { Overlay } from 'react-native-elements';
+import { useIsFocused } from '@react-navigation/native'
 
 //Styles
 import styles from '../styles/mainScreenStyle.js';
@@ -39,63 +40,42 @@ import soshumSingleImage from '../assets/images/soshum-single.png'
 import purchaseToImage from '../assets/images/purchase-to-bg-gelap.png'
 import buySuccessImage from '../assets/images/pembelian-sukses-bg-terang.png'
 
-const items = [
-  {
-    subject: "Matematika",
-    name: "TPS Matematika Grade A",
-    paid: false,
-    price: '115',
-    finished: false,
-    time: '120 menit',
-  },
-  {
-    subject: "Matematika",
-    name: "TPS Matematika Grade B",
-    paid: true,
-    price: '125',
-    finished: false,
-    time: '120 menit',
-  },
-  {
-    subject: "Ilmu Pengetahuan Alam",
-    name: "TPS IPA Grade C",
-    paid: false,
-    price: '15',
-    finished: false,
-    time: '120 menit',
-  },
-  {
-    subject: "Geografi",
-    name: "TPS SosHum Grade A",
-    paid: true,
-    price: '1150',
-    finished: true,
-
-time: '120 menit',  },
-]
-
 export default [
   //Catalogue
   ({navigation}) => {
+    const { authState } = React.useContext(AuthContext)
+
     const [subjectPicker, setSubject] = React.useState("")
     const [availTryouts, setAvailTryouts] = React.useState([])
-    const availableTryouts = items.filter( ({paid}) => (paid === false))
+    const isFocused = useIsFocused()
 
     const getTryouts = () => {
       axios.get('https://dev.akademis.id/api/tryout/')
         .then(res => {
-          var arr = res.data.data.data
-          setAvailTryouts(arr)
+          //Getting the class that is owned
+          var arrChecker = []
 
-          console.log("TRYOUT RESPONSE: ")
-          console.log(arr)
+          axios.get(`https://dev.akademis.id/api/my-tryout/?user_id=${authState?.userToken}`)
+            .then(res1 => {
+              res1.data.data.forEach( ({ tryout_id }) => arrChecker.push(tryout_id) )
+
+              console.log("MY tryout RESPONSE: ")
+              console.log(arrChecker)
+
+              //Filtering the class that is not owned
+              var arr = res.data.data.data
+              setAvailTryouts(arr.filter( ({ id }) => (!arrChecker.some( (element) => (element == id) ) ) ) )
+
+              console.log("TRYOUT RESPONSE: ")
+              console.log(res.data.data.data)
+            })
         })
         .catch(e => console.log(e) )
     }
 
     React.useEffect( () => {
       getTryouts()
-    }, [])
+    }, [isFocused])
 
     return (
       <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
@@ -172,6 +152,7 @@ export default [
   },
   //My Tryout
   ({navigation}) => {
+    const isFocused = useIsFocused()
     const [subjectPicker, setSubject] = React.useState("")
     const [availTryouts, setAvailTryouts] = React.useState([])
     const { authState } = React.useContext(AuthContext)
@@ -193,7 +174,7 @@ export default [
 
     React.useEffect( () => {
       getTryouts()
-    }, [])
+    }, [isFocused])
 
     return (
       <ScrollView contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
@@ -269,10 +250,17 @@ export default [
   //Details Tryout
   ({route, navigation}) => {
     const { id, name, price, start_at, end_at } = route.params
+    const { authState, _setDiamond } = React.useContext(AuthContext)
+
     const [tests, setTests] = React.useState([])
     const [subTests, setSubTests] = React.useState([[], []])
     const [activeSections, setActiveSections] = React.useState([])
     const [buySuccessModal, setBuySuccessModal] = React.useState(false)
+    const [loading, setLoading] = React.useState(false)
+    const [buktiFollow, setFollow] = React.useState(null)
+    const [buktiTag, setTag] = React.useState(null)
+    const [buktiShare, setShare] = React.useState(null)
+    const [shareModal, setShareModal] = React.useState(false)
 
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -281,7 +269,74 @@ export default [
 
     today = dd + '/' + mm + '/' + yyyy;
 
+    const openGallery = () =>{
+      const options = {
+        title: 'Select photo',
+        storageOptions: {
+          skipBackup: true,
+          path: 'images',
+        },
+      };
+      
+      ImagePicker.launchImageLibrary(options, (response) => {
+        console.log('Response = ', response);
+
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.error) {
+          console.log('ImagePicker Error: ', response.error);
+        } else if (response.customButton) {
+          console.log('User tapped custom button: ', response.customButton);
+        } else {
+          const source = { uri: response.uri };
+
+          // You can also display the image using data:
+          // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+        return source.uri
+      }
+    })}
+
+    const shareTryout = () => {
+      axios.post(`https://dev.akademis.id/api/share`, {
+        "user_id": authState?.userToken,
+        "follow": buktiFollow,
+        "tag": buktiTag,
+        "share": buktiShare,
+        "status": "not verified"
+      })
+        .then(res => {
+          console.log(res)
+
+          setShareModal(false)
+          setFollow(null)
+          setTag(null)
+          setShare(null)
+          Alert.alert("Berhasil", "Pembelian dengan metode share berhasil, tunggu verifikasi dari tim kami ya")
+        })
+        .catch(e => console.log(e))
+    }
+
+    const buyTryout = () => {
+      setLoading(true)
+      axios.post('https://dev.akademis.id/api/my-tryout', {
+        "tryout_id": id,
+        "user_id": authState?.userToken,
+        "is_verified": "not verified",
+        "is_finished": "not finished",
+        "is_premium": "premium"
+      })
+        .then(res => {
+          console.log(res)
+          _setDiamond(res.data.data.user_diamond)
+          setBuySuccessModal(true)
+          setLoading(false)
+        })
+        .catch(e => {console.log(e.response), setLoading(false) } )
+    }
+
     const getData = () => {
+      setLoading(true)
       axios.get(`https://dev.akademis.id/api/tryout/${id}`)
         .then(res => {
           var arr = res.data.data.test
@@ -298,8 +353,10 @@ export default [
           console.log(arr)
           console.log("Subtest response: ")
           console.log(newArr)
+
+          setLoading(false)
         })
-        .catch(e => console.log(e) )
+        .catch(e => {console.log(e), setLoading(false)} )
     }
 
     const _renderHeader = sections => (
@@ -321,8 +378,91 @@ export default [
       getData()
     }, [])
 
-    return (
+    if (loading === true) return (
+      <View style={{flex:1,justifyContent:'center',alignItems:'center', backgroundColor: 'white'}}>
+        <ActivityIndicator size="large" color="black"/>
+      </View>
+    )
+    else return (
       <ScrollView contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
+        {/* Modal share method */}
+        <Overlay
+          animationType="fade"
+          fullscreen={false}
+          isVisible={modal}
+          onRequestClose={() => {
+            setModal(false)
+          }}
+          overlayStyle={styles.overlay}
+        >
+          <View style={styles.centeredView}>
+            <TouchableOpacity 
+              onPress={() => {
+                setFollow(null)
+                setTag(null)
+                setShare(null)
+                setShareModal(false)}} 
+              style={{position: 'absolute', top: 10, right: 10}}>
+              <FontAwesomeIcon name='close' size={35} color='white'/>
+            </TouchableOpacity>
+            <View style={{
+              width: Dimensions.get('window').width*0.8, 
+              backgroundColor: 'white',
+              elevation: 5,
+              alignSelf: 'center',
+              alignItems: 'center',
+              margin: 20,
+              borderRadius: 25,
+              overflow: 'hidden',
+              flex: 0.75
+              }}
+            >
+              <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%'}}>
+                <Text style={[styles.bigWhiteText, {margin: 10, left: 15}]}>Konfirmasi Sharing</Text>
+              </View>
+              <View style={{height: '100%', width: '100%', padding: 20}}>
+
+                <Text style={{fontSize: RFValue(18)}}>Tryout yg ingin dibeli: </Text>
+                <Text style={{fontSize: 16, color: 'gray', marginBottom: 15}}>{name}</Text>
+
+                <Text style={{fontSize: RFValue(18), marginBottom: 10}}>Unggah Bukti Follow: </Text>
+                <View style={{flexDirection: 'row', alignItems:'center', marginBottom: 15}}>
+                  <TouchableOpacity style={{backgroundColor: 'white', borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 1, padding: RFValue(12), width: '65%', borderRadius: 20}} 
+                    onPress={() => {setFollow(openGallery() )}}>
+                    <Text style={{fontSize: RFValue(15), alignSelf: 'center'}}>Unggah Foto</Text>
+                  </TouchableOpacity>
+                  {buktiFollow && <FontAwesomeIcon name={"check-square-o"} size={30} color={theme.SECONDARY_DARK_COLOR} style={{marginLeft: RFValue(15)}}/>}
+                </View>
+
+                <Text style={{fontSize: RFValue(18), marginBottom: 10}}>Unggah Bukti Tag: </Text>
+                <View style={{flexDirection: 'row', alignItems:'center', marginBottom: 15}}>
+                  <TouchableOpacity style={{backgroundColor: 'white', borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 1, padding: RFValue(12), width: '65%', borderRadius: 20}} 
+                    onPress={() => {setTag(openGallery() )}}>
+                    <Text style={{fontSize: RFValue(15), alignSelf: 'center'}}>Unggah Foto</Text>
+                  </TouchableOpacity>
+                  {buktiTag && <FontAwesomeIcon name={"check-square-o"} size={30} color={theme.SECONDARY_DARK_COLOR} style={{marginLeft: RFValue(15)}}/>}
+                </View>
+
+                <Text style={{fontSize: RFValue(18), marginBottom: 10}}>Unggah Bukti Share: </Text>
+                <View style={{flexDirection: 'row', alignItems:'center', marginBottom: 15}}>
+                  <TouchableOpacity style={{backgroundColor: 'white', borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 1, padding: RFValue(12), width: '65%', borderRadius: 20}} 
+                    onPress={() => {setShare(openGallery() )}}>
+                    <Text style={{fontSize: RFValue(15), alignSelf: 'center'}}>Unggah Foto</Text>
+                  </TouchableOpacity>
+                  {buktiShare && <FontAwesomeIcon name={"check-square-o"} size={30} color={theme.SECONDARY_DARK_COLOR} style={{marginLeft: RFValue(15)}}/>}
+                </View>
+
+                <TouchableOpacity 
+                  style={(buktiFollow && buktiShare && buktiTag) ? [styles.button, {width: '90%', marginTop: RFValue(30)}] : [styles.disabledButton, {width: '90%', marginTop: RFValue(30)}]} 
+                  onPress={ () => shareTryout()} 
+                  disabled={(buktiFollow && buktiShare && buktiTag) ? false : true}>
+                  <Text style={styles.buttonText}>Beli Tryout!</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Overlay>
+
         {/* Modal pembelian berhasil */}
         <Overlay
           animationType="fade"
@@ -331,8 +471,7 @@ export default [
           onRequestClose={() => {
             setBuySuccessModal(false)
           }}
-          overlayStyle={styles.overlay}
-        >
+          overlayStyle={styles.overlay}>
           <View style={styles.centeredView}>
             <View style={{
               width: Dimensions.get('window').width*0.8, 
@@ -368,8 +507,7 @@ export default [
           margin: 20,
           borderRadius: 25,
           overflow: 'hidden'
-          }}
-        >
+          }}>
           {
             (name.toLowerCase().includes('saintek') ) ?
               <ImageBackground source={saintekSingleImage} style={styles.backgroundImage}/>
@@ -416,10 +554,13 @@ export default [
         <View style={styles.horizontalRuler}/>
 
         <View style={{margin: 20, alignItems: 'center'}}>
-          <TouchableOpacity style={styles.button} onPress={ () => {
-              setBuySuccessModal(true)
-          }}>
-            <Text style={styles.buttonText}>Beli dengan diamond</Text>
+          <TouchableOpacity 
+            style={(authState?.diamond >= price) ? styles.button : styles.disabledButton} 
+            onPress={ () => buyTryout()} 
+            disabled={(authState?.diamond >= price) ? false : true}>
+            <Text style={styles.buttonText} >
+              { (authState?.diamond >= price) ? "Beli dengan diamond" : "Diamond anda tidak cukup"}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={ () => {
               setBuySuccessModal(true)

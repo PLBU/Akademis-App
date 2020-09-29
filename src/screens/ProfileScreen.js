@@ -29,7 +29,7 @@ import styles from '../styles/mainScreenStyle.js';
 import theme from '../styles/theme.js'
 
 export default ({navigation}) => {
-  const { _setProfile, logOut, authState } = React.useContext(AuthContext)
+  const { _setProfile, logOut, authState, _setDiamond } = React.useContext(AuthContext)
 
   const [posY, setPosY] = React.useState(0)
   const [avatar, setAvatar] = React.useState(null)
@@ -69,6 +69,7 @@ export default ({navigation}) => {
         setUniversity(res.data.data.ptn)
         setMajor(res.data.data.jurusan)
         setLoading(false)
+        _setDiamond(res.data.data.diamond)
       })
       .catch (e => {
         setLoading(false)
@@ -82,6 +83,7 @@ export default ({navigation}) => {
       "name": name,
       "username": username,
       "email": email,
+      "password": authState?.password,
       "ptn": university,
       "jurusan": major
     })
@@ -180,9 +182,10 @@ export default ({navigation}) => {
             onValueChange={ (itemValue) =>
               {setUniversity(itemValue)
               setMajor(majors[itemValue][0])
-              setChanged(true)}
-            }>
-            { (university === null) && <Picker.Item label="Choose" value={null}/>}
+              if (itemValue) setChanged(true)}
+            }
+            >
+            <Picker.Item label="Choose" value={"null"}/>
             {universities.map( (item, index) => (
               <Picker.Item label={item} value={item} key={index}/>
             ))}
@@ -198,9 +201,7 @@ export default ({navigation}) => {
               {setMajor(itemValue)
               setChanged(true)}
             }>
-            { (university === null) ?
-              <Picker.Item label="Choose your university first" value={null}/>
-              :
+            {
               majors[String(university) ].map( (item, index) => (
                 <Picker.Item label={item} value={item} key={index}/>
               ))

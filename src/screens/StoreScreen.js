@@ -7,13 +7,22 @@ import {
   StatusBar,
   FlatList,
   TouchableOpacity,
-  Image
+  Image,
+  Dimensions,
+  Alert,
+  PermissionsAndroid
 } from 'react-native';
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { RFValue } from "react-native-responsive-fontsize";
+import { AuthContext } from '../components/Context.js'
+import { Overlay } from 'react-native-elements';
+import { Picker } from '@react-native-community/picker';
+import ImagePicker from 'react-native-image-picker';
+import axios from 'react-native-axios';
+import ImgToBase64 from 'react-native-image-base64';
 
 //Importing style
 import styles from '../styles/mainScreenStyle.js';
@@ -36,6 +45,44 @@ import diamond100 from '../assets/icons/diamond-100-revised.png'
 
 export default ({navigation}) => {
   const [posY, setPosY] = React.useState(0)
+  const [storeId, setStoreId] = React.useState(0)
+  const [diamondBuy, setDiamondBuy] = React.useState(0)
+  const [diamondPrice, setDiamondPrice] = React.useState(0)
+  const [modal, setModal] = React.useState(false)
+  const [paymentMethod, setPaymentMethod] = React.useState('')
+  const [buktiBayar, setBuktiBayar] = React.useState(null)
+
+  const { authState } = React.useContext(AuthContext)
+
+  const openCamera = () =>{
+    const options = {
+      title: 'Select photo',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+    
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+      const source = { uri: response.uri };
+
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+      console.log(source)
+      ImgToBase64.getBase64String(source.uri)
+        .then(res => setBuktiBayar(res) )
+        .catch(e => console.log(e) )
+    }
+  })}
 
   const items = [
     {
@@ -110,8 +157,33 @@ export default ({navigation}) => {
     },
   ]
 
+  const buyDiamond = (id) => {
+    axios.post(`https://dev.akademis.id/api/checkout`,{
+      "store_id": id,
+      "user_id": authState?.userToken,
+      "method": paymentMethod,
+      "status": "not verified",
+      "payment": buktiBayar
+    })
+      .then(res => {
+        console.log(res) 
+
+        setBuktiBayar(null)
+        setPaymentMethod(null)
+        Alert.alert("Berhasil", "Pembelian berhasil, tunggu verifikasi dari tim kami ya")
+        setModal(false)
+      })
+      .catch(e => {console.log(e.response.data) })
+  }
+
   const _renderItem = ({item}) => (
-      <TouchableOpacity onPress={() => console.log(item.value)}>
+      <TouchableOpacity 
+        onPress={() => {
+          setStoreId(item.id)
+          setModal(true) 
+          setDiamondBuy(item.value)
+          setDiamondPrice(item.harga)
+          }}>
           <View style={styles.squareCard}>
             <View style={{flex: 0.6, justifyContent: 'center', alignItems: 'center'}}>
               <Image source={item.image} style={{width: RFValue(90), height: RFValue(90), marginTop: RFValue(15)}}/>
@@ -145,8 +217,113 @@ export default ({navigation}) => {
     }
   }
 
+  const requestCameraPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: "Cool Photo App Camera Permission",
+          message:
+            "Cool Photo App needs access to your camera " +
+            "so you can take awesome pictures.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK"
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("You can use the camera");
+      } else {
+        console.log("Camera permission denied");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
+  React.useEffect( () => {
+    requestCameraPermission()
+  }, [])
+
   return (
     <ScrollView onScroll={(e) => handleScroll(e)} style={styles.bgAll}>
+      {/* Modal pembelian diamond */}
+      <Overlay
+        animationType="fade"
+        fullscreen={false}
+        isVisible={modal}
+        onRequestClose={() => {
+          setModal(false)
+        }}
+        overlayStyle={styles.overlay}
+      >
+        <View style={styles.centeredView}>
+          <TouchableOpacity 
+            onPress={() => {
+              setBuktiBayar(null)
+              setPaymentMethod(null)
+              setModal(false)}} 
+            style={{position: 'absolute', top: 10, right: 10}}>
+            <FontAwesomeIcon name='close' size={35} color='white'/>
+          </TouchableOpacity>
+          <View style={{
+            width: Dimensions.get('window').width*0.8, 
+            backgroundColor: 'white',
+            elevation: 5,
+            alignSelf: 'center',
+            alignItems: 'center',
+            margin: 20,
+            borderRadius: 25,
+            overflow: 'hidden',
+            flex: 0.75
+            }}
+          >
+            <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%'}}>
+              <Text style={[styles.bigWhiteText, {margin: 10, left: 15}]}>Konfirmasi Pembayaran</Text>
+            </View>
+            <View style={{height: '100%', width: '100%', padding: 20}}>
+
+              <Text style={{fontSize: RFValue(18)}}>Jumlah diamond yg dibeli: </Text>
+              <View style={{flexDirection: 'row', alignItems:'center', marginBottom: 15}}>
+                <Image source={diamond} style={{width: 17, height: 17}}/>
+                <Text style={{fontSize: 16, color: 'gray'}}>{" "}{diamondBuy}</Text>
+              </View>
+
+              <Text style={{fontSize: RFValue(18)}}>Harga total: </Text>
+              <Text style={{fontSize: 16, color: 'gray', marginBottom: 15}}>{diamondPrice}</Text>
+
+              <Text style={{fontSize: RFValue(18)}}>Metode Pembayaran: </Text>
+              <View style={[styles.pickerContainerStyle, {width: Dimensions.get('window').width*0.7, marginTop: 5, marginBottom: 15}]}>
+                <Picker
+                  selectedValue={paymentMethod}
+                  style={[styles.pickerStyle, {width: Dimensions.get('window').width*0.7}]}
+                  onValueChange={ (itemValue) => setPaymentMethod(itemValue) }>
+                  <Picker.Item label="Choose" value={null}/>
+                  <Picker.Item label="Go Pay" value={"gopay"}/>
+                  <Picker.Item label="Dana" value={"dana"}/>
+                  <Picker.Item label="BCA" value={"bca"}/>
+                  <Picker.Item label="BNI" value={"bni"}/>
+                </Picker>
+              </View>
+
+              <Text style={{fontSize: RFValue(18), marginBottom: 10}}>Unggah Bukti Pembayaran: </Text>
+              <View style={{flexDirection: 'row', alignItems:'center'}}>
+                <TouchableOpacity style={{backgroundColor: 'white', borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 1, padding: RFValue(12), width: '65%', borderRadius: 20}} onPress={() => openCamera()}>
+                  <Text style={{fontSize: RFValue(15), alignSelf: 'center'}}>Unggah Foto</Text>
+                </TouchableOpacity>
+                {buktiBayar && <FontAwesomeIcon name={"check-square-o"} size={30} color={theme.SECONDARY_DARK_COLOR} style={{marginLeft: RFValue(15)}}/>}
+              </View>
+              <TouchableOpacity 
+                style={(buktiBayar && paymentMethod) ? [styles.button, {width: '90%', marginTop: RFValue(30)}] : [styles.disabledButton, {width: '90%', marginTop: RFValue(30)}]} 
+                onPress={ () => buyDiamond(storeId)} 
+                disabled={(buktiBayar && paymentMethod) ? false : true}>
+                <Text style={styles.buttonText}>Beli diamond!</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Overlay>
+      
       <View style={{
         height: 125, 
         backgroundColor: theme.PRIMARY_DARK_COLOR, 
@@ -154,12 +331,11 @@ export default ({navigation}) => {
         justifyContent: 'center',
         borderBottomLeftRadius: 50,
         borderBottomRightRadius: 50,
-        }}
-      >
+        }}>
         <Text style={styles.titleText}>Beli Diamond</Text>
         <View style={{flexDirection: 'row', alignItems:'center', position: 'absolute', top: 20, right: 20}}>
           <Image source={diamond} style={{width: 30, height: 30}}/>
-          <Text style={{fontSize: 22, color: 'white'}}>{" "}123</Text>
+          <Text style={{fontSize: 22, color: 'white'}}>{" "}{authState?.diamond}</Text>
         </View>
       </View>
       <FlatList
@@ -169,8 +345,7 @@ export default ({navigation}) => {
         columnWrapperStyle={{justifyContent: 'space-between'}}
         renderItem={_renderItem}
         keyExtractor={ (item) => item.id}
-        showsHorizontalScrollIndicator={false}
-      />
+        showsHorizontalScrollIndicator={false}/>
 
     </ScrollView>
   )

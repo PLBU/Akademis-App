@@ -161,6 +161,7 @@ export default StyleSheet.create({
    },
   disabledButton: {
     alignItems: "center",
+    alignSelf: 'center',
     opacity: 0.3,
     backgroundColor: theme.PRIMARY_ACCENT_COLOR,
     padding: 15,

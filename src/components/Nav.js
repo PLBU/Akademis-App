@@ -14,6 +14,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { RFValue } from "react-native-responsive-fontsize";
 
 //Context
 import { AuthContext } from '../components/Context.js'
@@ -34,6 +35,10 @@ import theme from '../styles/theme.js'
 
 //Importing style
 import styles from '../styles/mainScreenStyle.js'
+
+//Importing images
+import logo from '../assets/images/byU.png'
+import logo2 from '../assets/images/mamikos.png'
 
 const BottomTab = createBottomTabNavigator()
 const AuthStack = createNativeStackNavigator()
@@ -87,7 +92,7 @@ const VirtualClassStackComponent = ({navigation}) => {
       <VirtualClassStack.Screen name="Details VC" component={VirtualClassScreen[2]}
         options={({route}) => ({
           headerTopInsetEnabled: false,
-          headerCenter: () => <Text style={styles.headerText}>{route.params.judul}</Text>,
+          headerCenter: () => <Text style={styles.headerText}>Details</Text>,
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.navigate('Main VC')}>
               <BackButton/>
@@ -98,7 +103,7 @@ const VirtualClassStackComponent = ({navigation}) => {
       <VirtualClassStack.Screen name="Details Paid VC" component={VirtualClassScreen[3]}
         options={ ({ route }) => ({
           headerTopInsetEnabled: false,
-          headerCenter: () => <Text style={styles.headerText}>{route.params.judul}</Text>,
+          headerCenter: () => <Text style={styles.headerText}>Details</Text>,
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.navigate('Main VC')}>
               <BackButton/>
@@ -156,7 +161,7 @@ const TryoutStackComponent = ({navigation}) => {
       <TryoutStack.Screen name="Details Tryout" component={TryoutScreen[2]}
         options={ ({ route }) => ({
           headerTopInsetEnabled: false,
-          headerCenter: () => <Text style={styles.headerText}>{route.params.name}</Text>,
+          headerCenter: () => <Text style={styles.headerText}>Details</Text>,
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.navigate('Main Tryout')}>
               <BackButton/>
@@ -167,7 +172,7 @@ const TryoutStackComponent = ({navigation}) => {
       <TryoutStack.Screen name="Details Unfinished Tryout" component={TryoutScreen[3]}
         options={ ({ route }) => ({
           headerTopInsetEnabled: false,
-          headerCenter: () => <Text style={styles.headerText}>{route.params.name}</Text>,
+          headerCenter: () => <Text style={styles.headerText}>Details</Text>,
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.navigate('Main Tryout')}>
               <BackButton/>
@@ -178,7 +183,7 @@ const TryoutStackComponent = ({navigation}) => {
       <TryoutStack.Screen name="Details Finished Tryout" component={TryoutScreen[4]}
         options={ ({ route }) => ({
           headerTopInsetEnabled: false,
-          headerCenter: () => <Text style={styles.headerText}>{route.params.name}</Text>,
+          headerCenter: () => <Text style={styles.headerText}>Details</Text>,
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.navigate('Main Tryout')}>
               <BackButton/>
@@ -189,7 +194,30 @@ const TryoutStackComponent = ({navigation}) => {
       <TryoutStack.Screen name="Conduct Tryout" component={TryoutConductScreen}
         options={({ route }) => ({
           headerTopInsetEnabled: false,
-          headerCenter: () => <Text style={styles.headerText}>{route.params.name}</Text>,
+          headerCenter: () => 
+            <View style={{width: '100%', height: RFValue(60), justifyContent: 'center'}}>
+              <Text style={styles.headerText}>{route.params.name}</Text>
+              <View style={{
+                flexDirection:'row', 
+                position: 'absolute', 
+                right: 20, 
+                alignItems: 'center',
+                }}>
+                <Image 
+                  source={logo2} 
+                  style={{
+                    width: RFValue(75), 
+                    height: RFValue(20),
+                    marginHorizontal: RFValue(5)}}/>
+                <Image 
+                  source={logo} 
+                  style={{
+                    width: RFValue(50), 
+                    height: RFValue(50),
+                    marginHorizontal: RFValue(5)}}/>
+              </View>
+            </View>
+            ,
           headerLeft: () => null,
         })}
       />

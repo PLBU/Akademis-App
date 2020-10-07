@@ -10,7 +10,8 @@ import {
   Alert,
   Image,
   ImageBackground,
-  ActivityIndicator
+  ActivityIndicator,
+  Linking
 } from 'react-native';
 import { Picker } from '@react-native-community/picker';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -22,6 +23,7 @@ import axios from 'react-native-axios';
 import Accordion from 'react-native-collapsible/Accordion';
 import { Overlay } from 'react-native-elements';
 import { useIsFocused } from '@react-navigation/native'
+import ImagePicker from 'react-native-image-picker';
 
 //Styles
 import styles from '../styles/mainScreenStyle.js';
@@ -39,6 +41,17 @@ import saintekSingleImage from '../assets/images/saintek-single.png'
 import soshumSingleImage from '../assets/images/soshum-single.png'
 import purchaseToImage from '../assets/images/purchase-to-bg-gelap.png'
 import buySuccessImage from '../assets/images/pembelian-sukses-bg-terang.png'
+
+const moment = require('moment');
+
+function shorten(str, maxLen, separator = ' ') {
+  if (str.length <= maxLen) return str;
+  return str.substr(0, str.lastIndexOf(separator, maxLen));
+}
+
+function dateFormat(date){
+  return moment(new Date(date) ).format('DD/MM/YYYY')
+}
 
 export default [
   //Catalogue
@@ -91,9 +104,11 @@ export default [
             <Picker.Item label={"SOSHUM"} value={"soshum"}/>
           </Picker>
         </View>
+
         {/* Tryout Events */}
         <View style={styles.horizontalRuler}/>
         <Text style={{left: 20, fontSize: 22, marginBottom: 20}}>Pilih Tryout</Text>
+
         {availTryouts.filter( ({ name }) => (subjectPicker === "") ? true : (name.toLowerCase().includes(subjectPicker) ) )
           .map( (value, index) => {
             return (
@@ -104,7 +119,13 @@ export default [
                     <Text style={{fontSize: 17, color: 'white'}}>{" "}{value.price}</Text>
                   </View>
                   <View style={{flex: 0.75, justifyContent: 'center'}}>
-                    <Text style={styles.leftSmallMediumText}>{value.name}</Text>
+                    <Text style={styles.leftSmallMediumText}>
+                      { (value.name.length < 20) ?
+                        value.name
+                        :
+                        shorten(value.name, 20, ' ')
+                      }
+                    </Text>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -196,13 +217,19 @@ export default [
         {unfinishedTryouts.filter( ({ tryout }) => (subjectPicker === "") ? true : (tryout.name.toLowerCase().includes(subjectPicker) ) )
           .map( (value, index) => {
             return (
-              <TouchableOpacity onPress={() => navigation.navigate('Details Unfinished Tryout', {...value.tryout})} key={index}>
+              <TouchableOpacity onPress={() => navigation.navigate('Details Unfinished Tryout', {...value.tryout, mytryout_id: value.id})} key={index}>
                 <View style={styles.smallCard}>
                   <View style={{flex: 0.25, backgroundColor: theme.PRIMARY_DARK_COLOR, flexDirection: 'row', justifyContent: 'center', alignItems:'center'}}>
                     {/* Belum tau mo isi apa */}
                   </View>
                   <View style={{flex: 0.75, justifyContent: 'center'}}>
-                    <Text style={styles.leftSmallMediumText}>{value.tryout.name}</Text>
+                    <Text style={styles.leftSmallMediumText}>
+                      { (value.tryout.name.length < 20) ?
+                        value.tryout.name
+                        :
+                        shorten(value.tryout.name, 20, ' ')
+                      }
+                    </Text>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -223,13 +250,19 @@ export default [
         {finishedTryouts.filter( ({ tryout }) => (subjectPicker === "") ? true : (tryout.name.toLowerCase().includes(subjectPicker) ) )
           .map( (value, index) => {
             return (
-              <TouchableOpacity onPress={() => navigation.navigate('Details Finished Tryout', {...value})} key={index}>
+              <TouchableOpacity onPress={() => navigation.navigate('Details Finished Tryout', {...value.tryout})} key={index}>
                 <View style={styles.smallCard}>
                   <View style={{flex: 0.25, backgroundColor: theme.PRIMARY_DARK_COLOR, flexDirection: 'row', justifyContent: 'center', alignItems:'center'}}>
                     {/* Belum tau mo isi */}
                   </View>
                   <View style={{flex: 0.75, justifyContent: 'center'}}>
-                    <Text style={styles.leftSmallMediumText}>{value.name}</Text>
+                    <Text style={styles.leftSmallMediumText}>
+                      { (value.tryout.name.length < 20) ?
+                        value.tryout.name
+                        :
+                        shorten(value.tryout.name, 20, ' ')
+                      }
+                    </Text>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -269,7 +302,7 @@ export default [
 
     today = dd + '/' + mm + '/' + yyyy;
 
-    const openGallery = () =>{
+    const openGallery = (section) =>{
       const options = {
         title: 'Select photo',
         storageOptions: {
@@ -290,12 +323,12 @@ export default [
         } else {
           const source = { uri: response.uri };
 
-          // You can also display the image using data:
-          // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-        return source.uri
+          if (section == 'f') setFollow(source.uri)
+          else if (section == 't') setTag(source.uri)
+          else if (section == 's') setShare(source.uri)
       }
-    })}
+      })
+    }
 
     const shareTryout = () => {
       axios.post(`https://dev.akademis.id/api/share`, {
@@ -303,7 +336,8 @@ export default [
         "follow": buktiFollow,
         "tag": buktiTag,
         "share": buktiShare,
-        "status": "not verified"
+        "status": "not verified",
+        "tryout_id": id
       })
         .then(res => {
           console.log(res)
@@ -389,12 +423,11 @@ export default [
         <Overlay
           animationType="fade"
           fullscreen={false}
-          isVisible={modal}
+          isVisible={shareModal}
           onRequestClose={() => {
-            setModal(false)
+            setShareModal(false)
           }}
-          overlayStyle={styles.overlay}
-        >
+          overlayStyle={styles.overlay}>
           <View style={styles.centeredView}>
             <TouchableOpacity 
               onPress={() => {
@@ -428,7 +461,7 @@ export default [
                 <Text style={{fontSize: RFValue(18), marginBottom: 10}}>Unggah Bukti Follow: </Text>
                 <View style={{flexDirection: 'row', alignItems:'center', marginBottom: 15}}>
                   <TouchableOpacity style={{backgroundColor: 'white', borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 1, padding: RFValue(12), width: '65%', borderRadius: 20}} 
-                    onPress={() => {setFollow(openGallery() )}}>
+                    onPress={() => openGallery('f')}>
                     <Text style={{fontSize: RFValue(15), alignSelf: 'center'}}>Unggah Foto</Text>
                   </TouchableOpacity>
                   {buktiFollow && <FontAwesomeIcon name={"check-square-o"} size={30} color={theme.SECONDARY_DARK_COLOR} style={{marginLeft: RFValue(15)}}/>}
@@ -437,7 +470,7 @@ export default [
                 <Text style={{fontSize: RFValue(18), marginBottom: 10}}>Unggah Bukti Tag: </Text>
                 <View style={{flexDirection: 'row', alignItems:'center', marginBottom: 15}}>
                   <TouchableOpacity style={{backgroundColor: 'white', borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 1, padding: RFValue(12), width: '65%', borderRadius: 20}} 
-                    onPress={() => {setTag(openGallery() )}}>
+                    onPress={() => openGallery('t')}>
                     <Text style={{fontSize: RFValue(15), alignSelf: 'center'}}>Unggah Foto</Text>
                   </TouchableOpacity>
                   {buktiTag && <FontAwesomeIcon name={"check-square-o"} size={30} color={theme.SECONDARY_DARK_COLOR} style={{marginLeft: RFValue(15)}}/>}
@@ -446,14 +479,14 @@ export default [
                 <Text style={{fontSize: RFValue(18), marginBottom: 10}}>Unggah Bukti Share: </Text>
                 <View style={{flexDirection: 'row', alignItems:'center', marginBottom: 15}}>
                   <TouchableOpacity style={{backgroundColor: 'white', borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 1, padding: RFValue(12), width: '65%', borderRadius: 20}} 
-                    onPress={() => {setShare(openGallery() )}}>
+                    onPress={() => openGallery('s')}>
                     <Text style={{fontSize: RFValue(15), alignSelf: 'center'}}>Unggah Foto</Text>
                   </TouchableOpacity>
                   {buktiShare && <FontAwesomeIcon name={"check-square-o"} size={30} color={theme.SECONDARY_DARK_COLOR} style={{marginLeft: RFValue(15)}}/>}
                 </View>
 
                 <TouchableOpacity 
-                  style={(buktiFollow && buktiShare && buktiTag) ? [styles.button, {width: '90%', marginTop: RFValue(30)}] : [styles.disabledButton, {width: '90%', marginTop: RFValue(30)}]} 
+                  style={(buktiFollow && buktiShare && buktiTag) ? [styles.button, {width: '90%', marginTop: RFValue(10)}] : [styles.disabledButton, {width: '90%', marginTop: RFValue(10)}]} 
                   onPress={ () => shareTryout()} 
                   disabled={(buktiFollow && buktiShare && buktiTag) ? false : true}>
                   <Text style={styles.buttonText}>Beli Tryout!</Text>
@@ -563,7 +596,7 @@ export default [
             </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={ () => {
-              setBuySuccessModal(true)
+              setShareModal(true)
           }}>
             <Text style={styles.buttonText}>Beli via share ke media sosial</Text>
           </TouchableOpacity>
@@ -573,8 +606,9 @@ export default [
   },
   //Details Unfinished Tryout
   ({route, navigation}) => {
-    const { id, name, price, start_at, end_at } = route.params
+    const { id, name, start_at, end_at, mytryout_id } = route.params
     const { authState } = React.useContext(AuthContext)
+    const isFocused = useIsFocused()
     
     const [loading, setLoading] = React.useState(false)
 
@@ -582,14 +616,22 @@ export default [
     const [subTests, setSubTests] = React.useState([[], []])
     const [isFinished, setIsFinished] = React.useState([{id: 0, finished: true}])
     const [activeSections, setActiveSections] = React.useState([])
-    const [buySuccessModal, setBuySuccessModal] = React.useState(false)
 
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    var yyyy = today.getFullYear();
-
-    today = dd + '/' + mm + '/' + yyyy;
+    const finishTryout = () => {
+      setLoading(true)
+      axios.put(`https://dev.akademis.id/api/my-tryout/${mytryout_id}`, {
+        "is_finished": "finished"
+      })
+        .then( res => {
+          setLoading(false)
+          console.log(res)
+          navigation.goBack()
+        })
+        .catch(e => {
+          console.log(e) 
+          setLoading(false)
+        })
+    }
 
     const getData = () => {
       setLoading(true)
@@ -598,6 +640,8 @@ export default [
           var arr = res.data.data.test
           var newArr = []
 
+          console.log('Finished tryout or not?')
+          console.log(arr)
           arr.forEach( (element) => {
             newArr.push(element.subtest)
           })
@@ -606,7 +650,7 @@ export default [
 
           newArr.forEach(element => {
             element.map( (value) => {
-              axios.get(`https://dev.akademis.id/api/answer?user_id=${authState?.userToken}&soal_id=${value.id}`)
+              axios.get(`https://dev.akademis.id/api/answer?user_id=${authState?.userToken}&subtest_id=${value.id}`)
                 .then(res => {
                   var tempArr = res.data.data
                   console.log("Ansewrs: ")
@@ -671,7 +715,7 @@ export default [
 
     React.useEffect(() => {
       getData()
-    }, [])
+    }, [isFocused])
 
     if (loading === true) return (
       <View style={{flex:1,justifyContent:'center',alignItems:'center', backgroundColor: 'white'}}>
@@ -711,9 +755,6 @@ export default [
           <Text style={styles.leftMediumText}>Waktu Tryout : {"\n"}
             <Text style={styles.leftSmallText}>{start_at}{"\n"}hingga{"\n"}{end_at}</Text>
           </Text>
-          <Text style={styles.leftMediumText}>Tanggal Pembelian : {"\n"}
-            <Text style={styles.leftSmallText}>{today}</Text>
-          </Text>
         </View>
 
         <Text style={{left: 20, fontSize: 22, marginTop: 30}}>Konten Tryout</Text>
@@ -729,43 +770,58 @@ export default [
           containerStyle={{width: RFValue(320), alignSelf: 'center', borderRadius: 20, overflow: 'hidden', marginTop: RFValue(10), marginBottom: RFValue(30) }}
         />
 
+        { (!isFinished.find( ( {finished } ) => (!finished) ) ) ?
+          <TouchableOpacity 
+            style={[styles.button, {marginTop: 20}]} 
+            onPress={() => finishTryout()} >
+              <Text style={styles.buttonText}>Selesaikan tryout</Text>
+          </TouchableOpacity>
+          :
+          <TouchableOpacity 
+            style={[styles.disabledButton, {marginTop: 20}]} 
+            disabled={true}>
+              <Text style={styles.buttonText}>Tryout belum selesai</Text>
+          </TouchableOpacity>
+        }
+
       </ScrollView>
     )
   },
   //Details Finished Tryout
   ({route, navigation}) => {
-    const { id, name, price, start_at, end_at } = route.params
+    const { id, name, start_at, end_at } = route.params
+    const { authState } = React.useContext(AuthContext)
+    const isFocused = useIsFocused()
+    
+    const [loading, setLoading] = React.useState(false)
+
     const [tests, setTests] = React.useState([])
     const [subTests, setSubTests] = React.useState([[], []])
     const [activeSections, setActiveSections] = React.useState([])
-    const [buySuccessModal, setBuySuccessModal] = React.useState(false)
-
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    var yyyy = today.getFullYear();
-
-    today = dd + '/' + mm + '/' + yyyy;
 
     const getData = () => {
+      setLoading(true)
       axios.get(`https://dev.akademis.id/api/tryout/${id}`)
         .then(res => {
           var arr = res.data.data.test
           var newArr = []
 
-          arr.forEach(element => {
+          arr.forEach( (element) => {
             newArr.push(element.subtest)
           })
-
+            
           setTests(arr)
           setSubTests(newArr)
 
+          console.log(arrIsFinished)
           console.log("Data response: ")
           console.log(arr)
           console.log("Subtest response: ")
           console.log(newArr)
+
+          setLoading(false)
         })
-        .catch(e => console.log(e) )
+        .catch(e => {console.log(e), setLoading(false) })
     }
 
     const _renderHeader = sections => (
@@ -779,20 +835,34 @@ export default [
           <View style={{marginVertical: 10, justifyContent: 'center', alignItems: 'center', borderColor: theme.SECONDARY_DARK_COLOR, borderRadius: 15, borderWidth: 0.5, padding: 5}}>
             <Text style={{fontSize: RFValue(15) }}>{value.name}</Text>
             <Text style={{fontSize: RFValue(14), color: 'gray' }}>Waktu : {value.time} menit</Text>
-            <TouchableOpacity 
-              style={[styles.button, {marginTop: 20}]} 
-              onPress={() => { navigation.navigate('Conduct Tryout', {...value})}} >
-                <Text style={styles.buttonText}>Lihat Pembahasan</Text>
-            </TouchableOpacity>
+
+            { (value.pdf) ?
+              <TouchableOpacity 
+                style={[styles.button, {marginTop: 20}]} 
+                onPress={() => {Linking.openURL(value.pdf)}} >
+                  <Text style={styles.buttonText}>Lihat pembahasan</Text>
+              </TouchableOpacity>
+              :
+              <TouchableOpacity 
+                style={[styles.disabledButton, {marginTop: 20}]} 
+                disabled={true}>
+                  <Text style={styles.buttonText}>Belum ada pembahasan</Text>
+              </TouchableOpacity>
+            }
           </View>
         ) )
     )
 
     React.useEffect(() => {
       getData()
-    }, [])
+    }, [isFocused])
 
-    return (
+    if (loading === true) return (
+      <View style={{flex:1,justifyContent:'center',alignItems:'center', backgroundColor: 'white'}}>
+          <ActivityIndicator size="large" color="black"/>
+      </View>
+    )
+    else return (
       <ScrollView contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
 
         <View style={{
@@ -825,9 +895,6 @@ export default [
           <Text style={styles.leftMediumText}>Waktu Tryout : {"\n"}
             <Text style={styles.leftSmallText}>{start_at}{"\n"}hingga{"\n"}{end_at}</Text>
           </Text>
-          <Text style={styles.leftMediumText}>Tanggal Pembelian : {"\n"}
-            <Text style={styles.leftSmallText}>{today}</Text>
-          </Text>
         </View>
 
         <Text style={{left: 20, fontSize: 22, marginTop: 30}}>Konten Tryout</Text>
@@ -845,5 +912,5 @@ export default [
 
       </ScrollView>
     )
-  }
+  },
 ]

@@ -9,12 +9,14 @@ import {
   Image,
   Alert,
   ActivityIndicator,
-  Dimensions
+  Dimensions,
+  PermissionsAndroid
 } from 'react-native'
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { Picker } from '@react-native-community/picker';
 import axios from 'react-native-axios';
 import { BarChart } from "react-native-chart-kit";
+import ImagePicker from 'react-native-image-picker';
 
 //Context
 import { AuthContext } from '../components/Context.js'
@@ -28,11 +30,14 @@ import styles from '../styles/mainScreenStyle.js';
 //Importing theme
 import theme from '../styles/theme.js'
 
+//Immporting images
+import profile from '../assets/images/profile-icon.png'
+
 export default ({navigation}) => {
   const { _setProfile, logOut, authState, _setDiamond } = React.useContext(AuthContext)
 
   const [posY, setPosY] = React.useState(0)
-  const [avatar, setAvatar] = React.useState(null)
+  const [avatar, setAvatar] = React.useState("null")
   const [name, setName] = React.useState('')
   const [username, setUsername] = React.useState('')
   const [email, setEmail] = React.useState('')
@@ -55,6 +60,32 @@ export default ({navigation}) => {
       ]
   }
 
+  const openCamera = () =>{
+    const options = {
+      title: 'Select photo',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+    
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+      const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+      setAvatar(source.uri)
+      setChanged(true)
+    }
+  })}
+
   const getUserProfile = () => {
     setLoading(true)
     axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
@@ -62,7 +93,8 @@ export default ({navigation}) => {
         console.log("Ini dari getUserProfile")
         console.log(res)
         console.log(authState?.userToken)
-        setAvatar(res.data.data.avatar)
+        if (res.data.data.avatar) setAvatar(res.data.data.avatar)
+        else setAvatar("null")
         setName(res.data.data.name)
         setUsername(res.data.data.username)
         setEmail(res.data.data.email)
@@ -85,7 +117,8 @@ export default ({navigation}) => {
       "email": email,
       "password": authState?.password,
       "ptn": university,
-      "jurusan": major
+      "jurusan": major,
+      "avatar": avatar
     })
       .then( res => {
         console.log("Ini dari PUT profile")
@@ -126,6 +159,7 @@ export default ({navigation}) => {
   }
 
   React.useEffect( () => {
+    setChanged(false)
     getUserProfile()
 
     console.log(university)
@@ -152,10 +186,14 @@ export default ({navigation}) => {
         borderBottomLeftRadius: 50,
         borderBottomRightRadius: 50,
         }}>
-        {avatar ? 
-          <Image source={avatar} style={{width: 100, height: 100}}/>
+        {(avatar != "null") ? 
+          <TouchableOpacity onPress={openCamera}>
+            <Image source={{uri: avatar}} style={{width: 100, height: 100, borderRadius: 50, overflow: 'hidden'}}/>
+          </TouchableOpacity>
           :
-          <Image source={require('../assets/images/profile-icon.png')} style={{width: 100, height: 100}}/>
+          <TouchableOpacity onPress={openCamera}>
+            <Image source={profile} style={{width: 100, height: 100, borderRadius: 50, overflow: 'hidden'}}/>
+          </TouchableOpacity>
         }
         <Text style={styles.bigWhiteText}>Halo, {name}</Text>
       </View>

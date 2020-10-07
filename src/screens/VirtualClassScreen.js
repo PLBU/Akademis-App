@@ -13,7 +13,8 @@ import {
   TouchableHighlight,
   Image,
   ImageBackground,
-  ActivityIndicator
+  ActivityIndicator,
+  Linking
 } from 'react-native';
 import { Picker } from '@react-native-community/picker';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -41,6 +42,17 @@ import vcImage from '../assets/images/virtual-class-bg-gelap.png'
 import vcPurchaseImage from '../assets/images/purchase-virtual-class-bg-gelap.png'
 import notFoundImage from '../assets/images/image-not-found-bg-terang.png'
 import buySuccessImage from '../assets/images/pembelian-sukses-bg-terang.png'
+
+const moment = require('moment');
+
+function shorten(str, maxLen, separator = ' ') {
+  if (str.length <= maxLen) return str;
+  return str.substr(0, str.lastIndexOf(separator, maxLen));
+}
+
+function dateFormat(date){
+  return moment(new Date(date) ).format('DD/MM/YYYY')
+}
 
 export default [
   //Catalogue
@@ -81,9 +93,8 @@ export default [
             style={styles.pickerStyle}
             onValueChange={ (itemValue) => setSubject(itemValue)}>
             <Picker.Item label={"All"} value={""}/>
-            <Picker.Item label={"Matematika"} value={"Matematika"}/>
-            <Picker.Item label={"Geografi"} value={"Geografi"}/>
-            <Picker.Item label={"Ilmu Pengetahuan Alam"} value={"Ilmu Pengetahuan Alam"}/>
+            <Picker.Item label={"UTBK"} value={"utbk"}/>
+            <Picker.Item label={"Kelas 11 Semester 1"} value={"kelas 11 semester 1"}/>
             <Picker.Item label={"SBMPTN"} value={"sbmptn"}/>
           </Picker>
         </View>
@@ -91,13 +102,19 @@ export default [
         <View style={styles.horizontalRuler}/>
         <Text style={{left: 20, fontSize: 22, marginBottom: 20}}>Pilih Virtual Class</Text>
 
-        {availableClasses.filter( ({ kategori }) => (subjectPicker === "") ? true : (kategori === subjectPicker))
+        {availableClasses.filter( ({ kategori }) => (subjectPicker === "") ? true : (kategori.toLowerCase() === subjectPicker))
           .map( (value, index) => {
             return (
               <TouchableOpacity onPress={() => navigation.navigate('Details VC', {...value})} key={index}>
                 <View style={styles.mediumCardWithDesc}>
                   <View style={{height: 50, flexDirection: 'row', backgroundColor: theme.PRIMARY_DARK_COLOR}}>
-                    <Text style={{fontSize: 20, color: 'white', alignSelf: 'center', left: 15}}>{value.judul}</Text>
+                    <Text style={{fontSize: 18, color: 'white', alignSelf: 'center', left: 15}}>
+                    { (value.judul.length > 30) ? 
+                      shorten(value.judul, 30, ' ') + " ..."
+                      :
+                      value.judul
+                    }
+                    </Text>
                     <View style={{flexDirection: 'row', alignItems:'center', alignSelf: 'center', position: 'absolute', right: 15}}>
                       <Image source={diamond} style={{width: 22, height: 22}}/>
                       <Text style={{fontSize: 17, color: 'white'}}>{" "}{value.harga}</Text>
@@ -106,13 +123,13 @@ export default [
                   <Text style={styles.leftSmallText}>Kategori : {value.kategori}</Text>                
                   <Text style={styles.leftSmallText}>Pelajaran : {value.pelajaran}</Text>                
                   <Text style={styles.leftSmallText}>Kapasitas : {value.kapasitas}</Text>
-                  <Text style={styles.leftSmallText}>Tanggal : {value.date_start} hingga {value.date_end}</Text>
+                  <Text style={styles.leftSmallText}>Tanggal : {dateFormat(value.date_start)} hingga {dateFormat(value.date_end)}</Text>
                 </View>
               </TouchableOpacity>
             )
         })
       }
-      { (availableClasses.find( ({ kategori }) => (subjectPicker === "") ? true : (kategori === subjectPicker) ) ) ?
+      { (availableClasses.find( ({ kategori }) => (subjectPicker === "") ? true : (kategori.toLowerCase() === subjectPicker) ) ) ?
           null 
         :
           <View style={styles.centeredView}>
@@ -139,7 +156,7 @@ export default [
               axios.get(`https://dev.akademis.id/api/myclass?user_email=${res1.data.data.email}`)
                 .then( res2 => {
                   let arrChecker = []
-                  res2.data.data.data.forEach( ({ id_event }) => arrChecker.push(id_event) )
+                  res2.data.data.data.forEach( ({ event_id }) => arrChecker.push(event_id) )
 
                   setAvailableClasses(arr.filter( ({ id }) => arrChecker.some( (element) => (element == id) ) ) )
                 })
@@ -161,34 +178,39 @@ export default [
             style={styles.pickerStyle}
             onValueChange={ (itemValue) => setSubject(itemValue)}>
             <Picker.Item label={"All"} value={""}/>
-            <Picker.Item label={"Matematika"} value={"Matematika"}/>
-            <Picker.Item label={"Geografi"} value={"Geografi"}/>
-            <Picker.Item label={"Ilmu Pengetahuan Alam"} value={"Ilmu Pengetahuan Alam"}/>
-            <Picker.Item label={"sbmptn"} value={"sbmptn"}/>
+            <Picker.Item label={"UTBK"} value={"utbk"}/>
+            <Picker.Item label={"Kelas 11 Semester 1"} value={"kelas 11 semester 1"}/>
+            <Picker.Item label={"SBMPTN"} value={"sbmptn"}/>
           </Picker>
         </View>
 
         <View style={styles.horizontalRuler}/>
         <Text style={{left: 20, fontSize: 22, marginBottom: 20}}>Pilih Virtual Class</Text>
 
-        {availableClasses.filter( ({ kategori }) => (subjectPicker === "") ? true : (kategori === subjectPicker))
+        {availableClasses.filter( ({ kategori }) => (subjectPicker === "") ? true : (kategori.toLowerCase() === subjectPicker))
           .map( (value, index) => {
             return (
               <TouchableOpacity onPress={() => navigation.navigate('Details Paid VC', {...value})} key={index}>
                 <View style={styles.mediumCardWithDesc}>
                   <View style={{height: 50, flexDirection: 'row', backgroundColor: theme.PRIMARY_DARK_COLOR}}>
-                    <Text style={{fontSize: 20, color: 'white', alignSelf: 'center', left: 15}}>{value.judul}</Text>
+                    <Text style={{fontSize: 18, color: 'white', alignSelf: 'center', left: 15}}>
+                    { (value.judul.length > 30) ? 
+                      shorten(value.judul, 30, ' ') + " ..."
+                      :
+                      value.judul
+                    }
+                    </Text>
                   </View>
                   <Text style={styles.leftSmallText}>Kategori : {value.kategori}</Text>                
                   <Text style={styles.leftSmallText}>Pelajaran : {value.pelajaran}</Text>                
                   <Text style={styles.leftSmallText}>Kapasitas : {value.kapasitas}</Text>
-                  <Text style={styles.leftSmallText}>Tanggal : {value.date_start} hingga {value.date_end}</Text>
+                  <Text style={styles.leftSmallText}>Tanggal : {dateFormat(value.date_start)} hingga {dateFormat(value.date_end)}</Text>
                 </View>
               </TouchableOpacity>
             )
         })
       }
-      { (availableClasses.find( ({ kategori }) => (subjectPicker === "") ? true : (kategori === subjectPicker) ) ) ?
+      { (availableClasses.find( ({ kategori }) => (subjectPicker === "") ? true : (kategori.toLowerCase() === subjectPicker) ) ) ?
           null 
         :
           <View style={styles.centeredView}>
@@ -304,8 +326,7 @@ export default [
           margin: 20,
           overflow: 'hidden',
           borderRadius: 25,
-          }}
-        >
+          }}>
           <ImageBackground source={vcPurchaseImage} style={styles.backgroundImage} />
         </View>
 
@@ -313,6 +334,9 @@ export default [
         <View style={styles.horizontalRuler}/>
 
         <View style={{width: Dimensions.get('window').width*0.95, alignSelf: 'center'}}>
+          <Text style={styles.leftMediumText}>Nama Kelas : {"\n"}
+            <Text style={styles.leftSmallText}>{data.judul}</Text>
+          </Text>
           <Text style={styles.leftMediumText}>Kategori : {"\n"}
             <Text style={styles.leftSmallText}>{data.kategori}</Text>
           </Text>
@@ -323,7 +347,7 @@ export default [
             <Text style={styles.leftSmallText}>{data.kapasitas} murid</Text>
           </Text>
           <Text style={styles.leftMediumText}>Tanggal : {"\n"}
-            <Text style={styles.leftSmallText}>{data.date_start} hingga {data.date_end}</Text>
+            <Text style={styles.leftSmallText}>{dateFormat(data.date_start)} hingga {dateFormat(data.date_end)}</Text>
           </Text>
           <Text style={styles.leftMediumText}>Deskripsi : {"\n"}
             <Text style={styles.leftSmallText}>{data.deskripsi}</Text>
@@ -341,7 +365,7 @@ export default [
           <Table style={{marginHorizontal: 10}}>
             <Row data={['Tanggal', 'Waktu', 'Link']} textStyle={{fontSize: 17, margin: 2.5}}/>
             {session.map( (value, index) =>
-              <Row data={[value.tanggal, String(value.time_start) + " - " + String(value.time_end), 'Locked']} key={index} textStyle={{fontSize: 15, margin: 2.5, color:'grey'}}/>
+              <Row data={[dateFormat(value.tanggal), String(value.time_start) + " - " + String(value.time_end), 'Locked']} key={index} textStyle={{fontSize: 15, margin: 2.5, color:'grey'}}/>
             )}
           </Table>
         </View>
@@ -354,7 +378,7 @@ export default [
             <Text style={styles.leftSmallText}>{teacher.nama}</Text>
           </Text>
           <Text style={styles.leftMediumText}>Rating Guru : {"\n"}
-            <Text style={styles.leftSmallText}>{(rating) ? rating : "Masih belum ada rating"}</Text>
+            <Text style={styles.leftSmallText}>{(rating) ? rating.toFixed(1) : "Masih belum ada rating"}</Text>
           </Text>
           <Text style={styles.leftMediumText}>About me : {"\n"}
             <Text style={styles.leftSmallText}>{teacher.deskripsi}</Text>
@@ -383,6 +407,7 @@ export default [
     const { id } = route.params
     const { authState } = React.useContext(AuthContext)
 
+    const [loading, setLoading] = React.useState(false)
     const [myRating, setMyRating] = React.useState(null)
     const [kritik, setKritik] = React.useState(null)
     const [data, setData] = React.useState({})
@@ -393,21 +418,27 @@ export default [
     const [notifVisible, setNotifVisible] = React.useState(false);
     const [questionVisible, setQuestionVisible] = React.useState(false);
     const [questionText, setQuestionText] = React.useState(null)
+    const [isReviewable, setIsReviewable] = React.useState(false)
 
     const getClass = () => {
+      setLoading(true)
       axios.get(`https://dev.akademis.id/api/class/${id}`)
         .then( res => {
           const reviews = res.data.data.reviews
+          const dateEnd = new Date(res.data.data.date_end)
+          const today = new Date()
           var sumRating = 0;
 
           reviews.forEach( el => sumRating += parseFloat(el.kualitas) )
 
+          setLoading(false)
           setData(res.data.data)
           setTeacher(res.data.data.teacher)
-          setSession(res.data.data.sesi)
+          setSession(res.data.data.sesi)          
           if (reviews.length > 0) setRating(sumRating/reviews.length)
+          if (dateEnd - today <= 0) setIsReviewable(true)
         })
-        .catch( e => console.log(e) )
+        .catch( e => {console.log(e), setLoading(false) })
     }
 
     const getNotif = () => {
@@ -471,7 +502,12 @@ export default [
       navigation.setParams({notif: () => setNotifVisible(true) })
     }, [])
 
-    return (
+    if (loading === true) return (
+      <View style={{flex:1,justifyContent:'center',alignItems:'center', backgroundColor: 'white'}}>
+        <ActivityIndicator size="large" color="black"/>
+      </View>
+    )
+    else return (
       <View style={[{flex: 1}, styles.bgAll]}>
         <ScrollView contentContainerStyle={{flexGrow: 1,}}>
 
@@ -586,6 +622,9 @@ export default [
           <View style={styles.horizontalRuler}/>
 
           <View style={{width: Dimensions.get('window').width*0.95, alignSelf: 'center'}}>
+            <Text style={styles.leftMediumText}>Nama Kelas : {"\n"}
+              <Text style={styles.leftSmallText}>{data.judul}</Text>
+            </Text>
             <Text style={styles.leftMediumText}>Kategori : {"\n"}
               <Text style={styles.leftSmallText}>{data.kategori}</Text>
             </Text>
@@ -593,7 +632,7 @@ export default [
               <Text style={styles.leftSmallText}>{data.pelajaran}</Text>
             </Text>
             <Text style={styles.leftMediumText}>Tanggal : {"\n"}
-              <Text style={styles.leftSmallText}>{data.date_start} hingga {data.date_end}</Text>
+              <Text style={styles.leftSmallText}>{dateFormat(data.date_start)} hingga {dateFormat(data.date_end)}</Text>
             </Text>
             <Text style={styles.leftMediumText}>Deskripsi : {"\n"}
               <Text style={styles.leftSmallText}>{data.deskripsi}</Text>
@@ -611,7 +650,9 @@ export default [
             <Table style={{marginHorizontal: 10}}>
               <Row data={['Tanggal', 'Waktu', 'Link']} textStyle={{fontSize: 17, margin: 2.5}}/>
               {session.map( (value, index) =>
-                <Row data={[value.tanggal, String(value.time_start) + " - " + String(value.time_end), value.link]} key={index} textStyle={{fontSize: 15, margin: 2.5, color:'grey'}}/>
+                <TouchableOpacity onPress={() => Linking.openURL(value.link)}>
+                  <Row data={[dateFormat(value.tanggal), String(value.time_start) + " - " + String(value.time_end), value.link]} key={index} textStyle={{fontSize: 15, margin: 2.5, color:'grey'}}/>
+                </TouchableOpacity>
               )}
             </Table>
           </View>
@@ -631,36 +672,41 @@ export default [
             </Text>
           </View>
 
-          <Text style={styles.sectionText}>Berikan penilaian mu!</Text>
-          <View style={styles.horizontalRuler}/>
+          { (isReviewable) ?
+            <View>
+              <Text style={styles.sectionText}>Berikan penilaian mu!</Text>
+              <View style={styles.horizontalRuler}/>
 
-          <TextInput 
-            style={{fontSize: 16, padding: 20, height: 100, width: '90%', borderColor: 'lightgray', borderWidth: 1, borderRadius: 15, margin: 20}}
-            multiline={true}
-            numberOfLines={2}
-            onChangeText={(text) => setKritik(text)}
-            value={kritik}
-            placeholder="Isi saran dan kritikmu di sini"
-          />
-          <Stars
-            default={0}
-            count={5}
-            starSize={50}
-            update={ (value) => setMyRating(value) }
-            fullStar={<MaterialIcon name={'star'} size={50} color={theme.PRIMARY_ACCENT_COLOR}/>}
-            emptyStar={<MaterialIcon name={'star-border'} size={50} color={theme.PRIMARY_ACCENT_COLOR}/>}
-            halfStar={<MaterialIcon name={'star-half'} size={50} color={theme.PRIMARY_ACCENT_COLOR}/>}
-          />
+              <TextInput 
+                style={{fontSize: 16, padding: 20, height: 100, width: '90%', borderColor: 'lightgray', borderWidth: 1, borderRadius: 15, margin: 20}}
+                multiline={true}
+                numberOfLines={2}
+                onChangeText={(text) => setKritik(text)}
+                value={kritik}
+                placeholder="Isi saran dan kritikmu di sini"
+              />
+              <Stars
+                default={0}
+                count={5}
+                starSize={50}
+                update={ (value) => setMyRating(value) }
+                fullStar={<MaterialIcon name={'star'} size={50} color={theme.PRIMARY_ACCENT_COLOR}/>}
+                emptyStar={<MaterialIcon name={'star-border'} size={50} color={theme.PRIMARY_ACCENT_COLOR}/>}
+                halfStar={<MaterialIcon name={'star-half'} size={50} color={theme.PRIMARY_ACCENT_COLOR}/>}
+              />
 
-          <View style={{margin: 20, alignItems: 'center'}}>
-            <TouchableOpacity 
-              style={(kritik == null || myRating == null) ? styles.disabledButton : styles.button} 
-              disabled={ (kritik == null || myRating == null) ? true : false} 
-              onPress={() => postReview() }>
-              <Text style={styles.buttonText}>Unggah Penilaian</Text>
-            </TouchableOpacity>
-          </View>
-        
+              <View style={{margin: 20, alignItems: 'center'}}>
+                <TouchableOpacity 
+                  style={(kritik == null || myRating == null) ? styles.disabledButton : styles.button} 
+                  disabled={ (kritik == null || myRating == null) ? true : false} 
+                  onPress={() => postReview() }>
+                  <Text style={styles.buttonText}>Unggah Penilaian</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            :
+            <View style={{marginVertical: 20}} />
+        }
         </ScrollView>
         <View style={{position: 'absolute', right: 25, bottom: 25, height: 65, width: 65, borderRadius: 75, overflow: 'hidden', elevation: 8}}>
           <TouchableHighlight 

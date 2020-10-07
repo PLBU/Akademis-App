@@ -48,23 +48,33 @@ export default ( { route, navigation } ) => {
 
     var timeState
 
-    const finished = () => {
-        const stringAnswer = answers.join("")
-        
-        axios.post(`https://dev.akademis.id/api/answer`, {
-            "soal_id": id,
-            "subtest_id": id,
-            "user_id": authState?.userToken,
-            "option": stringAnswer
-        })
-            .then(res => {
-                console.log(res)
-                Alert.alert('Skor anda:', `Anda benar ${getScore()}/${questions.length}`)
-                navigation.navigate('Main Tryout')
-                console.log(answers)
-                console.log(keyAnswers)
+    const finished = () => {        
+        new Promise ( (resolve, reject) => {
+            answers.forEach( (item, index) => {
+                axios.post(`https://dev.akademis.id/api/answer`, {
+                    "soal_id": index+1,
+                    "subtest_id": id,
+                    "user_id": authState?.userToken,
+                    "option": item
+                })
+                    .then(res => {
+                        console.log("ANSWERS ACCEPTED")
+                        console.log(res)
+                        resolve()
+                    })
+                    .catch(e => {
+                        console.log("ANSWERS REJECTED")
+                        console.log(e.response)
+                        throw(e.response)
+                        reject() 
+                    })
             })
-            .catch(e => console.log(e) )
+        })
+            .then( () => {
+                Alert.alert('Skor anda:', `Anda benar ${getScore()}/${questions.length}`) 
+                navigation.goBack()
+            })
+            .catch( e => console.log(e) )
     }
 
     const countdown = () => {

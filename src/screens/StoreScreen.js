@@ -10,7 +10,8 @@ import {
   Image,
   Dimensions,
   Alert,
-  PermissionsAndroid
+  PermissionsAndroid,
+  ActivityIndicator
 } from 'react-native';
 import {
   Colors,
@@ -22,7 +23,6 @@ import { Overlay } from 'react-native-elements';
 import { Picker } from '@react-native-community/picker';
 import ImagePicker from 'react-native-image-picker';
 import axios from 'react-native-axios';
-import ImgToBase64 from 'react-native-image-base64';
 
 //Importing style
 import styles from '../styles/mainScreenStyle.js';
@@ -51,6 +51,7 @@ export default ({navigation}) => {
   const [modal, setModal] = React.useState(false)
   const [paymentMethod, setPaymentMethod] = React.useState('')
   const [buktiBayar, setBuktiBayar] = React.useState(null)
+  const [loading, setLoading] = React.useState(false)
 
   const { authState } = React.useContext(AuthContext)
 
@@ -73,14 +74,11 @@ export default ({navigation}) => {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-      const source = { uri: response.uri };
+        const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
         // You can also display the image using data:
         // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-      console.log(source)
-      ImgToBase64.getBase64String(source.uri)
-        .then(res => setBuktiBayar(res) )
-        .catch(e => console.log(e) )
+        setBuktiBayar(source.uri)
     }
   })}
 
@@ -158,6 +156,7 @@ export default ({navigation}) => {
   ]
 
   const buyDiamond = (id) => {
+    setLoading(true)
     axios.post(`https://dev.akademis.id/api/checkout`,{
       "store_id": id,
       "user_id": authState?.userToken,
@@ -172,8 +171,9 @@ export default ({navigation}) => {
         setPaymentMethod(null)
         Alert.alert("Berhasil", "Pembelian berhasil, tunggu verifikasi dari tim kami ya")
         setModal(false)
+        setLoading(false)
       })
-      .catch(e => {console.log(e.response.data) })
+      .catch(e => {console.log(e.response.data), setLoading(false)})
   }
 
   const _renderItem = ({item}) => (
@@ -245,7 +245,12 @@ export default ({navigation}) => {
     requestCameraPermission()
   }, [])
 
-  return (
+  if (loading === true) return (
+    <View style={{flex:1,justifyContent:'center',alignItems:'center', backgroundColor: 'white'}}>
+      <ActivityIndicator size="large" color="black"/>
+    </View>
+  )
+  else return (
     <ScrollView onScroll={(e) => handleScroll(e)} style={styles.bgAll}>
       {/* Modal pembelian diamond */}
       <Overlay
@@ -255,8 +260,7 @@ export default ({navigation}) => {
         onRequestClose={() => {
           setModal(false)
         }}
-        overlayStyle={styles.overlay}
-      >
+        overlayStyle={styles.overlay}>
         <View style={styles.centeredView}>
           <TouchableOpacity 
             onPress={() => {

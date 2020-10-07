@@ -141,7 +141,7 @@ const App = () => {
             })
             .catch(err => {
               Alert.alert("Error", err.response.data.message)
-              console.log(err.response.data.message)
+              console.log(err.response)
               dispatch({type: 'STOP LOADING'})
 
               throw(err)
@@ -252,15 +252,23 @@ const App = () => {
               "username": res1.data.data.username,
               "ptn": res1.data.data.ptn,
               "jurusan": res1.data.data.jurusan,
-              "diamond": diamondValue
+              "diamond": diamondValue,
+              "avatar": res1.data.data.avatar
             })
               .then(res => {
+                console.log("Ini dari set diamond")
                 console.log(res.data)
                 dispatch({type: 'SET DIAMOND', diamond: diamondValue})
               })
-              .catch(e => console.log(e.response))
+              .catch(e => {
+                console.log("Ini dari SET DIAMOND")
+                console.log(e.response)
+              })
           })
-          .catch(e => console.log(e.response))
+          .catch(e => {
+            console.log("Ini dari SET DIAMOND")
+            console.log(e.response)
+          })
       },
       authState,
     }), [authState])

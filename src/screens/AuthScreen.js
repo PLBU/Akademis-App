@@ -33,7 +33,7 @@ export default [
       } else if (!(email.includes('@') && email.includes('.') ) ) {
         setValidationText('Tolong gunakan alamat email yang valid')
       } else if (password.length < 8) {
-        setValidationText('Panjang password seharusnya lebih dari 8')
+        setValidationText('Minimal panjang password adalah 8')
       } else {
         logIn(email, password)
       }

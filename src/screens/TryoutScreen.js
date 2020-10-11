@@ -24,6 +24,7 @@ import Accordion from 'react-native-collapsible/Accordion';
 import { Overlay } from 'react-native-elements';
 import { useIsFocused } from '@react-navigation/native'
 import ImagePicker from 'react-native-image-picker';
+import { Table, Row, Rows } from 'react-native-table-component';
 
 //Styles
 import styles from '../styles/mainScreenStyle.js';
@@ -250,7 +251,7 @@ export default [
         {finishedTryouts.filter( ({ tryout }) => (subjectPicker === "") ? true : (tryout.name.toLowerCase().includes(subjectPicker) ) )
           .map( (value, index) => {
             return (
-              <TouchableOpacity onPress={() => navigation.navigate('Details Finished Tryout', {...value.tryout})} key={index}>
+              <TouchableOpacity onPress={() => navigation.navigate('Details Finished Tryout', {...value.tryout, mytryout_id: value.id})} key={index}>
                 <View style={styles.smallCard}>
                   <View style={{flex: 0.25, backgroundColor: theme.PRIMARY_DARK_COLOR, flexDirection: 'row', justifyContent: 'center', alignItems:'center'}}>
                     {/* Belum tau mo isi */}
@@ -614,7 +615,7 @@ export default [
 
     const [tests, setTests] = React.useState([])
     const [subTests, setSubTests] = React.useState([[], []])
-    const [isFinished, setIsFinished] = React.useState([{id: 0, finished: true}])
+    const [isFinished, setIsFinished] = React.useState([{id: -1, finished: false}])
     const [activeSections, setActiveSections] = React.useState([])
 
     const finishTryout = () => {
@@ -646,7 +647,7 @@ export default [
             newArr.push(element.subtest)
           })
 
-          var arrIsFinished = [{id: 0, finished: true}]
+          var arrIsFinished = []
 
           newArr.forEach(element => {
             element.map( (value) => {
@@ -697,6 +698,12 @@ export default [
             <Text style={{fontSize: RFValue(14), color: 'gray' }}>Waktu : {value.time} menit</Text>
 
             { (isFinished.find( ( { id, finished } ) => (value.id == id && !finished) ) ) ?
+              <TouchableOpacity 
+                style={[styles.button, {marginTop: 20}]} 
+                onPress={() => { navigation.navigate('Conduct Tryout', {...value})}} >
+                  <Text style={styles.buttonText}>Mulai Subtest</Text>
+              </TouchableOpacity>
+              : (!isFinished.find( ( { id } ) => (value.id == id) ) ) ?
               <TouchableOpacity 
                 style={[styles.button, {marginTop: 20}]} 
                 onPress={() => { navigation.navigate('Conduct Tryout', {...value})}} >
@@ -789,7 +796,7 @@ export default [
   },
   //Details Finished Tryout
   ({route, navigation}) => {
-    const { id, name, start_at, end_at } = route.params
+    const { id, name, start_at, end_at, mytryout_id } = route.params
     const { authState } = React.useContext(AuthContext)
     const isFocused = useIsFocused()
     
@@ -798,6 +805,51 @@ export default [
     const [tests, setTests] = React.useState([])
     const [subTests, setSubTests] = React.useState([[], []])
     const [activeSections, setActiveSections] = React.useState([])
+    const [ranks, setRanks] = React.useState([])
+    const [myRank, setMyRank] = React.useState({rank: null, nilai: null})
+    const [score, setScore] = React.useState({})
+
+    const getRanking = () => {
+      axios.get(`https://dev.akademis.id/api/ranking?tryout_id=${id}`)
+        .then(res => {
+          console.log('RANKING: ')
+          console.log(res.data.data)
+          setRanks(res.data.data)
+
+          res.data.data.forEach( (value, index) => {
+            if (value.user_id = authState?.userToken) {
+              setMyRank({rank: index + 1, nilai: value.nilai})
+            }
+          })
+
+        })
+        .catch(e => {
+          console.log(e)
+        })
+
+      // axios.get(`https://dev.akademis.id/api/ranking?user_id=${authState?.userToken}&tryout_id=${id}`)
+      //   .then(res => {
+      //     console.log('MY RANKING: ')
+      //     console.log(res.data.data)
+      //     setMyRank(res.data.data)
+      //   })
+      //   .catch(e => {
+      //     console.log(e)
+      //   })
+    }
+
+    const getScore = () => {
+      axios.get(`https://dev.akademis.id/api/my-tryout/?tryout_id=${id}&user_id=${authState?.userToken}`)
+        .then(res => {
+          console.log('MY SCOREEE')
+          console.log(res.data.data[0].score[0] )
+          setScore(res.data.data[0].score[0] )
+        })
+        .catch(e => {
+          console.log('MY SCORE')
+          console.log(e)
+        })
+    }
 
     const getData = () => {
       setLoading(true)
@@ -813,7 +865,6 @@ export default [
           setTests(arr)
           setSubTests(newArr)
 
-          console.log(arrIsFinished)
           console.log("Data response: ")
           console.log(arr)
           console.log("Subtest response: ")
@@ -830,11 +881,44 @@ export default [
       </View>
     )
 
+    const getNilai = (name) => {
+      switch (name) {
+        case "Biologi":
+          return score.nilai_biologi
+        case "Ekonomi":
+          return score.nilai_ekonomi
+        case "Fisika":
+          return score.nilai_fisika
+        case "Geografi":
+          return score.nilai_geografi
+        case "Kimia":
+          return score.nilai_kimia
+        case "Mat Ipa":
+          return score.nilai_mat_ipa
+        case "Mat Soshum":
+          return score.nilai_biologi
+        case "PBM":
+          return score.nilai_pbm
+        case "PK":
+          return score.nilai_pk
+        case "PPU":
+          return score.nilai_ppu
+        case "PU":
+          return score.nilai_pu
+        case "Sejarah":
+          return score.nilai_sejarah
+        case "Sosiologi":
+          return score.nilai_sosiologi
+        default:
+          return "Nilai tidak tercantum"
+      }
+    }
+
     const _renderContent = (sections, index) => (
         subTests[index].map( (value) => (
           <View style={{marginVertical: 10, justifyContent: 'center', alignItems: 'center', borderColor: theme.SECONDARY_DARK_COLOR, borderRadius: 15, borderWidth: 0.5, padding: 5}}>
             <Text style={{fontSize: RFValue(15) }}>{value.name}</Text>
-            <Text style={{fontSize: RFValue(14), color: 'gray' }}>Waktu : {value.time} menit</Text>
+            <Text style={{fontSize: RFValue(14), color: 'gray' }}>Nilai : {getNilai(value.name)}</Text>
 
             { (value.pdf) ?
               <TouchableOpacity 
@@ -855,6 +939,8 @@ export default [
 
     React.useEffect(() => {
       getData()
+      getRanking()
+      getScore()
     }, [isFocused])
 
     if (loading === true) return (
@@ -907,8 +993,33 @@ export default [
           renderContent={_renderContent}
           onChange={ active => setActiveSections(active) }
           underlayColor={theme.PRIMARY_ACCENT_COLOR}
-          containerStyle={{width: RFValue(320), alignSelf: 'center', borderRadius: 20, overflow: 'hidden', marginTop: RFValue(10), marginBottom: RFValue(30) }}
+          containerStyle={{width: RFValue(320), alignSelf: 'center', borderRadius: 20, overflow: 'hidden', marginTop: RFValue(10)}}
         />
+
+        <Text style={{left: 20, fontSize: 22, marginTop: 30}}>Ranking</Text>
+        <View style={styles.horizontalRuler}/>
+
+        <View style={{width: Dimensions.get('window').width*0.95, alignSelf: 'center', marginBottom: 15}}>
+          <Text style={styles.leftMediumText}>Ranking anda : {"\n"}
+            { (myRank.rank === null) 
+              ? <Text style={styles.leftSmallText}>Anda belum tercantum pada ranking</Text> 
+              : <Text style={styles.leftSmallText}>{myRank.rank} dengan nilai: {myRank.nilai}</Text> }
+          </Text>
+          <Table style={{marginHorizontal: RFValue(10), marginVertical: 15}} borderStyle={{borderWidth: 0.5, borderColor: theme.SECONDARY_DARK_COLOR}}>
+            <Row 
+              data={['No', 'Nama', 'PTN', 'Jurusan', 'Nilai']} 
+              textStyle={{fontSize: 17, margin: 2.5}}
+              style={{backgroundColor: theme.SECONDARY_DARK_COLOR}}
+              widthArr={[0.08 * (Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) )]}/>
+            {ranks.map( (value, index) => (
+              <Row 
+                data={[index + 1, value.name, value.ptn, value.jurusan, value.nilai]} 
+                key={index} 
+                textStyle={{fontSize: 15, margin: 2.5, color: 'dark-gray'}} 
+                widthArr={[0.08 * (Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) )]}/>
+            ))}
+          </Table>
+        </View>
 
       </ScrollView>
     )

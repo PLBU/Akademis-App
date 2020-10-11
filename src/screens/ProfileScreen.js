@@ -17,6 +17,7 @@ import { Picker } from '@react-native-community/picker';
 import axios from 'react-native-axios';
 import { BarChart } from "react-native-chart-kit";
 import ImagePicker from 'react-native-image-picker';
+import { RFValue } from "react-native-responsive-fontsize";
 
 //Context
 import { AuthContext } from '../components/Context.js'
@@ -45,19 +46,56 @@ export default ({navigation}) => {
   const [major, setMajor] = React.useState(null)
   const [changed, setChanged] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
+  const [chartData, setChartData] = React.useState({
+    labels: ["PU", "PK", "PBM", "PPU"],
+    datasets: [
+      {
+        data: [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+  })
 
-  const items = {
-      labels: ["SosHum", "Kimia", "B. Inggris", "B. Indonesia"],
-      datasets: [
-        {
-          data: [
-            95,
-            100,
-            60,
-            55
-          ]
-        }
-      ]
+  const getScore = () => {
+    axios.get(`https://dev.akademis.id/api/my-tryout/?user_id=${authState?.userToken}`)
+    .then(res => {
+      console.log('MY SCORE')
+      console.log(res.data.data)
+      var arr = res.data.data
+      var scorePU = 0
+      var scorePK = 0
+      var scorePBM = 0
+      var scorePPU = 0
+
+      arr.forEach(element => {
+        scorePU += element.score[0].nilai_pu
+        scorePK += element.score[0].nilai_pk
+        scorePBM += element.score[0].nilai_pbm
+        scorePPU += element.score[0].nilai_ppu
+      })
+
+      setChartData({
+        labels: ["PU", "PK", "PBM", "PPU"],
+        datasets: [
+          {
+            data: [
+              (scorePU/arr.length).toFixed(2),
+              (scorePK/arr.length).toFixed(2),
+              (scorePBM/arr.length).toFixed(2),
+              (scorePPU/arr.length).toFixed(2)
+            ]
+          }
+        ],
+      })
+
+    })
+    .catch(e => {
+      console.log(e.response)
+    })
   }
 
   const openCamera = () =>{
@@ -91,7 +129,7 @@ export default ({navigation}) => {
     axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
       .then( res => {
         console.log("Ini dari getUserProfile")
-        console.log(res)
+        // console.log(res)
         console.log(authState?.userToken)
         if (res.data.data.avatar) setAvatar(res.data.data.avatar)
         else setAvatar("null")
@@ -161,6 +199,7 @@ export default ({navigation}) => {
   React.useEffect( () => {
     setChanged(false)
     getUserProfile()
+    getScore()
 
     console.log(university)
 
@@ -258,7 +297,7 @@ export default ({navigation}) => {
 
       <View style={[styles.centeredView, {marginVertical: 20}]}>
         <BarChart
-          data={items}
+          data={chartData}
           width={Dimensions.get("window").width*0.85} // from react-native
           height={250}
           fromZero
@@ -282,7 +321,14 @@ export default ({navigation}) => {
           }}
         />
       </View>
-      
+
+      <Text style={[styles.leftMediumText, {marginLeft: RFValue(15) }]}>Penjelasan : {"\n"}
+        <Text style={styles.leftSmallText}>*PU = Penalaran Umum{"\n"}</Text>
+        <Text style={styles.leftSmallText}>*PK = Pengetahuan Kuantitaif{"\n"}</Text>
+        <Text style={styles.leftSmallText}>*PBM = Pemahaman Bacaan dan Menulis{"\n"}</Text>
+        <Text style={styles.leftSmallText}>*PPU = Pemahaman dan Pengetahuan Umum{"\n"}</Text>
+      </Text>
+
       <TouchableOpacity style={[styles.button, {alignSelf: 'center'}]} onPress={() => logOut()}>
         <Text style={styles.buttonText}>Log out</Text>
       </TouchableOpacity> 

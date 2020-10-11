@@ -31,6 +31,7 @@ import {
 } from '@react-native-community/google-signin';
 import { enableScreens } from 'react-native-screens';
 import 'react-native-gesture-handler'
+import NetInfo from "@react-native-community/netinfo";
 
 //Context
 import { AuthContext } from './Context.js'
@@ -38,9 +39,14 @@ import { AuthContext } from './Context.js'
 //Components
 import { BottomTabComponent, AuthStackComponent, IntroStackComponent } from './Nav.js'
 
+//Style
+import styles from '../styles/mainScreenStyle.js'
+
 enableScreens()
 
 const App = () => {
+  const [internetConnected , setInternetConnected] = React.useState();
+
   const authReducer = (prevState, action) => {
     switch( action.type ) {
       case 'RETRIEVE_TOKEN': 
@@ -99,6 +105,15 @@ const App = () => {
         diamond: action.diamond
       }
     }
+  }
+
+  const getInternetConnection = () => {
+    NetInfo.fetch().then(state => {
+      console.log("Connection type", state.type);
+      console.log("Is connected?", state.isConnected);
+
+      setInternetConnected(state.isConnected)
+    });
   }
 
   // State with dispatch of authReducer
@@ -257,7 +272,7 @@ const App = () => {
             })
               .then(res => {
                 console.log("Ini dari set diamond")
-                console.log(res.data)
+                // console.log(res.data)
                 dispatch({type: 'SET DIAMOND', diamond: diamondValue})
               })
               .catch(e => {
@@ -274,6 +289,8 @@ const App = () => {
     }), [authState])
 
   //React.useEffect equivalent of componentDidMount
+  React.useEffect(() => getInternetConnection() )
+
   React.useEffect(() => {
     SplashScreen.hide();
     InteractionManager.runAfterInteractions( async () => {
@@ -310,7 +327,14 @@ const App = () => {
 
   return (
     <AuthContext.Provider value={authContext}>
-      { (authState?.isLoading === true) ?
+      { (internetConnected === false) ?
+        <View style={styles.centeredView} >
+          <Text style={{fontSize: 17}}>Perangkat tidak terkoneksi ke internet.</Text>
+          <Text style={{fontSize: 17}}>Silakan hubungkan perangkat ke internet,</Text>
+          <Text style={{fontSize: 17}}>kemudian membuka aplikasi ini kembali.</Text>
+        </View>
+        :
+        (authState?.isLoading === true) ?
         <View style={{flex:1,justifyContent:'center',alignItems:'center', backgroundColor: 'white'}}>
           <ActivityIndicator size="large" color="black"/>
         </View>

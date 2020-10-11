@@ -11,6 +11,7 @@ declare module '@react-native-community/google-signin' {declare module.exports: 
 declare module '@react-native-community/picker' { declare module.exports: any }
 declare module 'react-native-snap-carousel' { declare module.exports: any }
 declare module 'react-native-screens' { declare module.exports: any }
+declare module '@react-native-community/netinfo' { declare module.exports: any }
 
 declare module '../screens/HomeScreen.js' {  declare module.exports: any;  };
 declare module '../screens/FeaturesScreen.js' {  declare module.exports: any;  };

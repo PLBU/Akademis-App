@@ -10,7 +10,8 @@ import {
   ImageBackground,
   TouchableOpacity,
   FlatList,
-  ActivityIndicator
+  ActivityIndicator,
+  Linking
 } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import axios from 'react-native-axios';
@@ -98,18 +99,25 @@ export default ({navigation}) => {
           marginBottom: 3.5,
           overflow: 'hidden'
           }}>
-        { (item.youtube === undefined) ?
-            <ImageBackground source={item.image} style={styles.backgroundImage}>
-              <Text style={{fontSize: 30, marginLeft: 25, marginTop: 25}}>{item.title}</Text>
-              <Text style={{marginLeft: 25}}>{item.author}</Text>
-            </ImageBackground>
-            :
+        { (item.youtube !== undefined) ?
             <Thumbnail 
               url={item.youtube} 
               containerStyle={styles.centeredView}
               imageHeight={(Dimensions.get('window').width*0.8)*9/16} 
               imageWidth={Dimensions.get('window').width*0.8}
-            />    
+            />   
+          : (item.link) ?
+            <TouchableOpacity onPress={() => Linking.openURL(item.link)}>
+              <ImageBackground source={{uri: item.image}} style={styles.backgroundImage}>
+                <Text style={{fontSize: 30, marginLeft: 25, marginTop: 25}}>{item.title}</Text>
+                <Text style={{marginLeft: 25}}>{item.author}</Text>
+              </ImageBackground>
+            </TouchableOpacity>
+          :
+            <ImageBackground source={{uri: item.image}} style={styles.backgroundImage}>
+              <Text style={{fontSize: 30, marginLeft: 25, marginTop: 25}}>{item.title}</Text>
+              <Text style={{marginLeft: 25}}>{item.author}</Text>
+            </ImageBackground>
         }
       </View>
     )

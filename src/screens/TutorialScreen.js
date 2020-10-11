@@ -29,14 +29,14 @@ export default () => {
   const slides = [
     {
       key: '1',
-      title: 'Apa si itu Akademis.id?',
+      title: 'Apa sih itu Akademis.id?',
       text: 'Akademis.id merupakan platform tryout online yang selalu memberikan soal-soal yang berkualitas, up to date, dan tentunya menantang untuk dikerjakan.',
       image: tutorialImage1
     },
     {
       key: '2',
       title: 'TERPERCAYA',
-      text: 'Platform ini sudah dipercaya oleh lebih dari 150.000 siswa pejuang perguruan tinggi di Indonesia dan mendapat rating 9.2/10 berdasarkan survei yang diberikan kepada para pengguna tersebut.',
+      text: 'Platform ini sudah dipercaya oleh lebih dari 200.000 siswa pejuang perguruan tinggi di Indonesia dan mendapat rating 9.2/10 berdasarkan survei yang diberikan kepada para pengguna tersebut.',
       image: tutorialImage2
     },
     {

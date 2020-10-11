@@ -114,7 +114,7 @@ export default ({navigation}) => {
         borderBottomRightRadius: 50,
         }}
       >
-        <Text style={styles.titleText}>Aktivitasku</Text>
+        <Text style={styles.titleText}>Ranking</Text>
       </View>
 
       { (items.length != 0) ?

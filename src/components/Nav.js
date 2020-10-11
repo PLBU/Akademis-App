@@ -14,6 +14,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import { RFValue } from "react-native-responsive-fontsize";
 
 //Context
@@ -248,14 +249,14 @@ export const BottomTabComponent = () => {
           )
       }}
     />
-    <BottomTab.Screen name="Activity" component={ActivityScreen} 
+    {/* <BottomTab.Screen name="Ranking" component={ActivityScreen} 
       options={{
         tabBarButton: props => <TouchableOpacity {...props} disabled={authState?.isProfileSet ? false : true}/>,
         tabBarIcon: ({color}) => (
-            <Icon name="assignment" style={{marginTop: 9}} color={color} size={28} />
+            <FAIcon name="trophy" style={{marginTop: 9}} color={color} size={25} />
           )
       }}
-    />
+    /> */}
     <BottomTab.Screen name="Store" component={StoreScreen}     
       options={{
         tabBarButton: props => <TouchableOpacity {...props} disabled={authState?.isProfileSet ? false : true}/>,

@@ -75,7 +75,6 @@ export default ({navigation}) => {
     axios.get('https://dev.akademis.id/api/blog')
       .then( res => {
         var a = res.data.data.data
-        a.push({'youtube': 'https://www.youtube.com/watch?v=UEqZUFmSZKk'})
 
         setCarouselItems(a)
 
@@ -106,17 +105,16 @@ export default ({navigation}) => {
               imageHeight={(Dimensions.get('window').width*0.8)*9/16} 
               imageWidth={Dimensions.get('window').width*0.8}
             />   
-          : (item.link) ?
-            <TouchableOpacity onPress={() => Linking.openURL(item.link)}>
+          : (item.image) ?            
               <ImageBackground source={{uri: item.image}} style={styles.backgroundImage}>
-                <Text style={{fontSize: 30, marginLeft: 25, marginTop: 25}}>{item.title}</Text>
-                <Text style={{marginLeft: 25}}>{item.author}</Text>
+                <TouchableOpacity onPress={() => Linking.openURL(item.description)} style={{width: '100%', height: '100%'}}/>
               </ImageBackground>
-            </TouchableOpacity>
           :
             <ImageBackground source={{uri: item.image}} style={styles.backgroundImage}>
-              <Text style={{fontSize: 30, marginLeft: 25, marginTop: 25}}>{item.title}</Text>
-              <Text style={{marginLeft: 25}}>{item.author}</Text>
+              <TouchableOpacity onPress={() => Linking.openURL(item.description)} style={{width: '100%', height: '100%'}}>
+                <Text style={{fontSize: 30, marginLeft: 25, marginTop: 25}}>{item.title}</Text>
+                <Text style={{marginLeft: 25}}>{item.author}</Text>
+              </TouchableOpacity>
             </ImageBackground>
         }
       </View>

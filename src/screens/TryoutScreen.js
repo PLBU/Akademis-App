@@ -40,6 +40,8 @@ import diamond from '../assets/icons/diamond-currency.png'
 import notFoundImage from '../assets/images/image-not-found-bg-terang.png'
 import saintekSingleImage from '../assets/images/saintek-single.png'
 import soshumSingleImage from '../assets/images/soshum-single.png'
+import saintekSingleImageBox from '../assets/images/saintek-single-kotak-transparan.png'
+import soshumSingleImageBox from '../assets/images/soshum-single-kotak-transparan.png'
 import purchaseToImage from '../assets/images/purchase-to-bg-gelap.png'
 import buySuccessImage from '../assets/images/pembelian-sukses-bg-terang.png'
 
@@ -220,8 +222,13 @@ export default [
             return (
               <TouchableOpacity onPress={() => navigation.navigate('Details Unfinished Tryout', {...value.tryout, mytryout_id: value.id})} key={index}>
                 <View style={styles.smallCard}>
-                  <View style={{flex: 0.25, backgroundColor: theme.PRIMARY_DARK_COLOR, flexDirection: 'row', justifyContent: 'center', alignItems:'center'}}>
-                    {/* Belum tau mo isi apa */}
+                  <View style={{flex: 0.25, backgroundColor: theme.PRIMARY_DARK_COLOR, flexDirection: 'row', justifyContent: 'center', alignItems:'center', overflow: 'hidden'}}>
+                    {
+                      (value.tryout.name.toLowerCase().includes('saintek') ) ?
+                        <Image source={saintekSingleImageBox} style={{width: RFValue(90), height: RFValue(90)}}/>
+                      : 
+                        <Image source={soshumSingleImageBox} style={{width: RFValue(90), height: RFValue(90)}}/>  
+                    }
                   </View>
                   <View style={{flex: 0.75, justifyContent: 'center'}}>
                     <Text style={styles.leftSmallMediumText}>
@@ -254,7 +261,12 @@ export default [
               <TouchableOpacity onPress={() => navigation.navigate('Details Finished Tryout', {...value.tryout, mytryout_id: value.id})} key={index}>
                 <View style={styles.smallCard}>
                   <View style={{flex: 0.25, backgroundColor: theme.PRIMARY_DARK_COLOR, flexDirection: 'row', justifyContent: 'center', alignItems:'center'}}>
-                    {/* Belum tau mo isi */}
+                    {
+                      (value.tryout.name.toLowerCase().includes('saintek') ) ?
+                        <Image source={saintekSingleImageBox} style={{width: RFValue(90), height: RFValue(90)}}/>
+                      : 
+                        <Image source={soshumSingleImageBox} style={{width: RFValue(90), height: RFValue(90)}}/>  
+                    }
                   </View>
                   <View style={{flex: 0.75, justifyContent: 'center'}}>
                     <Text style={styles.leftSmallMediumText}>

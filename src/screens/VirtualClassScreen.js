@@ -70,10 +70,14 @@ export default [
             .then ( res1 => {
               axios.get(`https://dev.akademis.id/api/myclass?user_email=${res1.data.data.email}`)
                 .then( res2 => {
-                  let arrChecker = []
-                  res2.data.data.data.forEach( ({ id_event }) => arrChecker.push(id_event) )
+                  var arrChecker = []
+                  res2.data.data.forEach( ({ event_id }) => arrChecker.push(event_id) )
 
-                  setAvailableClasses(arr.filter( ({ id }) => (!arrChecker.some( (element) => (element == id) ) ) ) )
+                  var newArr = arr.filter( ({ id }) => !arrChecker.some( (element) => (element == id) ) ) 
+                  // console.log("INI DARI GET CLASS YANG KATALOG")
+                  // console.log(arr)
+                  // console.log(newArr)
+                  setAvailableClasses(newArr)
                 })
           })
         })
@@ -129,7 +133,7 @@ export default [
             )
         })
       }
-      { (availableClasses.find( ({ kategori }) => (subjectPicker === "") ? true : (kategori.toLowerCase() === subjectPicker) ) ) ?
+      { (availableClasses.some( ({ kategori }) => (subjectPicker === "") ? true : (kategori.toLowerCase() === subjectPicker) ) ) ?
           null 
         :
           <View style={styles.centeredView}>
@@ -155,10 +159,14 @@ export default [
             .then ( res1 => {
               axios.get(`https://dev.akademis.id/api/myclass?user_email=${res1.data.data.email}`)
                 .then( res2 => {
-                  let arrChecker = []
-                  res2.data.data.data.forEach( ({ event_id }) => arrChecker.push(event_id) )
+                  var arrChecker = []
+                  res2.data.data.forEach( ({ event_id }) => arrChecker.push(event_id) )
 
-                  setAvailableClasses(arr.filter( ({ id }) => arrChecker.some( (element) => (element == id) ) ) )
+                  var newArr = arr.filter( ({ id }) => arrChecker.some( (element) => (element == id) ) ) 
+                  // console.log("INI DARI GET MY CLASS")
+                  // console.log(arr)
+                  // console.log(newArr)
+                  setAvailableClasses(newArr)
                 })
           })
         })
@@ -210,7 +218,7 @@ export default [
             )
         })
       }
-      { (availableClasses.find( ({ kategori }) => (subjectPicker === "") ? true : (kategori.toLowerCase() === subjectPicker) ) ) ?
+      { (availableClasses.some( ({ kategori }) => (subjectPicker === "") ? true : (kategori.toLowerCase() === subjectPicker) ) ) ?
           null 
         :
           <View style={styles.centeredView}>
@@ -243,14 +251,15 @@ export default [
             "event_id": id
           })
             .then(res => {
+              console.log("FROM BUYING CLASS")
               console.log(res.data)
               setBuySuccessModal(true)
               setLoading(false)
-              _setDiamond(res.data.data.user_diamond)
+              _setDiamond(res.data.message.user_diamond)
             })
-            .catch(e => {console.log(e.response), setLoading(false), console.log("FAILED")})
+            .catch(e => {console.log("FAILED from buying Class"), console.log(e.resp), setLoading(false)})
         })
-        .catch(e => {console.log(e.response), setLoading(false), console.log("FAILED")})
+        .catch(e => { console.log("FAILED from getting User API"), console.log(e.response), setLoading(false)})
     }
 
     const getClass = () => {

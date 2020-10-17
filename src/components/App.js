@@ -100,10 +100,10 @@ const App = () => {
           isProfileSet: true,
         }
       case 'SET DIAMOND':
-      return {
-        ...prevState,
-        diamond: action.diamond
-      }
+        return {
+          ...prevState,
+          diamond: action.diamond
+        }
     }
   }
 
@@ -139,7 +139,7 @@ const App = () => {
           })
             .then(async res => {
               const userToken = String(res.data.data.id)
-              if (res.data.data.ptn && res.data.data.jurusan) dispatch({type: 'PROFILE SET'})
+              if (res.data.data.ptn && res.data.data.jurusan && res.data.data.ptn != "null" && res.data.data.jurusan != "null") dispatch({type: 'PROFILE SET'})
 
               try {
                 await AsyncStorage.setItem('userToken', userToken)
@@ -202,6 +202,7 @@ const App = () => {
               }
             }
 
+            console.log("INI DARI REGISTER")
             dispatch({type: 'REGISTER', token: userToken, password: password})
           })
           .catch(error => {
@@ -265,19 +266,19 @@ const App = () => {
               "email": res1.data.data.email,
               "password": authState?.password,
               "username": res1.data.data.username,
-              "ptn": res1.data.data.ptn,
-              "jurusan": res1.data.data.jurusan,
-              "diamond": diamondValue,
-              "avatar": res1.data.data.avatar
+              "ptn": (res1.data.data.ptn) ? res1.data.data.ptn : "null",
+              "jurusan": (res1.data.data.jurusan) ? res1.data.data.jurusan : "null",
+              "diamonds": diamondValue,
+              "avatar": (res1.data.data.avatar) ? res1.data.data.avatar : "null"
             })
               .then(res => {
-                console.log("Ini dari set diamond")
-                // console.log(res.data)
+                console.log("INI DARI SET DIAMOND BERHASIL")
+                // console.log(res.data.data.diamons)
                 dispatch({type: 'SET DIAMOND', diamond: diamondValue})
               })
               .catch(e => {
                 console.log("Ini dari SET DIAMOND")
-                console.log(e.response)
+                console.log(e.response.data.message)
               })
           })
           .catch(e => {
@@ -302,12 +303,12 @@ const App = () => {
         userPass = await AsyncStorage.getItem('userPass')
         console.log("Ini dari App.js pertama kali: " + userToken)
 
-        if (userToken === null && userPass == null) {
+        if (userToken === null && userPass === null) {
           dispatch({type: 'STOP LOADING'})
         } else {
           axios.get(`https://dev.akademis.id/api/user/${userToken}`)
             .then( res => {
-              if (res.data.data.ptn && res.data.data.jurusan) dispatch({type: 'PROFILE SET'})
+              if (res.data.data.ptn && res.data.data.jurusan && res.data.data.ptn != "null" && res.data.data.jurusan != "null") dispatch({type: 'PROFILE SET'})
               dispatch({type: 'RETRIEVE_TOKEN', token: userToken, password: userPass})
             })
             .catch ( (e) => {

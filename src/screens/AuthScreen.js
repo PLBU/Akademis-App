@@ -96,7 +96,7 @@ export default [
           </TouchableOpacity> 
           {/* <Text style={{color: 'gray', marginVertical: 20}}> Atau dengan metode lain </Text>
           <GoogleSigninButton
-            style={{ width: 300, height: 65,}}
+            style={{ width: 300, height: '65%',}}
             size={GoogleSigninButton.Size.Wide}
             color={GoogleSigninButton.Color.Light}
             onPress={ () => _signIn()}

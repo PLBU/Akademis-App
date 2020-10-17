@@ -135,7 +135,7 @@ export default [
             )
         })
       }
-      { (availTryouts.find( ({ name }) => (subjectPicker === "") ? true : (name.toLowerCase().includes(subjectPicker) ) ) ) ?
+      { (availTryouts.some( ({ name }) => (subjectPicker === "") ? true : (name.toLowerCase().includes(subjectPicker) ) ) ) ?
           null 
         :
           <View style={styles.centeredView}>
@@ -163,7 +163,7 @@ export default [
           )
         })
       }
-      { (availableTryouts.find( ({ subject }) => (subjectPicker === "") ? true : (subject === subjectPicker) ) ) ?
+      { (availableTryouts.some( ({ subject }) => (subjectPicker === "") ? true : (subject === subjectPicker) ) ) ?
           null 
         :
           <View style={styles.centeredView}>
@@ -244,7 +244,7 @@ export default [
             )
         })
       }
-      { (unfinishedTryouts.find( ({ tryout }) => (subjectPicker === "") ? true : (tryout.name.toLowerCase().includes(subjectPicker) ) ) ) ?
+      { (unfinishedTryouts.some( ({ tryout }) => (subjectPicker === "") ? true : (tryout.name.toLowerCase().includes(subjectPicker) ) ) ) ?
           null 
         :
           <View style={styles.centeredView}>
@@ -282,7 +282,7 @@ export default [
             )
         })
       }
-      { (finishedTryouts.find( ({ tryout }) => (subjectPicker === "") ? true : (tryout.name.toLowerCase().includes(subjectPicker) ) ) ) ?
+      { (finishedTryouts.some( ({ tryout }) => (subjectPicker === "") ? true : (tryout.name.toLowerCase().includes(subjectPicker) ) ) ) ?
           null 
         :
           <View style={styles.centeredView}>
@@ -660,6 +660,12 @@ export default [
           })
 
           var arrIsFinished = []
+          var itemProcessed = 0
+          var maxItems = 0
+
+          newArr.forEach(element => {
+            maxItems += element.length
+          })
 
           newArr.forEach(element => {
             element.map( (value) => {
@@ -678,9 +684,17 @@ export default [
                   console.log(arrIsFinished.filter( ( { id } ) => (value.id == id) )[0].finished )
 
                   setIsFinished(arrIsFinished)
+                  itemProcessed++
+
+                  console.log("ITEM PROCESSED IN FOR EACH")
+                  console.log(itemProcessed)
+                  console.log(maxItems)
+
+                  if (itemProcessed == maxItems) setLoading(false)
                 })
                 .catch(e => console.log(e) )
             })
+
           })
             
           setTests(arr)
@@ -691,8 +705,6 @@ export default [
           console.log(arr)
           console.log("Subtest response: ")
           console.log(newArr)
-
-          setLoading(false)
         })
         .catch(e => {console.log(e), setLoading(false) })
     }
@@ -709,18 +721,18 @@ export default [
             <Text style={{fontSize: RFValue(15) }}>{value.name}</Text>
             <Text style={{fontSize: RFValue(14), color: 'gray' }}>Waktu : {value.time} menit</Text>
 
-            { (isFinished.find( ( { id, finished } ) => (value.id == id && !finished) ) ) ?
+            { (isFinished.some( ( { id, finished } ) => (value.id == id && !finished) ) ) ?
               <TouchableOpacity 
                 style={[styles.button, {marginTop: 20}]} 
                 onPress={() => { navigation.navigate('Conduct Tryout', {...value})}} >
                   <Text style={styles.buttonText}>Mulai Subtest</Text>
               </TouchableOpacity>
-              : (!isFinished.find( ( { id } ) => (value.id == id) ) ) ?
-              <TouchableOpacity 
-                style={[styles.button, {marginTop: 20}]} 
-                onPress={() => { navigation.navigate('Conduct Tryout', {...value})}} >
-                  <Text style={styles.buttonText}>Mulai Subtest</Text>
-              </TouchableOpacity>
+              // : (!isFinished.some( ( { id } ) => (value.id == id) ) ) ?
+              // <TouchableOpacity 
+              //   style={[styles.button, {marginTop: 20}]} 
+              //   onPress={() => { navigation.navigate('Conduct Tryout', {...value})}} >
+              //     <Text style={styles.buttonText}>Mulai Subtest</Text>
+              // </TouchableOpacity>
               :
               <TouchableOpacity 
                 style={[styles.disabledButton, {marginTop: 20}]} 
@@ -733,6 +745,8 @@ export default [
     )
 
     React.useEffect(() => {
+      console.log("FIRST TIME SHOWN IN DETAILS")
+      console.log(isFinished)
       getData()
     }, [isFocused])
 
@@ -789,17 +803,18 @@ export default [
           containerStyle={{width: RFValue(320), alignSelf: 'center', borderRadius: 20, overflow: 'hidden', marginTop: RFValue(10), marginBottom: RFValue(30) }}
         />
 
-        { (!isFinished.find( ( {finished } ) => (!finished) ) ) ?
-          <TouchableOpacity 
-            style={[styles.button, {marginTop: 20}]} 
-            onPress={() => finishTryout()} >
-              <Text style={styles.buttonText}>Selesaikan tryout</Text>
-          </TouchableOpacity>
-          :
+        { (isFinished.some( ( { finished  } ) => {console.log("Ini dari SOME SIALAN: " + finished); return (finished == false)} ) ) 
+          ?
           <TouchableOpacity 
             style={[styles.disabledButton, {marginTop: 20}]} 
             disabled={true}>
               <Text style={styles.buttonText}>Tryout belum selesai</Text>
+          </TouchableOpacity>
+          :
+          <TouchableOpacity 
+            style={[styles.button, {marginTop: 20}]} 
+            onPress={() => finishTryout()} >
+              <Text style={styles.buttonText}>Selesaikan tryout</Text>
           </TouchableOpacity>
         }
 

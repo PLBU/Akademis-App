@@ -59,7 +59,7 @@ export default [
             Selamat Datang!
           </Text>
           <Text style={{fontSize: RFValue(23), color: theme.PRIMARY_DARK_COLOR, marginBottom: 32}} >
-            Calon Mahasiswa Baru PTN 2021
+            Calon Mahasiswa Baru PTN
           </Text>
           <Text style={{fontSize: RFValue(18), color: theme.PRIMARY_DARK_COLOR, marginBottom: 32}}>
             Silakan masuk untuk melanjutkan

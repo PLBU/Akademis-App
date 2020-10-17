@@ -273,7 +273,7 @@ const App = () => {
             })
               .then(res => {
                 console.log("INI DARI SET DIAMOND BERHASIL")
-                // console.log(res.data.data.diamons)
+                // console.log(res.data.data.diamonds)
                 dispatch({type: 'SET DIAMOND', diamond: diamondValue})
               })
               .catch(e => {

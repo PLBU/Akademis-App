@@ -18,6 +18,7 @@ import axios from 'react-native-axios';
 import { BarChart } from "react-native-chart-kit";
 import ImagePicker from 'react-native-image-picker';
 import { RFValue } from "react-native-responsive-fontsize";
+import { TextInput } from 'react-native-paper';
 
 //Context
 import { AuthContext } from '../components/Context.js'
@@ -78,19 +79,21 @@ export default ({navigation}) => {
         scorePPU += element.score[0].nilai_ppu
       })
 
-      setChartData({
-        labels: ["PU", "PK", "PBM", "PPU"],
-        datasets: [
-          {
-            data: [
-              (scorePU/arr.length).toFixed(2),
-              (scorePK/arr.length).toFixed(2),
-              (scorePBM/arr.length).toFixed(2),
-              (scorePPU/arr.length).toFixed(2)
-            ]
-          }
-        ],
-      })
+      if (arr.length > 0) {
+        setChartData({
+          labels: ["PU", "PK", "PBM", "PPU"],
+          datasets: [
+            {
+              data: [
+                (scorePU/arr.length).toFixed(2),
+                (scorePK/arr.length).toFixed(2),
+                (scorePBM/arr.length).toFixed(2),
+                (scorePPU/arr.length).toFixed(2)
+              ]
+            }
+          ],
+        })
+      }
 
     })
     .catch(e => {
@@ -158,7 +161,8 @@ export default ({navigation}) => {
       "password": authState?.password,
       "ptn": university,
       "jurusan": major,
-      "avatar": avatar
+      "avatar": avatar,
+      "diamonds": authState?.diamond
     })
       .then( res => {
         console.log("Ini dari PUT profile")
@@ -244,10 +248,23 @@ export default ({navigation}) => {
 
       <View style={{width: Dimensions.get('window').width*0.9, alignSelf: 'center', marginBottom: 20}}>
         <Text style={styles.leftMediumText}>Nama Lengkap : {"\n"}
-          <Text style={styles.leftSmallText}>{name}</Text>
+           <Text style={styles.leftSmallText}>{name}</Text>
+            
         </Text>
         <Text style={styles.leftMediumText}>Username : {"\n"}
-          <Text style={styles.leftSmallText}>{username}</Text>
+          { (username) 
+            ?<Text style={styles.leftSmallText}>{username}</Text>
+            : <TextInput 
+                style={styles.textInput}
+                label="Isi username"
+                onChangeText={val => setUsername(val)}
+                value={username}
+                mode='flat'
+                theme={{
+                  colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
+                  roundness: 10,
+                }}/>
+          }
         </Text>
         <Text style={styles.leftMediumText}>Email : {"\n"}
           <Text style={styles.leftSmallText}>{email}</Text>

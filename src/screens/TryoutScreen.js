@@ -79,11 +79,11 @@ export default [
               console.log(arrChecker)
 
               //Filtering the class that is not owned
-              var arr = res.data.data.data
+              var arr = res.data.data
               setAvailTryouts(arr.filter( ({ id }) => (!arrChecker.some( (element) => (element == id) ) ) ) )
 
               console.log("TRYOUT RESPONSE: ")
-              console.log(res.data.data.data)
+              console.log(res.data.data)
             })
         })
         .catch(e => console.log(e) )

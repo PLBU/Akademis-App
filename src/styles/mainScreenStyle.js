@@ -9,6 +9,13 @@ import { RFValue } from "react-native-responsive-fontsize";
 import theme from '../styles/theme.js'
 
 export default StyleSheet.create({
+  textInput: {
+    width: 300,
+    height: 50,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    marginBottom: 16,
+  },
   headerText:{
     color: 'white',
     fontSize: 24,

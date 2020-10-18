@@ -11,7 +11,8 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
-  Linking
+  Linking,
+  RefreshControl,
 } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import axios from 'react-native-axios';
@@ -31,6 +32,7 @@ import virtualClassImage from '../assets/images/virtual-class-bg-terang.png'
 import logo from '../assets/images/logo-akademis.png'
 
 export default ({navigation}) => {
+  const [refreshing, setRefreshing] = React.useState(false)
   const [posY, setPosY] = React.useState(0)
   const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
   const [carouselItems, setCarouselItems] = React.useState([])
@@ -70,7 +72,7 @@ export default ({navigation}) => {
     }
   }
 
-  React.useEffect( () => {
+  const getWOI = () => {
     setLoading(true)
     axios.get('https://dev.akademis.id/api/blog')
       .then( res => {
@@ -86,6 +88,22 @@ export default ({navigation}) => {
         console.log(err)
         setLoading(false)
       })
+  }
+
+  const wait = (timeout) => {
+    return new Promise(resolve => {
+      setTimeout(resolve, timeout);
+    })
+  }
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true)
+    getWOI()
+    wait(1000).then(() => setRefreshing(false))
+  }, [])
+
+  React.useEffect( () => {
+    getWOI()
   }, [] )
 
   const _renderItem = ({item,index}) => {
@@ -144,7 +162,12 @@ export default ({navigation}) => {
     </View>
   )
   else return (
-    <ScrollView onScroll={(e) => handleScroll(e)} contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white'}}>
+    <ScrollView 
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      onScroll={(e) => handleScroll(e)} 
+      contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white'}}>
       <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 180, borderBottomLeftRadius: 50, borderBottomRightRadius: 50, flexDirection: 'row'}}>
         <Image source={logo} style={{width: RFValue(30), height: RFValue(30), top: 10, left: 15}}/>
         <Text style={{fontSize: RFValue(30), color: 'white', top: RFValue(10), left: RFValue(25)}}>Akademis.id</Text>

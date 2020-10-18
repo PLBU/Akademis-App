@@ -11,7 +11,8 @@ import {
   Dimensions,
   Alert,
   PermissionsAndroid,
-  ActivityIndicator
+  ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import {
   Colors,
@@ -44,6 +45,7 @@ import diamond80 from '../assets/icons/diamond-80-revised.png'
 import diamond100 from '../assets/icons/diamond-100-revised.png'
 
 export default ({navigation}) => {
+  const [refreshing, setRefreshing] = React.useState(false)
   const [posY, setPosY] = React.useState(0)
   const [storeId, setStoreId] = React.useState(0)
   const [diamondBuy, setDiamondBuy] = React.useState(0)
@@ -54,6 +56,18 @@ export default ({navigation}) => {
   const [loading, setLoading] = React.useState(false)
 
   const { authState } = React.useContext(AuthContext)
+
+  const wait = (timeout) => {
+    return new Promise(resolve => {
+      setTimeout(resolve, timeout);
+    })
+  }
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true)
+
+    wait(1000).then(() => setRefreshing(false))
+  }, [])
 
   const openCamera = () =>{
     const options = {
@@ -251,7 +265,12 @@ export default ({navigation}) => {
     </View>
   )
   else return (
-    <ScrollView onScroll={(e) => handleScroll(e)} style={styles.bgAll}>
+    <ScrollView 
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      onScroll={(e) => handleScroll(e)} 
+      style={styles.bgAll}>
       {/* Modal pembelian diamond */}
       <Overlay
         animationType="fade"

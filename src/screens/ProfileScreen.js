@@ -10,7 +10,8 @@ import {
   Alert,
   ActivityIndicator,
   Dimensions,
-  PermissionsAndroid
+  PermissionsAndroid,
+  RefreshControl,
 } from 'react-native'
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { Picker } from '@react-native-community/picker';
@@ -38,6 +39,8 @@ import profile from '../assets/images/profile-icon.png'
 export default ({navigation}) => {
   const { _setProfile, logOut, authState, _setDiamond } = React.useContext(AuthContext)
 
+  const [refreshing, setRefreshing] = React.useState(false)
+
   const [posY, setPosY] = React.useState(0)
   const [avatar, setAvatar] = React.useState("null")
   const [name, setName] = React.useState('')
@@ -61,6 +64,23 @@ export default ({navigation}) => {
       }
     ],
   })
+
+  const wait = (timeout) => {
+    return new Promise(resolve => {
+      setTimeout(resolve, timeout);
+    })
+  }
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true)
+    setChanged(false)
+    getUserProfile()
+    getScore()
+
+    if (authState?.isProfileSet === false) 
+      Alert.alert("Please set up your profile", "Please choose your university and major")
+    wait(1000).then(() => setRefreshing(false))
+  }, [])
 
   const getScore = () => {
     axios.get(`https://dev.akademis.id/api/my-tryout/?user_id=${authState?.userToken}`)
@@ -208,8 +228,6 @@ export default ({navigation}) => {
     getUserProfile()
     getScore()
 
-    console.log(university)
-
     if (authState?.isProfileSet === false) 
       Alert.alert("Please set up your profile", "Please choose your university and major")
   }, [authState?.isProfileSet])
@@ -223,6 +241,9 @@ export default ({navigation}) => {
   else return (
     <ScrollView 
       // onScroll={(e) => handleScroll(e)} 
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
       contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
       <View style={{
         height: 150, 

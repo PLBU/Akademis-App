@@ -11,7 +11,8 @@ import {
   Image,
   ImageBackground,
   ActivityIndicator,
-  Linking
+  Linking,
+  RefreshControl,
 } from 'react-native';
 import { Picker } from '@react-native-community/picker';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -61,9 +62,22 @@ export default [
   ({navigation}) => {
     const { authState } = React.useContext(AuthContext)
 
+    const [refreshing, setRefreshing] = React.useState(false)
     const [subjectPicker, setSubject] = React.useState("")
     const [availTryouts, setAvailTryouts] = React.useState([])
     const isFocused = useIsFocused()
+
+    const wait = (timeout) => {
+      return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+      })
+    }
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true)
+      getTryouts()
+      wait(2000).then(() => setRefreshing(false))
+    }, [])
 
     const getTryouts = () => {
       axios.get('https://dev.akademis.id/api/tryout/')
@@ -94,7 +108,12 @@ export default [
     }, [isFocused])
 
     return (
-      <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
+      <ScrollView 
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        contentContainerStyle={{flexGrow: 1}}
+        style={styles.bgAll}>
         <Text style={{top: 10, left: 20, fontSize: 22, marginBottom: 15}}>Pilih Kategori</Text>
         <View style={[styles.pickerContainerStyle, {marginTop: 10, marginBottom: 10}]}>
           <Picker
@@ -176,10 +195,23 @@ export default [
   },
   //My Tryout
   ({navigation}) => {
+    const [refreshing, setRefreshing] = React.useState(false)
     const isFocused = useIsFocused()
     const [subjectPicker, setSubject] = React.useState("")
     const [availTryouts, setAvailTryouts] = React.useState([])
     const { authState } = React.useContext(AuthContext)
+
+    const wait = (timeout) => {
+      return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+      })
+    }
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true)
+      getTryouts()
+      wait(2000).then(() => setRefreshing(false))
+    }, [])
 
     const unfinishedTryouts = availTryouts.filter( ({is_finished}) => (is_finished === "not finished") )
     const finishedTryouts = availTryouts.filter( ({is_finished}) => (is_finished === "finished") )
@@ -201,7 +233,11 @@ export default [
     }, [isFocused])
 
     return (
-      <ScrollView contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
+      <ScrollView 
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
         <Text style={{top: 10, left: 20, fontSize: 22, marginBottom: 15}}>Pilih Kategori</Text>
         <View style={[styles.pickerContainerStyle, {marginTop: 10, marginBottom: 10}]}>
           <Picker
@@ -298,6 +334,7 @@ export default [
     const { id, name, price, start_at, end_at } = route.params
     const { authState, _setDiamond } = React.useContext(AuthContext)
 
+    const [refreshing, setRefreshing] = React.useState(false)
     const [tests, setTests] = React.useState([])
     const [subTests, setSubTests] = React.useState([[], []])
     const [activeSections, setActiveSections] = React.useState([])
@@ -312,6 +349,19 @@ export default [
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     var yyyy = today.getFullYear();
+
+    const wait = (timeout) => {
+      return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+      })
+    }
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true)
+      getData()
+      wait(2000).then(() => setRefreshing(false))
+    }, [])
+
 
     today = dd + '/' + mm + '/' + yyyy;
 
@@ -431,7 +481,11 @@ export default [
       </View>
     )
     else return (
-      <ScrollView contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
+      <ScrollView 
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
         {/* Modal share method */}
         <Overlay
           animationType="fade"
@@ -623,12 +677,25 @@ export default [
     const { authState } = React.useContext(AuthContext)
     const isFocused = useIsFocused()
     
+    const [refreshing, setRefreshing] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
 
     const [tests, setTests] = React.useState([])
     const [subTests, setSubTests] = React.useState([[], []])
     const [isFinished, setIsFinished] = React.useState([{id: -1, finished: false}])
     const [activeSections, setActiveSections] = React.useState([])
+
+    const wait = (timeout) => {
+      return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+      })
+    }
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true)
+      getData()
+      wait(2000).then(() => setRefreshing(false))
+    }, [])
 
     const finishTryout = () => {
       setLoading(true)
@@ -756,7 +823,11 @@ export default [
       </View>
     )
     else return (
-      <ScrollView contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
+      <ScrollView 
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
 
         <View style={{
           width: Dimensions.get('window').width*0.7, 
@@ -827,6 +898,7 @@ export default [
     const { authState } = React.useContext(AuthContext)
     const isFocused = useIsFocused()
     
+    const [refreshing, setRefreshing] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
 
     const [tests, setTests] = React.useState([])
@@ -835,6 +907,20 @@ export default [
     const [ranks, setRanks] = React.useState([])
     const [myRank, setMyRank] = React.useState({rank: null, nilai: null})
     const [score, setScore] = React.useState({})
+
+    const wait = (timeout) => {
+      return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+      })
+    }
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true)
+      getData()
+      getRanking()
+      getScore()
+      wait(2000).then(() => setRefreshing(false))
+    }, [])
 
     const getRanking = () => {
       axios.get(`https://dev.akademis.id/api/ranking?tryout_id=${id}`)
@@ -853,16 +939,6 @@ export default [
         .catch(e => {
           console.log(e)
         })
-
-      // axios.get(`https://dev.akademis.id/api/ranking?user_id=${authState?.userToken}&tryout_id=${id}`)
-      //   .then(res => {
-      //     console.log('MY RANKING: ')
-      //     console.log(res.data.data)
-      //     setMyRank(res.data.data)
-      //   })
-      //   .catch(e => {
-      //     console.log(e)
-      //   })
     }
 
     const getScore = () => {
@@ -976,7 +1052,11 @@ export default [
       </View>
     )
     else return (
-      <ScrollView contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
+      <ScrollView 
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        contentContainerStyle={[{flexGrow: 1}, styles.bgAll]}>
 
         <View style={{
           width: Dimensions.get('window').width*0.7, 
@@ -1032,6 +1112,7 @@ export default [
               ? <Text style={styles.leftSmallText}>Anda belum tercantum pada ranking</Text> 
               : <Text style={styles.leftSmallText}>{myRank.rank} dengan nilai: {myRank.nilai}</Text> }
           </Text>
+          {ranks.length !==0 &&
           <Table style={{marginHorizontal: RFValue(10), marginVertical: 15}} borderStyle={{borderWidth: 0.5, borderColor: theme.SECONDARY_DARK_COLOR}}>
             <Row 
               data={['No', 'Nama', 'PTN', 'Jurusan', 'Nilai']} 
@@ -1045,7 +1126,7 @@ export default [
                 textStyle={{fontSize: 15, margin: 2.5, color: 'dark-gray'}} 
                 widthArr={[0.08 * (Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) )]}/>
             ))}
-          </Table>
+          </Table>}
         </View>
 
       </ScrollView>

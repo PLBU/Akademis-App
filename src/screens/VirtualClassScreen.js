@@ -14,7 +14,8 @@ import {
   Image,
   ImageBackground,
   ActivityIndicator,
-  Linking
+  Linking,
+  RefreshControl,
 } from 'react-native';
 import { Picker } from '@react-native-community/picker';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -59,8 +60,22 @@ export default [
   ({navigation}) => {
     const { authState } = React.useContext(AuthContext)
     const isFocused = useIsFocused()
+
+    const [refreshing, setRefreshing] = React.useState(false)
     const [subjectPicker, setSubject] = React.useState("")
     const [availableClasses, setAvailableClasses] = React.useState([])
+
+    const wait = (timeout) => {
+      return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+      })
+    }
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true)
+      getClasses()
+      wait(1000).then(() => setRefreshing(false))
+    }, [])
 
     const getClasses = () => {
       axios.get('https://dev.akademis.id/api/class')
@@ -89,7 +104,11 @@ export default [
     }, [isFocused])
 
     return (
-      <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
+      <ScrollView 
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
         <Text style={{top: 10, left: 20, fontSize: 22, marginBottom: 15}}>Pilih Kategori</Text>
         <View style={[styles.pickerContainerStyle, {marginTop: 10, marginBottom: 10}]}>
           <Picker
@@ -148,8 +167,22 @@ export default [
   ({navigation}) => {
     const { authState } = React.useContext(AuthContext)
     const isFocused = useIsFocused()
+
+    const [refreshing, setRefreshing] = React.useState(false)
     const [subjectPicker, setSubject] = React.useState("")
     const [availableClasses, setAvailableClasses] = React.useState([])
+
+    const wait = (timeout) => {
+      return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+      })
+    }
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true)
+      getMyClasses()
+      wait(1000).then(() => setRefreshing(false))
+    }, [])
 
     const getMyClasses = () => {
       axios.get('https://dev.akademis.id/api/class')
@@ -178,7 +211,11 @@ export default [
     }, [isFocused])
 
     return (
-      <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
+      <ScrollView 
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
         <Text style={{top: 10, left: 20, fontSize: 22, marginBottom: 15}}>Pilih Kategori</Text>
         <View style={[styles.pickerContainerStyle, {marginTop: 10, marginBottom: 10}]}>
           <Picker
@@ -234,6 +271,7 @@ export default [
     const { id } = route.params
     const { authState, _setDiamond } = React.useContext(AuthContext)
 
+    const [refreshing, setRefreshing] = React.useState(false)
     const [myRating, setMyRating] = React.useState(0)
     const [data, setData] = React.useState({})
     const [teacher, setTeacher] = React.useState({})
@@ -241,6 +279,18 @@ export default [
     const [rating, setRating] = React.useState(null)
     const [buySuccessModal, setBuySuccessModal] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
+
+    const wait = (timeout) => {
+      return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+      })
+    }
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true)
+      getClass()
+      wait(1000).then(() => setRefreshing(false))
+    }, [])
 
     const buyClass = () => {
       setLoading(true)
@@ -281,7 +331,7 @@ export default [
     }
 
     React.useEffect( () => {
-      getClass();
+      getClass()
     }, [])
 
     if (loading === true) return (
@@ -290,7 +340,11 @@ export default [
       </View>
     )
     else return (
-      <ScrollView contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
+      <ScrollView 
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
         {/* Modal pembelian berhasil */}
         <Overlay
           animationType="fade"
@@ -416,6 +470,7 @@ export default [
     const { id } = route.params
     const { authState } = React.useContext(AuthContext)
 
+    const [refreshing, setRefreshing] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
     const [myRating, setMyRating] = React.useState(null)
     const [kritik, setKritik] = React.useState(null)
@@ -428,6 +483,20 @@ export default [
     const [questionVisible, setQuestionVisible] = React.useState(false);
     const [questionText, setQuestionText] = React.useState(null)
     const [isReviewable, setIsReviewable] = React.useState(false)
+
+    const wait = (timeout) => {
+      return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+      })
+    }
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true)
+      getClass()
+      getNotif()
+      navigation.setParams({notif: () => setNotifVisible(true) })
+      wait(1000).then(() => setRefreshing(false))
+    }, [])
 
     const getClass = () => {
       setLoading(true)
@@ -518,7 +587,11 @@ export default [
     )
     else return (
       <View style={[{flex: 1}, styles.bgAll]}>
-        <ScrollView contentContainerStyle={{flexGrow: 1,}}>
+        <ScrollView 
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          contentContainerStyle={{flexGrow: 1,}}>
 
           {/* Notif */}
           <Overlay

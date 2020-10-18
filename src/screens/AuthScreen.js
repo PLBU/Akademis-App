@@ -193,6 +193,9 @@ export default [
           <Text style={{color: 'orangered', marginBottom: 16}}>
             {(passwordConfirm === password) ? null : 'Pastikan konfirmasi passwordmu benar'}
           </Text>
+          <Text style={{color: 'orangered', marginBottom: 16}}>
+            {(username === username.toLowerCase() && !(username.indexOf(' ') >= 0) ) ? null : 'Username harus huruf kecil semua & tidak ada spasi'}
+          </Text>
           <TouchableOpacity 
             style={
               (name.length !== 0 && 
@@ -201,7 +204,9 @@ export default [
               email.includes('@') && 
               email.includes('.') &&
               password === passwordConfirm &&
-              password.length >= 8) 
+              password.length >= 8 &&
+              username === username.toLowerCase() && 
+              !(username.indexOf(' ') >= 0) ) 
               ? styles.button 
               : styles.disabledButton} 
             onPress={() => register(name, username, email, password)}
@@ -212,9 +217,10 @@ export default [
               email.includes('@') && 
               email.includes('.') &&
               password === passwordConfirm &&
-              password.length >= 8)
-            }
-          >
+              password.length >= 8 &&
+              username === username.toLowerCase() && 
+              !(username.indexOf(' ') >= 0) )
+            }>
             <Text style={{fontSize: 18,}}>Daftar</Text>
           </TouchableOpacity> 
         </View>

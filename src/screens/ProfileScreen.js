@@ -42,6 +42,7 @@ export default ({navigation}) => {
   const [avatar, setAvatar] = React.useState("null")
   const [name, setName] = React.useState('')
   const [username, setUsername] = React.useState('')
+  const [newUsername, setNewUsername] = React.useState('')
   const [email, setEmail] = React.useState('')
   const [university, setUniversity] = React.useState("null")
   const [major, setMajor] = React.useState(null)
@@ -156,7 +157,7 @@ export default ({navigation}) => {
     setLoading(true)
     axios.put(`https://dev.akademis.id/api/user/${authState?.userToken}`, {
       "name": name,
-      "username": username,
+      "username": (username && username!= "null") ? username : newUsername,
       "email": email,
       "password": authState?.password,
       "ptn": university,
@@ -252,20 +253,30 @@ export default ({navigation}) => {
             
         </Text>
         <Text style={styles.leftMediumText}>Username : {"\n"}
-          { (username) 
+          { (username && username != "null") 
             ?<Text style={styles.leftSmallText}>{username}</Text>
-            : <TextInput 
-                style={styles.textInput}
-                label="Isi username"
-                onChangeText={val => setUsername(val)}
-                value={username}
-                mode='flat'
-                theme={{
-                  colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
-                  roundness: 10,
-                }}/>
+            : <View style={{height: 60, justifyContent: 'center', alignItems: 'center', width: Dimensions.get("window").width*0.85}}>
+                <TextInput 
+                  style={styles.textInput}
+                  label="Isi username"
+                  onChangeText={val => {
+                    setNewUsername(val)
+                    if (val.length !== 0 && 
+                      val === val.toLowerCase() && 
+                      !(val.indexOf(' ') >= 0) && 
+                      university && university != "null" &&
+                      major && major != "null") setChanged(true)
+                    else setChanged(false) }}
+                  value={newUsername}
+                  mode='flat'
+                  theme={{
+                    colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
+                    roundness: 10,
+                  }}/>
+              </View>
           }
         </Text>
+
         <Text style={styles.leftMediumText}>Email : {"\n"}
           <Text style={styles.leftSmallText}>{email}</Text>
         </Text>
@@ -278,7 +289,11 @@ export default ({navigation}) => {
             onValueChange={ (itemValue) =>
               {setUniversity(itemValue)
               setMajor(majors[itemValue][0])
-              if (itemValue) setChanged(true)}
+              if (itemValue && username && username != "null") setChanged(true)
+              else if (itemValue &&
+                newUsername.length !== 0 && 
+                newUsername === newUsername.toLowerCase() && 
+                !(newUsername.indexOf(' ') >= 0) ) setChanged(true) }
             }
             >
             <Picker.Item label="Choose" value={"null"}/>
@@ -295,8 +310,11 @@ export default ({navigation}) => {
             style={styles.pickerStyle}
             onValueChange={ (itemValue) =>
               {setMajor(itemValue)
-              setChanged(true)}
-            }>
+              if (itemValue && username && username != "null") setChanged(true)
+              else if (itemValue &&
+                newUsername.length !== 0 && 
+                newUsername === newUsername.toLowerCase() && 
+                !(newUsername.indexOf(' ') >= 0) ) setChanged(true) } }>
             {
               majors[String(university) ].map( (item, index) => (
                 <Picker.Item label={item} value={item} key={index}/>
@@ -306,8 +324,18 @@ export default ({navigation}) => {
         </View>
       </View>
 
+      <Text style={{color: 'orangered', marginBottom: 10, alignSelf: 'center'}}>
+        { (username && username != "null") 
+          ? null
+          : (newUsername === newUsername.toLowerCase() && !(newUsername.indexOf(' ') >= 0) && newUsername.length != 0) 
+          ? null 
+          : 'Username diisi huruf kecil semua, tidak ada spasi'}
+      </Text>
+
       {changed &&
-      <TouchableOpacity style={[styles.button, {alignSelf: 'center'}]} onPress={() => saveChanges()}>
+      <TouchableOpacity 
+        style={[styles.button, {alignSelf: 'center'}]} 
+        onPress={() => saveChanges()}>
         <Text style={styles.buttonText}>Save</Text>
       </TouchableOpacity>}
 

@@ -139,7 +139,11 @@ const App = () => {
           })
             .then(async res => {
               const userToken = String(res.data.data.id)
-              if (res.data.data.ptn && res.data.data.jurusan && res.data.data.ptn != "null" && res.data.data.jurusan != "null") dispatch({type: 'PROFILE SET'})
+              if (res.data.data.ptn && res.data.data.jurusan 
+                  && res.data.data.ptn != "null" && res.data.data.jurusan != "null"
+                  && res.data.data.username && res.data.data.username != "null") {
+                dispatch({type: 'PROFILE SET'})
+              }
 
               try {
                 await AsyncStorage.setItem('userToken', userToken)
@@ -265,7 +269,7 @@ const App = () => {
               "name": res1.data.data.name,
               "email": res1.data.data.email,
               "password": authState?.password,
-              "username": res1.data.data.username,
+              "username": (res1.data.data.username) ? res1.data.data.username : "null",
               "ptn": (res1.data.data.ptn) ? res1.data.data.ptn : "null",
               "jurusan": (res1.data.data.jurusan) ? res1.data.data.jurusan : "null",
               "diamonds": diamondValue,
@@ -308,7 +312,11 @@ const App = () => {
         } else {
           axios.get(`https://dev.akademis.id/api/user/${userToken}`)
             .then( res => {
-              if (res.data.data.ptn && res.data.data.jurusan && res.data.data.ptn != "null" && res.data.data.jurusan != "null") dispatch({type: 'PROFILE SET'})
+              if (res.data.data.ptn && res.data.data.jurusan 
+                  && res.data.data.ptn != "null" && res.data.data.jurusan != "null"
+                  && res.data.data.username && res.data.data.username != "null") {
+                dispatch({type: 'PROFILE SET'})
+              }
               dispatch({type: 'RETRIEVE_TOKEN', token: userToken, password: userPass})
             })
             .catch ( (e) => {

@@ -65,7 +65,7 @@ export default [
     const getClasses = () => {
       axios.get('https://dev.akademis.id/api/class')
         .then( res => {
-          var arr = res.data.data.data
+          var arr = res.data.data
           axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
             .then ( res1 => {
               axios.get(`https://dev.akademis.id/api/myclass?user_email=${res1.data.data.email}`)
@@ -154,7 +154,7 @@ export default [
     const getMyClasses = () => {
       axios.get('https://dev.akademis.id/api/class')
         .then( res => {
-          var arr = res.data.data.data
+          var arr = res.data.data
           axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
             .then ( res1 => {
               axios.get(`https://dev.akademis.id/api/myclass?user_email=${res1.data.data.email}`)

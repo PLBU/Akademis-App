@@ -13,8 +13,6 @@ export default StyleSheet.create({
     width: 300,
     height: 50,
     backgroundColor: 'white',
-    borderRadius: 10,
-    marginBottom: 16,
   },
   headerText:{
     color: 'white',

@@ -664,8 +664,8 @@ export default [
                 top: Dimensions.get('window').height*0.25
                 }}
               >
-                <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%'}}>
-                  <Text style={[styles.mediumWhiteText, {margin: 10, left: 15}]}>Beri pertanyaan pada gurumu!</Text>
+                <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%', justifyContent: 'center'}}>
+                  <Text style={[styles.mediumWhiteText, {fontSize: RFValue(16), alignSelf: 'center', }]}>Beri pertanyaan pada gurumu!</Text>
                 </View>
                 <View style={{ width: Dimensions.get('window').width*0.8, alignItems: 'center'}}>
                   <TextInput 

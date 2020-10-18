@@ -514,7 +514,7 @@ export default [
               margin: 20,
               borderRadius: 25,
               overflow: 'hidden',
-              flex: 0.75
+              flex: 0.78
               }}
             >
               <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%'}}>

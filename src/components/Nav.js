@@ -261,7 +261,7 @@ export const BottomTabComponent = () => {
       options={{
         tabBarButton: props => <TouchableOpacity {...props} disabled={authState?.isProfileSet ? false : true}/>,
         tabBarIcon: ({color}) => (
-            <FAIcon name="clipboard-list" style={{marginTop: 9}} color={color} size={27} />
+            <FAIcon name="clipboard-list" style={{marginTop: 7.5}} color={color} size={27} />
           )
       }}
     />

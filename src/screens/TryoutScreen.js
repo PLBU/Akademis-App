@@ -344,6 +344,7 @@ export default [
     const [buktiTag, setTag] = React.useState(null)
     const [buktiShare, setShare] = React.useState(null)
     const [shareModal, setShareModal] = React.useState(false)
+    const [isShared, setIsShared] = React.useState(false)
 
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -411,7 +412,7 @@ export default [
           setShare(null)
           Alert.alert("Berhasil", "Pembelian dengan metode share berhasil, tunggu verifikasi dari tim kami ya")
         })
-        .catch(e => console.log(e))
+        .catch(e => console.log(e) )
     }
 
     const buyTryout = () => {
@@ -451,7 +452,15 @@ export default [
           console.log("Subtest response: ")
           console.log(newArr)
 
-          setLoading(false)
+          axios.get(`https://dev.akademis.id/api/share?tryout_id=${id}&user_id=${authState?.userToken}`)
+            .then(res => {
+              if (res.data.data.length > 0) setIsShared(true)
+              setLoading(false)
+            })
+            .catch(e => {
+              setLoading(false)
+              console.log(e) 
+            })
         })
         .catch(e => {console.log(e), setLoading(false)} )
     }
@@ -662,10 +671,16 @@ export default [
               { (authState?.diamond >= price) ? "Beli dengan diamond" : "Diamond anda tidak cukup"}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={ () => {
-              setShareModal(true)
-          }}>
-            <Text style={styles.buttonText}>Beli via share ke media sosial</Text>
+          <TouchableOpacity 
+            style={(isShared) ? styles.disabledButton : styles.button} 
+            disabled={(isShared) ? true : false}
+            onPress={ () => {
+                setShareModal(true)
+            }}>
+            <Text style={styles.buttonText}>
+            {(isShared) 
+              ? "Menunggu verifikasi" 
+              : "Beli via share medsos"}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

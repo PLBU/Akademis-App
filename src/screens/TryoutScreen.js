@@ -345,6 +345,7 @@ export default [
     const [buktiShare, setShare] = React.useState(null)
     const [shareModal, setShareModal] = React.useState(false)
     const [isShared, setIsShared] = React.useState(false)
+    const [isVerified, setVerified] = React.useState(false)
 
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -373,6 +374,7 @@ export default [
           skipBackup: true,
           path: 'images',
         },
+        quality: 0.25
       };
       
       ImagePicker.launchImageLibrary(options, (response) => {
@@ -410,6 +412,7 @@ export default [
           setFollow(null)
           setTag(null)
           setShare(null)
+          getData()
           Alert.alert("Berhasil", "Pembelian dengan metode share berhasil, tunggu verifikasi dari tim kami ya")
         })
         .catch(e => console.log(e) )
@@ -431,6 +434,28 @@ export default [
           setLoading(false)
         })
         .catch(e => {console.log(e.response), setLoading(false) } )
+    }
+
+    const claimTryout = async () => {
+      setLoading(true)
+      await _setDiamond(price)
+      await axios.post('https://dev.akademis.id/api/my-tryout', {
+        "tryout_id": id,
+        "user_id": authState?.userToken,
+        "is_verified": "not verified",
+        "is_finished": "not finished",
+        "is_premium": "premium"
+      })
+        .then(res => {
+          console.log(res)
+          _setDiamond(res.data.data.user_diamond)
+          setBuySuccessModal(true)
+          setLoading(false)
+        })
+        .catch(e => {
+          console.log("ERROR DI CLAIM TRYOUT")
+          console.log(e.response), setLoading(false) 
+        })
     }
 
     const getData = () => {
@@ -455,6 +480,7 @@ export default [
           axios.get(`https://dev.akademis.id/api/share?tryout_id=${id}&user_id=${authState?.userToken}`)
             .then(res => {
               if (res.data.data.length > 0) setIsShared(true)
+              if (res.data.data[0].status == "verified") setVerified(true)
               setLoading(false)
             })
             .catch(e => {
@@ -672,13 +698,15 @@ export default [
             </Text>
           </TouchableOpacity>
           <TouchableOpacity 
-            style={(isShared) ? styles.disabledButton : styles.button} 
-            disabled={(isShared) ? true : false}
+            style={(isVerified) ? styles.button : (isShared) ? styles.disabledButton : styles.button} 
+            disabled={(isVerified) ? false : (isShared) ? true : false}
             onPress={ () => {
-                setShareModal(true)
+                (isVerified) ? claimTryout() : setShareModal(true)
             }}>
             <Text style={styles.buttonText}>
-            {(isShared) 
+            { (isVerified)
+              ? "Klaim Tryout"
+              : (isShared) 
               ? "Menunggu verifikasi" 
               : "Beli via share medsos"}</Text>
           </TouchableOpacity>

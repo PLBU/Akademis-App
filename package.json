@@ -48,7 +48,9 @@
     "react-native-tab-view": "^2.15.1",
     "react-native-table-component": "^1.2.1",
     "react-native-thumbnail-video": "^0.1.2",
-    "react-native-vector-icons": "^7.0.0"
+    "react-native-vector-icons": "^7.0.0",
+    "react-native-webview": "^10.9.2",
+    "rn-fetch-blob": "^0.12.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

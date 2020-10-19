@@ -261,34 +261,38 @@ const App = () => {
       _introDone: () => dispatch({type: 'INTRO DONE'}),
       _setProfile: () => dispatch({type: 'PROFILE SET'}),
       _setDiamond: async (diamondValue) => {
-        const userToken = await AsyncStorage.getItem('userToken')
+        // const userToken = await AsyncStorage.getItem('userToken')
 
-        axios.get(`https://dev.akademis.id/api/user/${userToken}`)
-          .then(res1 => {
-            axios.put(`https://dev.akademis.id/api/user/${userToken}`,{
-              "name": res1.data.data.name,
-              "email": res1.data.data.email,
-              "password": authState?.password,
-              "username": (res1.data.data.username) ? res1.data.data.username : "null",
-              "ptn": (res1.data.data.ptn) ? res1.data.data.ptn : "null",
-              "jurusan": (res1.data.data.jurusan) ? res1.data.data.jurusan : "null",
-              "diamonds": diamondValue,
-              "avatar": (res1.data.data.avatar) ? res1.data.data.avatar : "null"
+        return new Promise ( (resolve, reject) => 
+          axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
+            .then(res1 => {
+              axios.put(`https://dev.akademis.id/api/user/${authState?.userToken}`,{
+                "name": res1.data.data.name,
+                "email": res1.data.data.email,
+                "password": authState?.password,
+                "username": (res1.data.data.username) ? res1.data.data.username : "null",
+                "ptn": (res1.data.data.ptn) ? res1.data.data.ptn : "null",
+                "jurusan": (res1.data.data.jurusan) ? res1.data.data.jurusan : "null",
+                "diamonds": diamondValue,
+                "avatar": (res1.data.data.avatar) ? res1.data.data.avatar : "null"
+              })
+                .then(res => {
+                  console.log("INI DARI SET DIAMOND BERHASIL")
+                  console.log(res.data.data.diamonds)
+                  dispatch({type: 'SET DIAMOND', diamond: diamondValue})
+                  resolve()
+                })
+                .catch(e => {
+                  console.log("Ini dari SET DIAMOND")
+                  console.log(e.response.data.message)
+                  reject()
+                })
             })
-              .then(res => {
-                console.log("INI DARI SET DIAMOND BERHASIL")
-                console.log(res.data.data.diamonds)
-                dispatch({type: 'SET DIAMOND', diamond: diamondValue})
-              })
-              .catch(e => {
-                console.log("Ini dari SET DIAMOND")
-                console.log(e.response.data.message)
-              })
-          })
-          .catch(e => {
-            console.log("Ini dari SET DIAMOND")
-            console.log(e.response)
-          })
+            .catch(e => {
+              console.log("Ini dari SET DIAMOND")
+              console.log(e.response)
+              reject()
+            }) )
       },
       authState,
     }), [authState])

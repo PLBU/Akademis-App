@@ -164,8 +164,9 @@ export default ({navigation}) => {
         setEmail(res.data.data.email)
         setUniversity(res.data.data.ptn)
         setMajor(res.data.data.jurusan)
-        setLoading(false)
         _setDiamond(res.data.data.diamond)
+          .then( () => setLoading(false) )
+          .catch( e => {console.log(e), setLoading(false) })
       })
       .catch (e => {
         setLoading(false)

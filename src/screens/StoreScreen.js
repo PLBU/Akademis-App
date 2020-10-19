@@ -24,6 +24,8 @@ import { Overlay } from 'react-native-elements';
 import { Picker } from '@react-native-community/picker';
 import ImagePicker from 'react-native-image-picker';
 import axios from 'react-native-axios';
+import RNFetchBlob from 'rn-fetch-blob'
+import { WebView } from 'react-native-webview';
 
 //Importing style
 import styles from '../styles/mainScreenStyle.js';
@@ -48,11 +50,12 @@ export default ({navigation}) => {
   const [refreshing, setRefreshing] = React.useState(false)
   const [posY, setPosY] = React.useState(0)
   const [storeId, setStoreId] = React.useState(0)
-  const [diamondBuy, setDiamondBuy] = React.useState(0)
-  const [diamondPrice, setDiamondPrice] = React.useState(0)
-  const [modal, setModal] = React.useState(false)
-  const [paymentMethod, setPaymentMethod] = React.useState('')
-  const [buktiBayar, setBuktiBayar] = React.useState(null)
+  // const [diamondBuy, setDiamondBuy] = React.useState(0)
+  // const [diamondPrice, setDiamondPrice] = React.useState(0)
+  // const [modal, setModal] = React.useState(false)
+  // const [paymentMethod, setPaymentMethod] = React.useState('')
+  // const [buktiBayar, setBuktiBayar] = React.useState(null)
+  const [isWebView, setIsWebView] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
 
   const { authState } = React.useContext(AuthContext)
@@ -65,7 +68,7 @@ export default ({navigation}) => {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true)
-
+    getMyDiamond()
     wait(1000).then(() => setRefreshing(false))
   }, [])
 
@@ -76,11 +79,10 @@ export default ({navigation}) => {
         skipBackup: true,
         path: 'images',
       },
+      quality: 0.6
     };
     
     ImagePicker.showImagePicker(options, (response) => {
-      console.log('Response = ', response);
-
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
@@ -92,7 +94,9 @@ export default ({navigation}) => {
 
         // You can also display the image using data:
         // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-        setBuktiBayar(source.uri)
+        // setBuktiBayar(source.uri)
+        // console.log(response.uri)
+        setBuktiBayar(response)
     }
   })}
 
@@ -169,34 +173,107 @@ export default ({navigation}) => {
     },
   ]
 
-  const buyDiamond = (id) => {
+  const getMyDiamond = () => {
     setLoading(true)
-    axios.post(`https://dev.akademis.id/api/checkout`,{
-      "store_id": id,
-      "user_id": authState?.userToken,
-      "method": paymentMethod,
-      "status": "not verified",
-      "payment": buktiBayar
-    })
-      .then(res => {
-        console.log(res) 
-
-        setBuktiBayar(null)
-        setPaymentMethod(null)
-        Alert.alert("Berhasil", "Pembelian berhasil, tunggu verifikasi dari tim kami ya")
-        setModal(false)
-        setLoading(false)
+    axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
+      .then( res => {
+        _setDiamond(res.data.data.diamond)
+          .then( () => setLoading(false) )
+          .catch( e => {console.log(e), setLoading(false) })
       })
-      .catch(e => {console.log(e.response.data), setLoading(false)})
+      .catch( e => {console.log(e), setLoading(false) })
+  }
+
+  const buyDiamond = (id) => {
+    // setLoading(true)
+
+    // const formData = new FormData()
+
+    // formData.append('store_id', id)
+    // formData.append('user_id', authState?.userToken)
+    // formData.append('method', paymentMethod)
+    // formData.append('status', "not verified")
+    // formData.append('payment', buktiBayar.data)
+
+    // // RNFetchBlob.fetch('POST', 'https://dev.akademis.id/api/checkout', {
+    // //     // dropbox upload headers
+    // //     'Content-Type': 'multipart/form-data'
+    // //     // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
+    // //     // Or simply wrap the file path with RNFetchBlob.wrap().
+    // // }, [
+    // //     // element with property `filename` will be transformed into `file` in form data
+    // //     // custom content type
+    // //   { name: 'payment', type: 'image/jpeg', filename: 'image.jpg', data: RNFetchBlob.wrap(buktiBayar.uri) },
+    // //   { name: 'store_id', data: id }, 
+    // //   { name: 'user_id', data: authState?.userToken }, 
+    // //   { name: 'status', data: "not verified" }, 
+    // //   { name: 'method', data: paymentMethod }, 
+    // // ]).then((res) => {
+    // //   console.log("BERHASIL")
+    // //   console.log(res)
+
+    // //   setBuktiBayar(null)
+    // //   setPaymentMethod(null)
+    // //   Alert.alert("Berhasil", "Pembelian berhasil, tunggu verifikasi dari tim kami ya")
+    // //   setModal(false)
+    // //   setLoading(false)
+    // // })
+    // // .catch((err) => {
+    // //   // error handling ..
+    // //   console.log("FORM DATA ERROR")
+    // //   console.log(error)
+
+    // //   setLoading(false)
+    // // })
+
+    // fetch('https://dev.akademis.id/api/checkout',{
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'multipart/form-data',
+    //       },
+    //     body: formData
+    //   })
+    //   .then((response) => {
+    //     console.log("BERHASIL") 
+    //     console.log(response)
+
+    //     setBuktiBayar(null)
+    //     setPaymentMethod(null)
+    //     Alert.alert("Berhasil", "Pembelian berhasil, tunggu verifikasi dari tim kami ya")
+    //     setModal(false)
+    //     setLoading(false)
+    //   })
+    //   .catch((error) => {
+    //     console.log("FORM DATA ERROR")
+    //     console.log(error.response)
+
+    //     setLoading(false)
+    //   })
+
+    // // axios.post(`https://dev.akademis.id/api/checkout`,{
+    // //   "store_id": id,
+    // //   "user_id": authState?.userToken,
+    // //   "method": paymentMethod,
+    // //   "status": "not verified",
+    // //   "payment": buktiBayar
+    // // })
+    // //   .then(res => {
+    // //     console.log(res) 
+
+    // //     setBuktiBayar(null)
+    // //     setPaymentMethod(null)
+    // //     Alert.alert("Berhasil", "Pembelian berhasil, tunggu verifikasi dari tim kami ya")
+    // //     setModal(false)
+    // //     setLoading(false)
+    // //   })
+    // //   .catch(e => {console.log("ERROR DI BELI DIAMOND"), console.log(e.response.data), setLoading(false)})
   }
 
   const _renderItem = ({item}) => (
       <TouchableOpacity 
         onPress={() => {
           setStoreId(item.id)
-          setModal(true) 
-          setDiamondBuy(item.value)
-          setDiamondPrice(item.harga)
+          setIsWebView(true)
           }}>
           <View style={styles.squareCard}>
             <View style={{flex: 0.6, justifyContent: 'center', alignItems: 'center'}}>
@@ -256,12 +333,27 @@ export default ({navigation}) => {
   };
 
   React.useEffect( () => {
+    getMyDiamond()
     requestCameraPermission()
   }, [])
 
   if (loading === true) return (
     <View style={{flex:1,justifyContent:'center',alignItems:'center', backgroundColor: 'white'}}>
       <ActivityIndicator size="large" color="black"/>
+    </View>
+  ) 
+  else if (isWebView) return (
+    <View style={{flex: 1}}>
+      <WebView source={{ uri: `https://akademis.id/payment/index.php?user_id=${authState?.userToken}&store_id=${storeId}` }}/>
+      <View style={{position: 'absolute', top: 10, right: 10, elevation: 5, height: 30, width: 30,}}>
+        <TouchableOpacity 
+          onPress={() => {
+            setIsWebView(false)
+            setStoreId(null) }} 
+          style={{height: 30, width: 30}}>
+          <FontAwesomeIcon name='close' size={35} color='white'/>
+        </TouchableOpacity>
+      </View>
     </View>
   )
   else return (
@@ -272,7 +364,7 @@ export default ({navigation}) => {
       onScroll={(e) => handleScroll(e)} 
       style={styles.bgAll}>
       {/* Modal pembelian diamond */}
-      <Overlay
+      {/* <Overlay
         animationType="fade"
         fullscreen={false}
         isVisible={modal}
@@ -323,9 +415,8 @@ export default ({navigation}) => {
                   onValueChange={ (itemValue) => setPaymentMethod(itemValue) }>
                   <Picker.Item label="Choose" value={null}/>
                   <Picker.Item label="Go Pay" value={"gopay"}/>
-                  <Picker.Item label="Dana" value={"dana"}/>
+                  <Picker.Item label="Ovo" value={"ovo"}/>
                   <Picker.Item label="BCA" value={"bca"}/>
-                  <Picker.Item label="BNI" value={"bni"}/>
                 </Picker>
               </View>
 
@@ -345,7 +436,7 @@ export default ({navigation}) => {
             </View>
           </View>
         </View>
-      </Overlay>
+      </Overlay> */}
       
       <View style={{
         height: 125, 

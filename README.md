@@ -7,5 +7,5 @@
 2. Run <code>npx react-native run-android</code> to start the app, you can use real device or emulator
 
 ## TODO
-
+1. Store blm bener
 ## NOTE

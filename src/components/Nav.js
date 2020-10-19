@@ -249,19 +249,19 @@ export const BottomTabComponent = () => {
           )
       }}
     />
-    {/* <BottomTab.Screen name="Ranking" component={ActivityScreen} 
-      options={{
-        tabBarButton: props => <TouchableOpacity {...props} disabled={authState?.isProfileSet ? false : true}/>,
-        tabBarIcon: ({color}) => (
-            <FAIcon name="trophy" style={{marginTop: 9}} color={color} size={25} />
-          )
-      }}
-    /> */}
     <BottomTab.Screen name="Store" component={StoreScreen}     
       options={{
         tabBarButton: props => <TouchableOpacity {...props} disabled={authState?.isProfileSet ? false : true}/>,
         tabBarIcon: ({color}) => (
             <Icon name="local-grocery-store" style={{marginTop: 9}} color={color} size={28} />
+          )
+      }}
+    />
+    <BottomTab.Screen name="Riwayat" component={ActivityScreen} 
+      options={{
+        tabBarButton: props => <TouchableOpacity {...props} disabled={authState?.isProfileSet ? false : true}/>,
+        tabBarIcon: ({color}) => (
+            <FAIcon name="clipboard-list" style={{marginTop: 9}} color={color} size={27} />
           )
       }}
     />

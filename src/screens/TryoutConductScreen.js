@@ -243,13 +243,13 @@ export default ( { route, navigation } ) => {
                         <View style={{ width: Dimensions.get('window').width*0.8, alignItems: 'center'}}>
                             <Image source={unsureImage} style={{width: RFValue(200), height: RFValue(150) }}/>
                             <TouchableOpacity 
-                            style={[styles.button, {width: RFValue(270) } ]} 
+                            style={[styles.button, {width: RFValue(250) } ]} 
                             onPress={() => {setFinishedModal(false), finished() } }
                             >
                                 <Text style={styles.buttonText}>Yakin</Text>
                             </TouchableOpacity>
                             <TouchableOpacity 
-                            style={[styles.button, {width: RFValue(270) } ]} 
+                            style={[styles.button, {width: RFValue(250) } ]} 
                             onPress={() => {setFinishedModal(false)} }
                             >
                                 <Text style={styles.buttonText}>Belum nih</Text>
@@ -285,10 +285,10 @@ export default ( { route, navigation } ) => {
                         <View style={{ width: Dimensions.get('window').width*0.8, alignItems: 'center'}}>
                             <Image source={timesUpImage} style={{width: RFValue(200), height: RFValue(150) }}/>
                             <TouchableOpacity 
-                                style={[styles.button, {width: RFValue(270) } ]} 
+                                style={[styles.button, {width: RFValue(250) } ]} 
                                 onPress={() => {finished() } }
                             >
-                                <Text style={styles.buttonText}>Oke de</Text>
+                                <Text style={styles.buttonText}>Oke deh</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

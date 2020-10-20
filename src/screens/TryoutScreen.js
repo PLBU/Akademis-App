@@ -415,7 +415,10 @@ export default [
           getData()
           Alert.alert("Berhasil", "Pembelian dengan metode share berhasil, tunggu verifikasi dari tim kami ya")
         })
-        .catch(e => console.log(e) )
+        .catch(e => {
+          Alert.alert("Error", "Pembelian dengan metode share gagal diunggah ke server kami, silakan coba lagi")
+          console.log(e)
+        })
     }
 
     const buyTryout = () => {
@@ -433,7 +436,11 @@ export default [
           setBuySuccessModal(true)
           setLoading(false)
         })
-        .catch(e => {console.log(e.response), setLoading(false) } )
+        .catch(e => {
+          Alert.alert("Error", e.response)
+          console.log(e.response)
+          setLoading(false) 
+        })
     }
 
     const claimTryout = async () => {
@@ -453,6 +460,7 @@ export default [
           setLoading(false)
         })
         .catch(e => {
+          Alert.alert("Error", e.response)
           console.log("ERROR DI CLAIM TRYOUT")
           console.log(e.response), setLoading(false) 
         })
@@ -723,6 +731,7 @@ export default [
     const [refreshing, setRefreshing] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
 
+    const [status, setStatus] = React.useState("draft")
     const [tests, setTests] = React.useState([])
     const [subTests, setSubTests] = React.useState([[], []])
     const [isFinished, setIsFinished] = React.useState([{id: -1, finished: false}])
@@ -751,6 +760,7 @@ export default [
           navigation.goBack()
         })
         .catch(e => {
+          Alert.alert("Error", e.response)
           console.log(e) 
           setLoading(false)
         })
@@ -761,6 +771,7 @@ export default [
       axios.get(`https://dev.akademis.id/api/tryout/${id}`)
         .then(res => {
           var arr = res.data.data.test
+          var newStatus = res.data.data.status
           var newArr = []
 
           console.log('Finished tryout or not?')
@@ -809,6 +820,7 @@ export default [
             
           setTests(arr)
           setSubTests(newArr)
+          setStatus(newStatus)
 
           console.log(arrIsFinished)
           console.log("Data response: ")
@@ -831,7 +843,13 @@ export default [
             <Text style={{fontSize: RFValue(15) }}>{value.name}</Text>
             <Text style={{fontSize: RFValue(14), color: 'gray' }}>Waktu : {value.time} menit</Text>
 
-            { (isFinished.some( ( { id, finished } ) => (value.id == id && !finished) ) ) ?
+            { (status != "published") 
+            ? <TouchableOpacity 
+                style={[styles.disabledButton, {marginTop: 20}]} 
+                disabled={true}>
+                  <Text style={styles.buttonText}>Belum tersedia</Text>
+              </TouchableOpacity>
+            : (isFinished.some( ( { id, finished } ) => (value.id == id && !finished) ) ) ?
               <TouchableOpacity 
                 style={[styles.button, {marginTop: 20}]} 
                 onPress={() => { navigation.navigate('Conduct Tryout', {...value})}} >
@@ -1039,17 +1057,17 @@ export default [
           return score.nilai_geografi
         case "Kimia":
           return score.nilai_kimia
-        case "Mat Ipa":
+        case "Matematika Saintek":
           return score.nilai_mat_ipa
-        case "Mat Soshum":
-          return score.nilai_biologi
-        case "PBM":
+        case "Matematika Soshum":
+          return score.nilai_mat_soshum
+        case "Pemahaman Bacaan":
           return score.nilai_pbm
-        case "PK":
+        case "Pengetahuan Kuantitatif":
           return score.nilai_pk
-        case "PPU":
+        case "Pemahaman Umum":
           return score.nilai_ppu
-        case "PU":
+        case "Penalaran Umum":
           return score.nilai_pu
         case "Sejarah":
           return score.nilai_sejarah

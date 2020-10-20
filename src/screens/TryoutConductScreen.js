@@ -74,7 +74,7 @@ export default ( { route, navigation } ) => {
                 Alert.alert('Skor anda:', `Anda benar ${getScore()}/${questions.length}`) 
                 navigation.goBack()
             })
-            .catch( e => console.log(e) )
+            .catch( e =>{Alert.alert("Error", e.response), console.log(e) })
     }
 
     const countdown = () => {

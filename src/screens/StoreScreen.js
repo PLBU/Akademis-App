@@ -24,7 +24,6 @@ import { Overlay } from 'react-native-elements';
 import { Picker } from '@react-native-community/picker';
 import ImagePicker from 'react-native-image-picker';
 import axios from 'react-native-axios';
-import RNFetchBlob from 'rn-fetch-blob'
 import { WebView } from 'react-native-webview';
 
 //Importing style
@@ -313,10 +312,9 @@ export default ({navigation}) => {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA,
         {
-          title: "Cool Photo App Camera Permission",
+          title: "Meminta izin untuk mengakses kamera",
           message:
-            "Cool Photo App needs access to your camera " +
-            "so you can take awesome pictures.",
+            "Akses kamera diperlukan untuk mengunggah beberapa foto",
           buttonNeutral: "Ask Me Later",
           buttonNegative: "Cancel",
           buttonPositive: "OK"

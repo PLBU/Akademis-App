@@ -16,6 +16,8 @@ import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import { RFValue } from "react-native-responsive-fontsize";
+import axios from 'react-native-axios';
+import { useIsFocused } from '@react-navigation/native'
 
 //Context
 import { AuthContext } from '../components/Context.js'
@@ -243,7 +245,7 @@ export const BottomTabComponent = () => {
   >
     <BottomTab.Screen name="Home" component={HomeScreen} 
       options={{
-        tabBarButton: props => <TouchableOpacity {...props} disabled={authState?.isProfileSet ? false : true}/>,
+        tabBarButton: props => <TouchableOpacity {...props}/>,
         tabBarIcon: ({color}) => (
             <Icon name="home" style={{marginTop: 9}} color={color} size={30} />
           )
@@ -251,7 +253,7 @@ export const BottomTabComponent = () => {
     />
     <BottomTab.Screen name="Store" component={StoreScreen}     
       options={{
-        tabBarButton: props => <TouchableOpacity {...props} disabled={authState?.isProfileSet ? false : true}/>,
+        tabBarButton: props => <TouchableOpacity {...props}/>,
         tabBarIcon: ({color}) => (
             <Icon name="local-grocery-store" style={{marginTop: 9}} color={color} size={28} />
           )
@@ -259,7 +261,7 @@ export const BottomTabComponent = () => {
     />
     <BottomTab.Screen name="Riwayat" component={ActivityScreen} 
       options={{
-        tabBarButton: props => <TouchableOpacity {...props} disabled={authState?.isProfileSet ? false : true}/>,
+        tabBarButton: props => <TouchableOpacity {...props}/>,
         tabBarIcon: ({color}) => (
             <FAIcon name="clipboard-list" style={{marginTop: 7.5}} color={color} size={27} />
           )

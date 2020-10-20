@@ -7,5 +7,7 @@
 2. Run <code>npx react-native run-android</code> to start the app, you can use real device or emulator
 
 ## TODO
-1. Store blm bener
+1. Debug Profile yg usernamenya null blm bisa update
+2. nama dari "Subtest" di score harus sesuai
+
 ## NOTE

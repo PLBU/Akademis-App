@@ -74,11 +74,8 @@ export default ({navigation}) => {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true)
     setChanged(false)
-    getUserProfile()
     getScore()
-
-    if (authState?.isProfileSet === false) 
-      Alert.alert("Please set up your profile", "Please choose your university and major")
+    getUserProfile()
     wait(1000).then(() => setRefreshing(false))
   }, [])
 
@@ -149,28 +146,34 @@ export default ({navigation}) => {
   })}
 
   const getUserProfile = () => {
-    setLoading(true)
-    axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
-      .then( res => {
-        console.log("Ini dari getUserProfile")
-        // console.log(res)
-        console.log(authState?.userToken)
-        console.log("INI DIAMONDNYA DIA")
-        // console.log(res.data.data.avatar)
-        if (res.data.data.avatar) setAvatar(res.data.data.avatar)
-        else setAvatar("null")
-        setName(res.data.data.name)
-        setUsername(res.data.data.username)
-        setEmail(res.data.data.email)
-        setUniversity(res.data.data.ptn)
-        setMajor(res.data.data.jurusan)
-        _setDiamond(res.data.data.diamond)
-          .then( () => setLoading(false) )
-          .catch( e => {console.log(e), setLoading(false) })
-      })
-      .catch (e => {
-        setLoading(false)
-        console.log(e)
+    return new Promise ( (resolve, reject) => {
+      setLoading(true)
+      axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
+        .then( res => {
+          console.log("Ini dari getUserProfile")
+          // console.log(res)
+          console.log(authState?.userToken)
+          console.log("INI DIAMONDNYA DIA")
+          // console.log(res.data.data.avatar)
+          if (res.data.data.avatar) setAvatar(res.data.data.avatar)
+          else setAvatar("null")
+          setName(res.data.data.name)
+          setUsername(res.data.data.username)
+          setEmail(res.data.data.email)
+          setUniversity(res.data.data.ptn)
+          setMajor(res.data.data.jurusan)
+          if (res.data.data.ptn && res.data.data.jurusan 
+              && res.data.data.ptn != "null" && res.data.data.jurusan != "null"
+              && res.data.data.username && res.data.data.username != "null") _setProfile()
+          _setDiamond(res.data.data.diamond)
+            .then( () => setLoading(false), resolve() )
+            .catch( e => {console.log(e), setLoading(false), reject()})
+        })
+        .catch (e => {
+          setLoading(false)
+          console.log(e)
+          reject()
+        })
       })
   }
 
@@ -187,21 +190,21 @@ export default ({navigation}) => {
       "diamonds": authState?.diamond
     })
       .then( res => {
-        console.log("Ini dari PUT profile")
-        console.log(res)
+        console.log("Ini dari PUT profile BERHASIL")
+        // console.log(res)
         setAvatar(res.data.data.avatar)
         setName(res.data.data.name)
         setUsername(res.data.data.username)
         setEmail(res.data.data.email)
         setUniversity(res.data.data.ptn)
         setMajor(res.data.data.jurusan)
-
-        setChanged(false)
         _setProfile()
+        setChanged(false)
         setLoading(false)
       })
       .catch (e => {
-        console.log("Ini dari PUT profile")
+        Alert.alert("Error", "Gagal mengupdate profilmu ke server, coba lagi")
+        console.log("Ini dari PUT profile GAGAL")
         console.log(e.response) 
         setLoading(false)
       })
@@ -226,11 +229,15 @@ export default ({navigation}) => {
 
   React.useEffect( () => {
     setChanged(false)
-    getUserProfile()
     getScore()
-
-    if (authState?.isProfileSet === false) 
-      Alert.alert("Please set up your profile", "Please choose your university and major")
+    getUserProfile()
+      .then( () => {
+        console.log("IS PROFILE SET?")
+        console.log(authState?.isProfileSet)
+        if (authState?.isProfileSet === false) 
+          Alert.alert("Tolong set profilmu", "Silakan pilih universitas dan jurusan yang kamu ingini")
+      })
+      .catch(e => console.log(e) )
   }, [authState?.isProfileSet])
 
 

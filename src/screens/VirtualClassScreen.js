@@ -307,9 +307,13 @@ export default [
               setLoading(false)
               _setDiamond(res.data.message.user_diamond)
             })
-            .catch(e => {console.log("FAILED from buying Class"), console.log(e.resp), setLoading(false)})
+            .catch(e => {
+              Alert.alert("Error", e.response)
+              console.log("FAILED from buying Class"), console.log(e.response), setLoading(false)})
         })
-        .catch(e => { console.log("FAILED from getting User API"), console.log(e.response), setLoading(false)})
+        .catch(e => { 
+          Alert.alert("Error", e.response)
+          console.log("FAILED from getting User API"), console.log(e.response), setLoading(false)})
     }
 
     const getClass = () => {
@@ -509,14 +513,40 @@ export default [
 
           reviews.forEach( el => sumRating += parseFloat(el.kualitas) )
 
-          setLoading(false)
+
           setData(res.data.data)
           setTeacher(res.data.data.teacher)
           setSession(res.data.data.sesi)          
           if (reviews.length > 0) setRating(sumRating/reviews.length)
           if (dateEnd - today <= 0) setIsReviewable(true)
+
+          getReview()
+            .then(() => setLoading(false) )
+            .catche( e => console.log(e) )
         })
         .catch( e => {console.log(e), setLoading(false) })
+    }
+
+    const getReview = () => {
+      return new Promise( (resolve, reject) => {
+        axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
+        .then( res => {
+          axios.get(`https://dev.akademis.id/api/review?event_id=${id}`)
+            .then( res1 => {
+              console.log(res1.data.data)
+              if (res1.data.data.some( ({user_email}) => (res.data.data.email == user_email) ) ) setIsReviewable(false)
+              resolve()
+            })
+            .catch(e => {
+              console.log(e)
+              reject() 
+            })
+        })
+        .catch(e => {
+          console.log(e)
+          reject()
+        })
+      })
     }
 
     const getNotif = () => {
@@ -567,10 +597,11 @@ export default [
               Alert.alert("Sukses", "Penilaian berhasil diunggah")
               navigation.goBack()
             })
+            .catch(e => console.log(e) )
         })
         .catch(e => {
           console.log(e)
-          Alert.alert("Gagal", "Penilaian gagal diunggah")
+          Alert.alert("Gagal", "Penilaian gagal diunggah, silakan coba lagi")
         })
     }
 

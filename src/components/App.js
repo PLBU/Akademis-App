@@ -179,6 +179,7 @@ const App = () => {
           await AsyncStorage.removeItem('userPass')
         } catch (e) {
           {
+            Alert.alert("Error", "Gagal log out")
             console.error(e)
             dispatch({type: 'STOP LOADING'})
           }

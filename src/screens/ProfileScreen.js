@@ -380,10 +380,12 @@ export default ({navigation}) => {
           showValuesOnTopOfBars	
           yAxisInterval={1} // optional, defaults to 1
           chartConfig={{
-            backgroundGradientFrom: theme.SECONDARY_DARK_COLOR,
-            backgroundGradientTo: theme.SECONDARY_DARK_COLOR,
+            backgroundGradientFrom: theme.PRIMARY_DARK_COLOR,
+            backgroundGradientTo: theme.PRIMARY_DARK_COLOR,
             decimalPlaces: 2, // optional, defaults to 2dp
             color: () => 'white',
+            fillShadowGradient: 'white', 
+            fillShadowGradientOpacity: 100,
             labelColor: () => 'white',
             style: {
               borderRadius: 20,

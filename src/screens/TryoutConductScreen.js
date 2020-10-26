@@ -37,7 +37,7 @@ export default ( { route, navigation } ) => {
 
     const [activeScreen, setActiveScreen] = React.useState(0)
 
-    const [questions, setQuestions] = React.useState([{number: "", question: "", image: null, opsi: [] } ])
+    const [questions, setQuestions] = React.useState([])
     const [answers, setAnswers] = React.useState([])
     const [keyAnswers, setKeyAnswers] = React.useState([])
 
@@ -50,12 +50,12 @@ export default ( { route, navigation } ) => {
 
     const finished = () => {        
         new Promise ( (resolve, reject) => {
-            answers.forEach( (item, index) => {
+            answers.forEach( (item) => {
                 axios.post(`https://dev.akademis.id/api/answer`, {
-                    "soal_id": index+1,
+                    "soal_id": item.soal_id,
                     "subtest_id": id,
                     "user_id": authState?.userToken,
-                    "option": item
+                    "option": item.option
                 })
                     .then(res => {
                         console.log("ANSWERS ACCEPTED")
@@ -116,12 +116,12 @@ export default ( { route, navigation } ) => {
                         alignItems: 'center',
                         justifyContent: 'center' 
                     }, 
-                (answers[item.number-1] !== '0') ? {backgroundColor: theme.SECONDARY_DARK_COLOR}
+                (answers[item.number-1].option !== '0') ? {backgroundColor: theme.SECONDARY_DARK_COLOR}
                 :{backgroundColor: 'white'}
                 ]
             }>
                 <Text style={[{fontSize: 18},
-                    (answers[item.number-1] !== '0') ? {color: 'white'} : {color: 'black'}
+                    (answers[item.number-1].option !== '0') ? {color: 'white'} : {color: 'black'}
                 ]}>{item.number}</Text>
             </View>
         </TouchableOpacity>
@@ -142,10 +142,14 @@ export default ( { route, navigation } ) => {
         return true
     }
 
-    const updateAnswers = (index, value) => {
+    const updateAnswers = (index, newOption, soalId) => {
         let answersCopy = [...answers]
 
-        answersCopy[index] = value
+        answersCopy[index] = {
+            option: newOption,
+            soal_id: soalId
+        }
+
         setAnswers(answersCopy)
     }
 
@@ -153,8 +157,12 @@ export default ( { route, navigation } ) => {
         var correctAns = 0
 
         answers.forEach( (item, index) => {
-            if (item === keyAnswers[index] ) correctAns++
+            if (item.option === keyAnswers[index] ) correctAns++
         })
+
+        console.log("COMPARE: ")
+        console.log(answers)
+        console.log(keyAnswers)
 
         return correctAns
     }
@@ -164,15 +172,28 @@ export default ( { route, navigation } ) => {
         axios.get(`https://dev.akademis.id/api/subtest/${id}`)
             .then(res => {
                 var arr = res.data.data.soal
+                var newArr = []
 
                 console.log('Questions: ')
                 console.log(arr)
 
+                arr.forEach(element => {
+                  newArr.push({
+                      option: "0",
+                      soal_id: element.id
+                  })  
+                })
+
+                console.log('Initial answers: ')
+                console.log(newArr)
+
                 setQuestions(arr)
-                setAnswers(Array.from(Array(arr.length), () => "0") )
+                setAnswers(newArr)
                 setLoading(false)
             })
-            .catch(e => {console.log(e), setLoading(false) })
+            .catch(e => {
+                console.log("Error di getData di TryoutConduct" + e)
+                setLoading(false) })
     }
 
     const getKeyAnswers = () => {
@@ -186,6 +207,8 @@ export default ( { route, navigation } ) => {
                 })
 
                 setKeyAnswers(newArr)
+                console.log("KEY ANSWERS: ")
+                console.log(newArr)
             })
             .catch(e => console.log(e) )
     }
@@ -313,27 +336,31 @@ export default ( { route, navigation } ) => {
                     <View style={styles.horizontalRuler}/>
 
                     <View style={styles.bigCard}>
-                        <Text style={[styles.mediumLargeText, {margin: 10,}]}>{questions[activeScreen].question}</Text>
                         { (questions[activeScreen].image) ?
-                            <Image source={questions[activeScreen].image} />
+                            <Image 
+                                resizeMode={'contain'}
+                                style={{width: RFValue(350), height: RFValue(350) }} 
+                                source={{uri: questions[activeScreen].image}} />
                             :
                             null
                         }
-
+                        <Text style={[styles.mediumText, {margin: 10, textAlign: 'justify'}]}>{questions[activeScreen].question}</Text>
+                        
                         {questions[activeScreen].opsi.map( (value, index) => (
-                            <TouchableOpacity style={styles.multipleChoice} 
-                                onPress={() => updateAnswers(activeScreen, value.option)}
-                            >
-                                { (answers[activeScreen] === value.option) ? 
-                                    <MaterialCommunityIcon name='checkbox-blank-circle' color={theme.PRIMARY_DARK_COLOR} size={23}/>
+                            <TouchableOpacity 
+                                key={index}
+                                style={styles.multipleChoice} 
+                                onPress={() => updateAnswers(activeScreen, value.option, value.soal_id)}>
+                                { (answers[activeScreen].option === value.option) ? 
+                                    <MaterialCommunityIcon name='checkbox-blank-circle' color={theme.PRIMARY_DARK_COLOR} size={22}/>
                                     :
-                                    <MaterialCommunityIcon name='checkbox-blank-circle-outline' color='black' size={23}/>
+                                    <MaterialCommunityIcon name='checkbox-blank-circle-outline' color='black' size={22}/>
                                 }
                                 <Text style={
-                                    (answers[activeScreen] === value.option) ? 
-                                        [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: theme.PRIMARY_DARK_COLOR}]
+                                    (answers[activeScreen].option === value.option) ? 
+                                        [styles.mediumText, {marginLeft: 8, marginRight: 40, color: theme.PRIMARY_DARK_COLOR, textAlign: 'justify'}]
                                         :
-                                        [styles.mediumLargeText, {marginLeft: 8, marginRight: 40, color: 'black'}]}
+                                        [styles.mediumText, {marginLeft: 8, marginRight: 40, color: 'black', textAlign: 'justify'}]}
                                 >{value.answer}</Text>
                             </TouchableOpacity>
                         ))}

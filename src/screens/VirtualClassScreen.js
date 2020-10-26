@@ -88,11 +88,21 @@ export default [
                   var arrChecker = []
                   res2.data.data.forEach( ({ event_id }) => arrChecker.push(event_id) )
 
-                  var newArr = arr.filter( ({ id }) => !arrChecker.some( (element) => (element == id) ) ) 
+                  var newArr = arr.filter( ({ id }) => !arrChecker.some( (element) => (element == id) ) )
+                  var newestArr = newArr.filter( ({date_start}) => {
+                    const dateStartVC = new Date(date_start)
+                    const today = new Date()
+
+                    console.log("dateStartVC: " + dateStartVC)
+                    console.log("dateToday: " + today)
+
+                    return dateStartVC.getTime() > today.getTime()
+                  })  
                   // console.log("INI DARI GET CLASS YANG KATALOG")
                   // console.log(arr)
-                  // console.log(newArr)
-                  setAvailableClasses(newArr)
+                  console.log("INI YANG UDA DI FILTER")
+                  console.log(newestArr)
+                  setAvailableClasses(newestArr)
                 })
           })
         })
@@ -116,8 +126,13 @@ export default [
             style={styles.pickerStyle}
             onValueChange={ (itemValue) => setSubject(itemValue)}>
             <Picker.Item label={"All"} value={""}/>
-            <Picker.Item label={"UTBK"} value={"utbk"}/>
+            <Picker.Item label={"Kelas 10 Semester 1"} value={"kelas 10 semester 1"}/>
+            <Picker.Item label={"Kelas 10 Semester 2"} value={"kelas 10 semester 2"}/>
             <Picker.Item label={"Kelas 11 Semester 1"} value={"kelas 11 semester 1"}/>
+            <Picker.Item label={"Kelas 11 Semester 2"} value={"kelas 11 semester 2"}/>
+            <Picker.Item label={"Kelas 12 Semester 1"} value={"kelas 12 semester 1"}/>
+            <Picker.Item label={"Kelas 12 Semester 2"} value={"kelas 12 semester 2"}/>
+            <Picker.Item label={"UTBK"} value={"utbk"}/>
             <Picker.Item label={"SBMPTN"} value={"sbmptn"}/>
           </Picker>
         </View>
@@ -487,6 +502,7 @@ export default [
     const [questionVisible, setQuestionVisible] = React.useState(false);
     const [questionText, setQuestionText] = React.useState(null)
     const [isReviewable, setIsReviewable] = React.useState(false)
+    const [myQuestions, setMyQuestions] = React.useState([])
 
     const wait = (timeout) => {
       return new Promise(resolve => {
@@ -513,7 +529,6 @@ export default [
 
           reviews.forEach( el => sumRating += parseFloat(el.kualitas) )
 
-
           setData(res.data.data)
           setTeacher(res.data.data.teacher)
           setSession(res.data.data.sesi)          
@@ -522,7 +537,7 @@ export default [
 
           getReview()
             .then(() => setLoading(false) )
-            .catche( e => console.log(e) )
+            .catch( e => console.log(e) )
         })
         .catch( e => {console.log(e), setLoading(false) })
     }
@@ -559,6 +574,21 @@ export default [
           setNotifList(arr)
         })
         .catch( e => consol.log(e) )
+    }
+
+    const getQuestion = () => {
+      axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
+        .then( res => {
+          axios.get(`https://dev.akademis.id/api/tanya?user_email=${res.data.data.email}`)
+            .then( res1 => {
+              console.log("Ini dari getQuestion")
+              console.log(res1.data.data)
+              setMyQuestions(res1.data.data)
+            })
+        })
+        .catch(e => {
+          console.log("Error di getQuestion" + e)
+        })
     }
 
     const postQuestion = () => {
@@ -608,6 +638,7 @@ export default [
     React.useEffect( () => {
       getClass()
       getNotif()
+      getQuestion()
       navigation.setParams({notif: () => setNotifVisible(true) })
     }, [])
 
@@ -657,7 +688,7 @@ export default [
                     <Text style={{fontSize: 17}}> Belum ada notifikasi dari guru mu </Text> 
                     :
                     notifList.map( (value, index) => 
-                      <View style={{borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 0.5, borderRadius: 25, width: RFValue(270), paddingVertical: RFValue(10), justifyContent: 'center', alignItems: 'center' }}>
+                      <View style={{borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 0.5, borderRadius: 25, width: RFValue(270), paddingVertical: RFValue(10), justifyContent: 'center', alignItems: 'center', margin: RFValue(5)}}>
                         <Text style={{fontSize: 17}} key={index}>{value}</Text>
                       </View>
                     )
@@ -675,8 +706,7 @@ export default [
             onRequestClose={() => {
               setQuestionVisible(false)
             }}
-            overlayStyle={styles.overlay}
-          >
+            overlayStyle={styles.overlay}>
             <View style={{position: 'absolute', left: 0, right: 0, top: 0, justifyContent: 'center', alignItems: 'center', flex: 1}}>
               <TouchableOpacity onPress={() => setQuestionVisible(false)} style={{position: 'absolute', top: 10, right: 10}}>
                 <FontAwesomeIcon name='close' size={35} color='white'/>
@@ -726,8 +756,7 @@ export default [
             margin: 20,
             borderRadius: 25,
             overflow: 'hidden',
-            }}
-          >
+            }}>
             <ImageBackground source={vcImage} style={styles.backgroundImage} />
           </View>
 
@@ -770,6 +799,17 @@ export default [
             </Table>
           </View>
 
+          <Text style={styles.sectionText}>Pertanyaan kamu</Text>
+          <View style={styles.horizontalRuler}/>
+          <View style={{width: Dimensions.get('window').width*0.95, alignSelf: 'center'}}>
+          { (myQuestions.length != 0)
+            ? 
+              myQuestions.map( (value, index) => 
+                <Text style={styles.leftSmallText}>{index+1}. {value.pertanyaan}</Text>
+              )
+            :<Text style={styles.leftSmallText}>Kamu belum memberi pertanyaan ke gurumu</Text>
+          }
+          </View>
           <Text style={styles.sectionText}>Tentang Gurumu</Text>
           <View style={styles.horizontalRuler}/>
 

@@ -127,6 +127,7 @@ export default StyleSheet.create({
   leftSmallText: {fontSize: 16, left: 10, color: 'gray'},
   leftMediumText: {fontSize: 18, left: 10, marginTop: 5},
   leftSmallMediumText: {fontSize: 17, left: 10},
+  mediumText: {fontSize: RFValue(17)},
   mediumLargeText: {fontSize: 19},
   sectionText: {
     left: 20,
@@ -136,7 +137,7 @@ export default StyleSheet.create({
   multipleChoice: {
     flexDirection: 'row',
     alignItems: 'center', 
-    left: 15,
+    left: 12,
     margin: 5,
   },
   horizontalRuler: {

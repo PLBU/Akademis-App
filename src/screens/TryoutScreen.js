@@ -732,6 +732,7 @@ export default [
     const [loading, setLoading] = React.useState(false)
 
     const [status, setStatus] = React.useState("draft")
+    const [role, setRole] = React.useState(null)
     const [tests, setTests] = React.useState([])
     const [subTests, setSubTests] = React.useState([[], []])
     const [isFinished, setIsFinished] = React.useState([{id: -1, finished: false}])
@@ -831,6 +832,14 @@ export default [
         .catch(e => {console.log(e), setLoading(false) })
     }
 
+    const getRole = () => {
+      axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
+        .then(res => {
+          setRole(res.data.data.role)
+        })
+        .catch(e => console.log("ERROR DI GETROLE" + e) )
+    }
+
     const _renderHeader = sections => (
       <View style={{width: RFValue(320), padding: RFValue(10), backgroundColor: theme.PRIMARY_DARK_COLOR, justifyContent: 'center', alignItems: 'center', borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 0.5}}>
         <Text style={{fontSize: RFValue(17), color: 'white'}}>{sections.name}</Text>
@@ -843,7 +852,7 @@ export default [
             <Text style={{fontSize: RFValue(15) }}>{value.name}</Text>
             <Text style={{fontSize: RFValue(14), color: 'gray' }}>Waktu : {value.time} menit</Text>
 
-            { (status != "published") 
+            { !(status == "published" || role == "admin") 
             ? <TouchableOpacity 
                 style={[styles.disabledButton, {marginTop: 20}]} 
                 disabled={true}>
@@ -876,6 +885,7 @@ export default [
       console.log("FIRST TIME SHOWN IN DETAILS")
       console.log(isFinished)
       getData()
+      getRole()
     }, [isFocused])
 
     if (loading === true) return (
@@ -967,7 +977,21 @@ export default [
     const [activeSections, setActiveSections] = React.useState([])
     const [ranks, setRanks] = React.useState([])
     const [myRank, setMyRank] = React.useState({rank: null, nilai: null})
-    const [score, setScore] = React.useState({})
+    const [score, setScore] = React.useState({
+      nilai_biologi: null, 
+      nilai_ekonomi: null, 
+      nilai_fisika: null, 
+      nilai_geografi: null, 
+      nilai_kimia: null, 
+      nilai_mat_ipa: null, 
+      nilai_mat_soshum: null, 
+      nilai_pbm: null, 
+      nilai_pk: null, 
+      nilai_ppu: null, 
+      nilai_pu: null, 
+      nilai_sejarah: null, 
+      nilai_sosiologi: null,
+    })
 
     const wait = (timeout) => {
       return new Promise(resolve => {
@@ -1005,12 +1029,12 @@ export default [
     const getScore = () => {
       axios.get(`https://dev.akademis.id/api/my-tryout/?tryout_id=${id}&user_id=${authState?.userToken}`)
         .then(res => {
-          console.log('MY SCOREEE')
-          console.log(res.data.data[0].score[0] )
-          setScore(res.data.data[0].score[0] )
+          // console.log('MY SCOREEE')
+          // console.log(res.data.data[0].score[0] )
+          (res.data.data[0].score[0] ) ? setScore(res.data.data[0].score[0] ) : setScore(0)
         })
         .catch(e => {
-          console.log('MY SCORE')
+          // console.log('MY SCORE')
           console.log(e)
         })
     }
@@ -1074,7 +1098,7 @@ export default [
         case "Sosiologi":
           return score.nilai_sosiologi
         default:
-          return "Nilai tidak tercantum"
+          return null
       }
     }
 
@@ -1082,7 +1106,7 @@ export default [
         subTests[index].map( (value) => (
           <View style={{marginVertical: 10, justifyContent: 'center', alignItems: 'center', borderColor: theme.SECONDARY_DARK_COLOR, borderRadius: 15, borderWidth: 0.5, padding: 5}}>
             <Text style={{fontSize: RFValue(15) }}>{value.name}</Text>
-            <Text style={{fontSize: RFValue(14), color: 'gray' }}>Nilai : {getNilai(value.name)}</Text>
+            <Text style={{fontSize: RFValue(14), color: 'gray' }}>Nilai : {(getNilai(value.name) ) ? getNilai(value.name) : "nilai anda tidak tercantum"}</Text>
 
             { (value.pdf) ?
               <TouchableOpacity 

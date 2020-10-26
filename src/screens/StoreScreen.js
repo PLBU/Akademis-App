@@ -57,7 +57,7 @@ export default ({navigation}) => {
   const [isWebView, setIsWebView] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
 
-  const { authState } = React.useContext(AuthContext)
+  const { authState, _setDiamond } = React.useContext(AuthContext)
 
   const wait = (timeout) => {
     return new Promise(resolve => {

@@ -7,11 +7,6 @@
 	- [Technologies Required](#technologies-required)
 	- [Installation](#installation)
 - [Libraries](#libraries)
-- [Development](#development)
-    - [Part 1: Heading](#part-1-heading)
-	  - [Step 1: Subheading](#step-1-subheading)
-	  - [Step 2: Subheading](#step-2-subheading)
-	- [Part 2: Heading](#part-2-heading)
 - [Running the App](#running-the-app)
 - [Publishing](#publishing)
 
@@ -115,5 +110,22 @@ https://reactnative.dev/docs/environment-setup <br/>
   ```
 
 ## Publishing
-
-This section is completely optional. Add additional notes about how to deploy this on a live system
+* Make sure you've changed the versionCode and versionName to your desired option in <code>android/app/build.gradle</code>
+  ```
+    defaultConfig {
+        applicationId "com.akademis"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 6  // Change this when updating to newer version
+        versionName "1.3.2" // Change this when updating to newer version, (1.2.3 means 1 is for Major update, 2 is for Minor update, 3 is for patch)
+    }
+  ```
+* Making a bundle release (Open the terminal from the root of this project directory):
+  ```
+    cd android
+    ./gradlew bundleRelease
+  ```
+* Create new release (https://play.google.com/console/developers/5505865459155794257/app/4975345541804538006/tracks/production)
+* Upload app.aab in <code>android/app/build/outputs/bundle/release</code> to the new release
+* Give some description for this update
+* Review and Roll out

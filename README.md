@@ -20,7 +20,7 @@
 - [Acknowledgments](#acknowledgments)
 
 ## Getting Started
-*Disclaimer: This project is built for Akademis.id, I do not have the rights for claiming this application*
+*Disclaimer: This project is built for Akademis.id, I do not have the rights for claiming this application* <br/>
 Akademis.id mobile app v1.3.2 mainly has
 
 ```

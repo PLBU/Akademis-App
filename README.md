@@ -13,11 +13,6 @@
 	- [Part 2: Heading](#part-2-heading)
 - [Running the App](#running-the-app)
 - [Deployment](#deployment)
-- [Contributing](#contributing)
-- [Versioning](#versioning)
-- [Authors](#authors)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
 
 ## Getting Started
 *Disclaimer: This project is built for Akademis.id, I do not have the rights for claiming this application* <br/>
@@ -33,14 +28,28 @@ Akademis.id mobile app v1.3.2 mainly has 3 big features which are Tryout, Virtua
 	├── README.md
 	├── and other file that is not needed to be modified 
 	└── src
-		├── App.css
-		├── App.js
-		├── App.test.js
-		├── index.css
-		├── index.js
-		├── logo.svg
-		└── serviceWorker.js
-		└── setupTests.js
+		├── assets
+		│	├── icons
+		│	└── images (The advertisement images are here)
+		├── components
+		│	├── App.js
+		│	├── Context.js
+		│	└── Nav.js
+		├── data
+		│	└── index.js (Arrays of majors and universities)
+		├── screens
+		│	├── ActivityScreen.js (Known as riwayat in production)
+		│	├── AuthScreen.js (Both login & register screens)
+		│	├── HomeScreen.js
+		│	├── ProfileScreen.js
+		│	├── StoreScreen.js
+		│	├── TryoutConductScreen.js (When users are doing the tryout screen)
+		│	├── TryoutScreen.js (Catalogue, My Tryout, Detail of unpaid Tryout, Detail of unfinished, Detail of finished tryout screens)
+		│	├── TutorialScreen.js
+		│	└── VirtualClassScreen.js (Catalogue, My VC, Detail of unpaid VC, Detail of paid VC screens)
+		└── styles
+			├── mainScreenStyle.js (All styling is located here except for AuthScreen & TutorialScreen)
+			└── theme.js (Colors are located here)
 ```
 
 ### Tools Required
@@ -96,18 +105,6 @@ Steps and commands for running the app are to be included here
 ## Deployment
 
 This section is completely optional. Add additional notes about how to deploy this on a live system
-
-## Contributing
-
-Mention what you expect from the people who want to contribute
-
-We'd love to have your helping hand on `Project Title`! See [CONTRIBUTING.md] for more information on what we're looking for and how to get started.
-
-## Versioning
-
-If your project has multiple versions, include information about it here. 
-
-For the available versions, see the [tags on this repository][tags]
 
 ## Acknowledgments
 

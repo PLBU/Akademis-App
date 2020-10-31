@@ -19,7 +19,7 @@
 Akademis.id mobile app v1.3.2 mainly has 3 big features which are Tryout, Virtual Class, Payment system integrated with backend web service. The project structure is visualized below: 
 
 ```
-	akademis
+	Akademis-App
 	├── android (This directory should be modified only for use that is related to Android OS)
 	├── ios (This directory should be modified only for use that is related to iOS)
 	├── index.js (Author only modify this for global component styling such as font)

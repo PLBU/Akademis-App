@@ -52,21 +52,18 @@ Akademis.id mobile app v1.3.2 mainly has 3 big features which are Tryout, Virtua
 			└── theme.js (Colors are located here)
 ```
 
-### Tools Required
-
-All tools required go here. You would require the following tools to develop and run the project:
-
-* A text editor or an IDE (like IntelliJ)
-* Mention the other tools required for the project 
+### Technologies Required
+* React Native Command Line Interface
+* Node.js
+* Java Development Kit
+* Android Studio
+* Android SDK
+* Physical Android Device or an Emulator (Only available for PC equipped with Intel processor)
 
 ### Installation
-
-All installation steps go here.
-
-* Installing a particular tool
-  * Steps to complete it
-  
-* Installing another tool
+For full documentation on how to set up your environment, follow the instructions on this site <br/>
+https://reactnative.dev/docs/environment-setup <br/>
+(Choose React Native CLI Quickstart | Your PC OS | Android )
 
 ## Development
 

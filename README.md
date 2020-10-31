@@ -4,7 +4,7 @@
 
 ## Table of Contents
 - [Getting Started](#getting-started)
-	- [Tools Required](#tools-required)
+	- [Technologies Required](#technologies-required)
 	- [Installation](#installation)
 - [Development](#development)
     - [Part 1: Heading](#part-1-heading)
@@ -61,7 +61,7 @@ Akademis.id mobile app v1.3.2 mainly has 3 big features which are Tryout, Virtua
 * Physical Android Device or an Emulator (Only available for PC equipped with Intel processor)
 
 ### Installation
-For full documentation on how to set up your environment, follow the instructions on this site <br/>
+For full documentation on how to install the technologies above and set up your environment, follow the instructions on this site <br/>
 https://reactnative.dev/docs/environment-setup <br/>
 (Choose React Native CLI Quickstart | Your PC OS | Android )
 

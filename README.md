@@ -12,7 +12,7 @@
 	  - [Step 2: Subheading](#step-2-subheading)
 	- [Part 2: Heading](#part-2-heading)
 - [Running the App](#running-the-app)
-- [Deployment](#deployment)
+- [Publishing](#publishing)
 
 ## Getting Started
 *Disclaimer: This project is built for Akademis.id, I do not have the rights for claiming this application* <br/>
@@ -90,7 +90,7 @@ For details now how everything has been implemented, refer the source code
 
 * Mention the steps here
 
-## Running the App in Development Mode
+## Running the App
 * Starting the Metro server (Open the terminal from the root of this project directory):
   ```
     npx react-native start
@@ -98,23 +98,10 @@ For details now how everything has been implemented, refer the source code
  * Running the app in Physical Device or Emulator <br/>
  (If using physical device, make sure your device is already on developer mode and allowed the usb debugging pop-up) <br/>
  (Open the terminal from the root of this project directory)
-   ```
+  ```
     npx react-native run-android
   ```
 
-## Deployment
+## Publishing
 
 This section is completely optional. Add additional notes about how to deploy this on a live system
-
-## Acknowledgments
-
-This section can also be called as `Resources` or `References`
-
-* Code Honor if someone's work was referred to
-* Tutorials followed
-* Articles that helped
-* Inspiration
-* etc
-
-[//]: # (HyperLinks)
-[tags]: https://github.com/madhur-taneja/README-template/tags

@@ -90,13 +90,16 @@ For details now how everything has been implemented, refer the source code
 
 * Mention the steps here
 
-## Running the App
-
-Steps and commands for running the app are to be included here
-
-* Example steps:
+## Running the App in Development Mode
+* Starting the Metro server (Open the terminal from the root of this project directory):
   ```
-    Example command
+    npx react-native start
+  ```
+ * Running the app in Physical Device or Emulator <br/>
+ (If using physical device, make sure your device is already on developer mode and allowed the usb debugging pop-up) <br/>
+ (Open the terminal from the root of this project directory)
+   ```
+    npx react-native run-android
   ```
 
 ## Deployment

@@ -1,12 +1,6 @@
-# Project Title
+# Akademis.id React Native App
 
 ![Current Version](https://img.shields.io/badge/version-v1.3.2-blue)
-
-A template for README files that can be used for your future projects. A small description about the project, shields as well as the link to your repo.
-
-Open and view the Project using the `.zip` file provided or at my [GitHub Repository]
-
-The project is also hosted on [GitHub Pages]
 
 ## Table of Contents
 - [Getting Started](#getting-started)
@@ -26,13 +20,8 @@ The project is also hosted on [GitHub Pages]
 - [Acknowledgments](#acknowledgments)
 
 ## Getting Started
-
-The project might have multiple branches: `master`, `development`, etc. which can be explained here
-
-* `master` contains aggregate code of all branches
-* `development` contains code under development
-
-Other details that need to be given while starting out with the project can be provided in this section. A project structure like below can also be included for the big projects:
+*Disclaimer: This project is built for Akademis.id, I do not have the rights for claiming this application*
+Akademis.id mobile app v1.3.2 mainly has
 
 ```
 	project-title

@@ -21,17 +21,17 @@
 
 ## Getting Started
 *Disclaimer: This project is built for Akademis.id, I do not have the rights for claiming this application* <br/>
-Akademis.id mobile app v1.3.2 mainly has
+Akademis.id mobile app v1.3.2 mainly has 3 big features which are Tryout, Virtual Class, Payment system integrated with backend web service. The project structure is visualized below: 
 
 ```
-	project-title
-	├── README.md
+	akademis
+	├── android (This directory should be modified only for use that is related to Android OS)
+	├── ios (This directory should be modified only for use that is related to iOS)
+	├── index.js (Author only modify this for global component styling such as font)
+	├── app.json
 	├── package.json
-	├── .gitignore
-	├── public
-	│   ├── favicon.ico
-	│   ├── index.html
-	│   └── manifest.json
+	├── README.md
+	├── and other file that is not needed to be modified 
 	└── src
 		├── App.css
 		├── App.js

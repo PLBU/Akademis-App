@@ -6,6 +6,7 @@
 - [Getting Started](#getting-started)
 	- [Technologies Required](#technologies-required)
 	- [Installation](#installation)
+- [Libraries](#libraries)
 - [Development](#development)
     - [Part 1: Heading](#part-1-heading)
 	  - [Step 1: Subheading](#step-1-subheading)
@@ -65,6 +66,8 @@ For full documentation on how to install the technologies above and set up your 
 https://reactnative.dev/docs/environment-setup <br/>
 (Choose React Native CLI Quickstart | Your PC OS | Android )
 
+## Libraries
+
 ## Development
 
 This section is completely optional. For big projects, the developement strategies are not discussed. But for small projects, you can give some insight to people. It has 2 benefits in my opinion:
@@ -95,9 +98,8 @@ For details now how everything has been implemented, refer the source code
   ```
     npx react-native start
   ```
- * Running the app in Physical Device or Emulator <br/>
+* Running the app in Physical Device or Emulator (Open the terminal from the root of this project directory):<br/>
  (If using physical device, make sure your device is already on developer mode and allowed the usb debugging pop-up) <br/>
- (Open the terminal from the root of this project directory)
   ```
     npx react-native run-android
   ```

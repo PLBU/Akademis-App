@@ -67,33 +67,43 @@ https://reactnative.dev/docs/environment-setup <br/>
 (Choose React Native CLI Quickstart | Your PC OS | Android )
 
 ## Libraries
-
-## Development
-
-This section is completely optional. For big projects, the developement strategies are not discussed. But for small projects, you can give some insight to people. It has 2 benefits in my opinion:
-
-1. It's a way to give back to the community. People get to learn from you and appreciate your work
-2. You can refer the README in future as a quick refresher before an interview or for an old project to check if it can help you in your currect work
-
-### Part 1: Heading
-
-#### Step 1: Subheading
-
-* Mention the steps here
-  * You can also have nested steps to break a step into small tasks
-  
-#### Step 2: Subheading
-
-* Mention the steps here.
-  * You can also have nested steps to break a step into small tasks
-
-For details now how everything has been implemented, refer the source code
-
-### Part 2: Heading
-
-* Mention the steps here
-
+* https://www.npmjs.com/package/@react-native-community/async-storage
+* https://www.npmjs.com/package/@react-native-community/google-signin
+* https://www.npmjs.com/package/@react-native-community/masked-view
+* https://www.npmjs.com/package/@react-native-community/netinfo
+* https://www.npmjs.com/package/@react-native-community/picker
+* https://reactnavigation.org/docs/getting-started
+* https://reactnavigation.org/docs/bottom-tab-navigator/
+* https://reactnavigation.org/docs/material-top-tab-navigator/
+* https://reactnavigation.org/docs/stack-navigator/
+* https://momentjs.com/docs/
+* https://www.npmjs.com/package/react-native-app-intro-slider
+* https://www.npmjs.com/package/react-native-axios
+* https://www.npmjs.com/package/react-native-chart-kit
+* https://www.npmjs.com/package/react-native-collapsible
+* https://github.com/react-native-device-info/react-native-device-info
+* https://reactnativeelements.com/docs
+* https://www.npmjs.com/package/react-native-gesture-handler
+* https://www.npmjs.com/package/react-native-global-props
+* https://www.npmjs.com/package/react-native-image-base64
+* https://github.com/react-native-image-picker/react-native-image-picker
+* https://callstack.github.io/react-native-paper/
+* https://www.npmjs.com/package/react-native-reanimated
+* https://www.npmjs.com/package/react-native-responsive-fontsize
+* https://www.npmjs.com/package/react-native-safe-area-context?activeTab=versions
+* https://www.npmjs.com/package/react-native-snap-carousel
+* https://www.npmjs.com/package/react-native-splash-screen
+* https://www.npmjs.com/package/react-native-stars
+* https://github.com/react-native-svg/react-native-svg
+* https://www.npmjs.com/package/react-native-table-component
+* https://www.npmjs.com/package/react-native-thumbnail-video
+* https://www.npmjs.com/package/react-native-vector-icons
+* https://www.npmjs.com/package/react-native-webview
 ## Running the App
+* Installing all the npm packages
+  ```
+    npm install
+  ```
 * Starting the Metro server (Open the terminal from the root of this project directory):
   ```
     npx react-native start

@@ -14,6 +14,7 @@ import {
   Linking,
   RefreshControl,
 } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { Picker } from '@react-native-community/picker';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import Stars from 'react-native-stars';
@@ -343,6 +344,10 @@ export default [
     const [buktiFollow, setFollow] = React.useState(null)
     const [buktiTag, setTag] = React.useState(null)
     const [buktiShare, setShare] = React.useState(null)
+    const [telp, setTelp] = React.useState(null)
+    const [sekolah, setSekolah] = React.useState(null)
+    const [kota, setKota] = React.useState(null)
+    const [provinsi, setProvinsi] = React.useState(null)
     const [shareModal, setShareModal] = React.useState(false)
     const [isShared, setIsShared] = React.useState(false)
     const [isVerified, setVerified] = React.useState(false)
@@ -397,28 +402,42 @@ export default [
     }
 
     const shareTryout = () => {
-      axios.post(`https://dev.akademis.id/api/share`, {
-        "user_id": authState?.userToken,
-        "follow": buktiFollow,
-        "tag": buktiTag,
-        "share": buktiShare,
-        "status": "not verified",
-        "tryout_id": id
-      })
-        .then(res => {
-          console.log(res)
+      axios.all([
+        axios.post(`https://dev.akademis.id/api/share`, {
+          "user_id": authState?.userToken,
+          "follow": buktiFollow,
+          "tag": buktiTag,
+          "share": buktiShare,
+          "status": "not verified",
+          "tryout_id": id
+        }), 
+        axios.post(`https://dev.akademis.id/api/user-data`, {
+          "user_id": authState?.userToken,
+          'no_telp': telp,
+          'asal_sekolah': sekolah,
+          'kota': kota,
+          'provinsi': provinsi,
+          "tryout_id": id
+        })
+      ])
+      .then(axios.spread((res1,res2) => {
+        console.log((res1,res2))
 
-          setShareModal(false)
-          setFollow(null)
-          setTag(null)
-          setShare(null)
-          getData()
-          Alert.alert("Berhasil", "Pembelian dengan metode share berhasil, tunggu verifikasi dari tim kami ya")
-        })
-        .catch(e => {
-          Alert.alert("Error", "Pembelian dengan metode share gagal diunggah ke server kami, silakan coba lagi")
-          console.log(e)
-        })
+        setShareModal(false)
+        setFollow(null)
+        setTag(null)
+        setShare(null)
+        setTelp(null)
+        setSekolah(null)
+        setKota(null)
+        setProvinsi(null)
+        getData()
+        Alert.alert("Berhasil", "Pembelian dengan metode share berhasil, tunggu verifikasi dari tim kami ya")
+      }))
+      .catch(e => {
+        Alert.alert("Error", "Pembelian dengan metode share gagal diunggah ke server kami, silakan coba lagi")
+        console.log(e)
+      })
     }
 
     const buyTryout = () => {
@@ -517,6 +536,7 @@ export default [
     React.useEffect(() => {
       getData()
     }, [])
+    
 
     if (loading === true) return (
       <View style={{flex:1,justifyContent:'center',alignItems:'center', backgroundColor: 'white'}}>
@@ -544,23 +564,27 @@ export default [
                 setFollow(null)
                 setTag(null)
                 setShare(null)
+                setTelp(null)
+                setSekolah(null)
+                setKota(null)
+                setProvinsi(null)
                 setShareModal(false)}} 
               style={{position: 'absolute', top: 10, right: 10}}>
               <FontAwesomeIcon name='close' size={35} color='white'/>
             </TouchableOpacity>
-            <View style={{
-              width: Dimensions.get('window').width*0.8, 
+            <ScrollView contentContainerStyle={[{flexGrow: 1}]}
+            style={{
+              width: Dimensions.get('window').width*0.8,
+              maxHeight: Dimensions.get('window').height*0.8,
               backgroundColor: 'white',
               elevation: 5,
-              alignSelf: 'center',
-              alignItems: 'center',
               margin: 20,
               borderRadius: 25,
-              overflow: 'hidden',
               flex: 0.78
               }}
             >
-              <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%'}}>
+
+              <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%', borderTopLeftRadius: 25, borderTopRightRadius: 25}}>
                 <Text style={[styles.bigWhiteText, {margin: 10, left: 15}]}>Konfirmasi Sharing</Text>
               </View>
               <View style={{height: '100%', width: '100%', padding: 20}}>
@@ -568,7 +592,53 @@ export default [
                 <Text style={{fontSize: RFValue(18)}}>Tryout yg ingin dibeli: </Text>
                 <Text style={{fontSize: 16, color: 'gray', marginBottom: 15}}>{name}</Text>
 
-                <Text style={{fontSize: RFValue(18), marginBottom: 10}}>Unggah Bukti Follow: </Text>
+                <Text style={{fontSize: RFValue(18), marginBottom: 10, marginTop: 10}}>Isi Data Kamu: </Text>
+                <TextInput 
+                  style={styles.textInputModal}
+                  label="Nomor Telepon"
+                  onChangeText={val => setTelp(val)}
+                  value={telp}
+                  mode='flat'
+                  theme={{
+                    colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
+                    roundness: 10,
+                  }}
+                />
+                <TextInput 
+                  style={styles.textInputModal}
+                  label="Asal Sekolah"
+                  onChangeText={val => setSekolah(val)}
+                  value={sekolah}
+                  mode='flat'
+                  theme={{
+                    colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
+                    roundness: 10,
+                  }}
+                />
+                <TextInput 
+                  style={styles.textInputModal}
+                  label="Asal Kota"
+                  onChangeText={val => setKota(val)}
+                  value={kota}
+                  mode='flat'
+                  theme={{
+                    colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
+                    roundness: 10,
+                  }}
+                />
+                <TextInput 
+                  style={styles.textInputModal}
+                  label="Asal Provinsi"
+                  onChangeText={val => setProvinsi(val)}
+                  value={provinsi}
+                  mode='flat'
+                  theme={{
+                    colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
+                    roundness: 10,
+                  }}
+                />
+
+                <Text style={{fontSize: RFValue(18), marginBottom: 10, marginTop: 10}}>Unggah Bukti Follow: </Text>
                 <View style={{flexDirection: 'row', alignItems:'center', marginBottom: 15}}>
                   <TouchableOpacity style={{backgroundColor: 'white', borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 1, padding: RFValue(12), width: '65%', borderRadius: 20}} 
                     onPress={() => openGallery('f')}>
@@ -595,14 +665,15 @@ export default [
                   {buktiShare && <FontAwesomeIcon name={"check-square-o"} size={30} color={theme.SECONDARY_DARK_COLOR} style={{marginLeft: RFValue(15)}}/>}
                 </View>
 
-                <TouchableOpacity 
-                  style={(buktiFollow && buktiShare && buktiTag) ? [styles.button, {width: '90%', marginTop: RFValue(10)}] : [styles.disabledButton, {width: '90%', marginTop: RFValue(10)}]} 
+                <TouchableOpacity
+                  type="submit" 
+                  style={(buktiFollow && buktiShare && buktiTag && telp && sekolah && kota && provinsi) ? [styles.button, {width: '90%', marginTop: RFValue(10)}] : [styles.disabledButton, {width: '90%', marginTop: RFValue(10)}]} 
                   onPress={ () => shareTryout()} 
-                  disabled={(buktiFollow && buktiShare && buktiTag) ? false : true}>
+                  disabled={(buktiFollow && buktiShare && buktiTag && telp && sekolah && kota && provinsi) ? false : true}>
                   <Text style={styles.buttonText}>Beli Tryout!</Text>
                 </TouchableOpacity>
               </View>
-            </View>
+            </ScrollView>
           </View>
         </Overlay>
 

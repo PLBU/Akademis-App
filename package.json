@@ -24,6 +24,7 @@
     "flow-bin": "^0.122.0",
     "moment": "^2.29.0",
     "react": "16.13.1",
+    "react-hook-form": "^6.10.1",
     "react-native": "0.63.1",
     "react-native-app-intro-slider": "^4.0.4",
     "react-native-axios": "^0.17.1",

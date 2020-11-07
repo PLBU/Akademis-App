@@ -14,6 +14,11 @@ export default StyleSheet.create({
     height: 50,
     backgroundColor: 'white',
   },
+  textInputModal: {
+    width: 250,
+    height: 50,
+    backgroundColor: 'white',
+  },
   headerText:{
     color: 'white',
     fontSize: 24,

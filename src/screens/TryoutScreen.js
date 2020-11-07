@@ -413,8 +413,8 @@ export default [
         }), 
         axios.post(`https://dev.akademis.id/api/user-data`, {
           "user_id": authState?.userToken,
-          'telp': telp,
-          'sekolah': sekolah,
+          'no_telp': telp,
+          'asal_sekolah': sekolah,
           'kota': kota,
           'provinsi': provinsi,
           "tryout_id": id

@@ -402,28 +402,42 @@ export default [
     }
 
     const shareTryout = () => {
-      axios.post(`https://dev.akademis.id/api/share`, {
-        "user_id": authState?.userToken,
-        "follow": buktiFollow,
-        "tag": buktiTag,
-        "share": buktiShare,
-        "status": "not verified",
-        "tryout_id": id
-      })
-        .then(res => {
-          console.log(res)
+      axios.all([
+        axios.post(`https://dev.akademis.id/api/share/comment`, {
+          "user_id": authState?.userToken,
+          "follow": buktiFollow,
+          "tag": buktiTag,
+          "share": buktiShare,
+          "status": "not verified",
+          "tryout_id": id
+        }), 
+        axios.post(`https://my-json-server.typicode.com/syahrizailm/demo/posts`, {
+          "user_id": authState?.userToken,
+          'telp': telp,
+          'sekolah': sekolah,
+          'kota': kota,
+          'provinsi': provinsi,
+          "tryout_id": id
+        })
+      ])
+      .then(axios.spread((res1,res2) => {
+        console.log((res1,res2))
 
-          setShareModal(false)
-          setFollow(null)
-          setTag(null)
-          setShare(null)
-          getData()
-          Alert.alert("Berhasil", "Pembelian dengan metode share berhasil, tunggu verifikasi dari tim kami ya")
-        })
-        .catch(e => {
-          Alert.alert("Error", "Pembelian dengan metode share gagal diunggah ke server kami, silakan coba lagi")
-          console.log(e)
-        })
+        setShareModal(false)
+        setFollow(null)
+        setTag(null)
+        setShare(null)
+        setTelp(null)
+        setSekolah(null)
+        setKota(null)
+        setProvinsi(null)
+        getData()
+        Alert.alert("Berhasil", "Pembelian dengan metode share berhasil, tunggu verifikasi dari tim kami ya")
+      }))
+      .catch(e => {
+        Alert.alert("Error", "Pembelian dengan metode share gagal diunggah ke server kami, silakan coba lagi")
+        console.log(e)
+      })
     }
 
     const buyTryout = () => {
@@ -550,6 +564,10 @@ export default [
                 setFollow(null)
                 setTag(null)
                 setShare(null)
+                setTelp(null)
+                setSekolah(null)
+                setKota(null)
+                setProvinsi(null)
                 setShareModal(false)}} 
               style={{position: 'absolute', top: 10, right: 10}}>
               <FontAwesomeIcon name='close' size={35} color='white'/>

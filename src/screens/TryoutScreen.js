@@ -403,7 +403,7 @@ export default [
 
     const shareTryout = () => {
       axios.all([
-        axios.post(`https://dev.akademis.id/api/share/comment`, {
+        axios.post(`https://dev.akademis.id/api/share`, {
           "user_id": authState?.userToken,
           "follow": buktiFollow,
           "tag": buktiTag,

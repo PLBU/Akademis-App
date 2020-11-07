@@ -411,7 +411,7 @@ export default [
           "status": "not verified",
           "tryout_id": id
         }), 
-        axios.post(`https://my-json-server.typicode.com/syahrizailm/demo/posts`, {
+        axios.post(`https://dev.akademis.id/api/user-data`, {
           "user_id": authState?.userToken,
           'telp': telp,
           'sekolah': sekolah,

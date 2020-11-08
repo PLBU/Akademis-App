@@ -1,6 +1,6 @@
 # Akademis.id React Native App
 
-![Current Version](https://img.shields.io/badge/version-v1.3.2-blue)
+![Current Version](https://img.shields.io/badge/version-v1.3.3-blue)
 
 ## Table of Contents
 - [Getting Started](#getting-started)

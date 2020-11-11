@@ -6,7 +6,7 @@ declare module '@react-navigation/native' {  declare module.exports: any;  };
 declare module 'react-native/Libraries/NewAppScreen' {  declare module.exports: any;  };
 declare module 'react-native-gesture-handler' {  declare module.exports: any;  };
 declare module 'react-native-axios' { declare module.exports: any }
-declare module '@react-native-community/async-storage' {declare module.exports: any}
+declare module '@react-native-async-storage/async-storage' {declare module.exports: any}
 declare module '@react-native-community/google-signin' {declare module.exports: any}
 declare module '@react-native-community/picker' { declare module.exports: any }
 declare module 'react-native-snap-carousel' { declare module.exports: any }

@@ -573,16 +573,16 @@ export default [
               <FontAwesomeIcon name='close' size={35} color='white'/>
             </TouchableOpacity>
             <ScrollView contentContainerStyle={[{flexGrow: 1}]}
-            style={{
-              width: Dimensions.get('window').width*0.8,
-              maxHeight: Dimensions.get('window').height*0.8,
-              backgroundColor: 'white',
-              elevation: 5,
-              margin: 20,
-              borderRadius: 25,
-              flex: 0.78
-              }}
-            >
+              showsVerticalScrollIndicator={false}
+              style={{
+                width: Dimensions.get('window').width*0.8,
+                maxHeight: Dimensions.get('window').height*0.8,
+                backgroundColor: 'white',
+                elevation: 5,
+                margin: 20,
+                borderRadius: 25,
+                flex: 0.78
+                }}>
 
               <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%', borderTopLeftRadius: 25, borderTopRightRadius: 25}}>
                 <Text style={[styles.bigWhiteText, {margin: 10, left: 15}]}>Konfirmasi Sharing</Text>

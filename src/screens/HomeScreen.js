@@ -106,6 +106,8 @@ export default ({navigation}) => {
     getWOI()
   }, [] )
 
+
+  // WOI render Item
   const _renderItem = ({item,index}) => {
     return (
       <View style={{
@@ -123,22 +125,18 @@ export default ({navigation}) => {
               imageHeight={(Dimensions.get('window').width*0.8)*9/16} 
               imageWidth={Dimensions.get('window').width*0.8}
             />   
-          : (item.image) ?            
+          : (item.description) ?            
               <ImageBackground source={{uri: item.image}} style={styles.backgroundImage}>
                 <TouchableOpacity onPress={() => Linking.openURL(item.description)} style={{width: '100%', height: '100%'}}/>
               </ImageBackground>
           :
-            <ImageBackground source={{uri: item.image}} style={styles.backgroundImage}>
-              <TouchableOpacity onPress={() => Linking.openURL(item.description)} style={{width: '100%', height: '100%'}}>
-                <Text style={{fontSize: 30, marginLeft: 25, marginTop: 25}}>{item.title}</Text>
-                <Text style={{marginLeft: 25}}>{item.author}</Text>
-              </TouchableOpacity>
-            </ImageBackground>
+            <ImageBackground source={{uri: item.image}} style={styles.backgroundImage}/>
         }
       </View>
     )
   }
 
+  // Tryout & VC renderList
   const _renderList = ({item}) => 
     <TouchableOpacity onPress={() => navigation.navigate(item.name)}>
       <View style={styles.largeCardWithDesc}>
@@ -173,7 +171,8 @@ export default ({navigation}) => {
         <Text style={{fontSize: RFValue(30), color: 'white', top: RFValue(10), left: RFValue(25)}}>Akademis.id</Text>
       </View>
 
-      <View style={{marginTop: RFValue(-110) }}>
+      <View style={(carouselItems.length > 1) ? {marginTop: RFValue(-110) } : {marginBottom: RFValue(30), marginTop: RFValue(-110) }}>
+        {/* WOI */}
         <Carousel
           layout={"default"}
           data={carouselItems}
@@ -181,8 +180,7 @@ export default ({navigation}) => {
           itemWidth={Dimensions.get('window').width*0.8}
           renderItem={_renderItem}
           activeSlideOffset={35}
-          onSnapToItem={ (index) => setActiveSlideIndex(index) }
-        />
+          onSnapToItem={ (index) => setActiveSlideIndex(index) }/>
         <Pagination
           dotsLength={carouselItems.length}
           activeDotIndex={activeSlideIndex}
@@ -197,10 +195,10 @@ export default ({navigation}) => {
             backgroundColor: 'rgba(200, 200, 200, 1)'
           }}
           inactiveDotOpacity={0.4}
-          inactiveDotScale={0.6}
-        />
+          inactiveDotScale={0.6}/>
       </View>
 
+      {/* VC & Tryout */}
       <FlatList
         data={listItems}
         renderItem={_renderList}

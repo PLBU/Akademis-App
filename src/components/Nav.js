@@ -40,8 +40,8 @@ import theme from '../styles/theme.js'
 import styles from '../styles/mainScreenStyle.js'
 
 //Importing images
-import logo from '../assets/images/byU.png'
-import logo2 from '../assets/images/mamikos.png'
+import logo from '../assets/images/iklan/l3pi.png'
+// import logo2 from '../assets/images/mamikos.png'
 
 const BottomTab = createBottomTabNavigator()
 const AuthStack = createNativeStackNavigator()
@@ -206,17 +206,18 @@ const TryoutStackComponent = ({navigation}) => {
                 right: 20, 
                 alignItems: 'center',
                 }}>
-                <Image 
+                {/* Iklan */}
+                {/* <Image 
                   source={logo2} 
                   style={{
                     width: RFValue(75), 
                     height: RFValue(20),
-                    marginHorizontal: RFValue(5)}}/>
+                    marginHorizontal: RFValue(5)}}/> */}
                 <Image 
                   source={logo} 
                   style={{
-                    width: RFValue(50), 
-                    height: RFValue(50),
+                    width: RFValue(40), 
+                    height: RFValue(40),
                     marginHorizontal: RFValue(5)}}/>
               </View>
             </View>

@@ -238,8 +238,13 @@ export default [
             style={styles.pickerStyle}
             onValueChange={ (itemValue) => setSubject(itemValue)}>
             <Picker.Item label={"All"} value={""}/>
-            <Picker.Item label={"UTBK"} value={"utbk"}/>
+            <Picker.Item label={"Kelas 10 Semester 1"} value={"kelas 10 semester 1"}/>
+            <Picker.Item label={"Kelas 10 Semester 2"} value={"kelas 10 semester 2"}/>
             <Picker.Item label={"Kelas 11 Semester 1"} value={"kelas 11 semester 1"}/>
+            <Picker.Item label={"Kelas 11 Semester 2"} value={"kelas 11 semester 2"}/>
+            <Picker.Item label={"Kelas 12 Semester 1"} value={"kelas 12 semester 1"}/>
+            <Picker.Item label={"Kelas 12 Semester 2"} value={"kelas 12 semester 2"}/>
+            <Picker.Item label={"UTBK"} value={"utbk"}/>
             <Picker.Item label={"SBMPTN"} value={"sbmptn"}/>
           </Picker>
         </View>

@@ -318,6 +318,7 @@ export default ( { route, navigation } ) => {
                 </View>
             </Overlay>
 
+            {/* List horizontal buat pagination nomor */}
             <View style={{backgroundColor: 'white', padding: 5, margin: 15, marginVertical: 25, borderRadius: 25, overflow: 'hidden', elevation: 5}}>
                 <FlatList
                     horizontal={true}
@@ -368,6 +369,7 @@ export default ( { route, navigation } ) => {
                     </View>
                 </View> 
             }
+            
             <View style={{flexDirection: 'row', flex: 1}}>
                 <View style={[styles.middleItemCard, {flex: 0.27, margin: 15, padding: 15}]}>
                     <Text style={styles.buttonText}>{("0" + timer.HH).slice(-2)}:{("0" + timer.MM).slice(-2)}:{("0" + timer.SS).slice(-2)}</Text>

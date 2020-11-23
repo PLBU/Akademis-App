@@ -89,14 +89,14 @@ export default [
                   res2.data.data.forEach( ({ event_id }) => arrChecker.push(event_id) )
 
                   var newArr = arr.filter( ({ id }) => !arrChecker.some( (element) => (element == id) ) )
-                  var newestArr = newArr.filter( ({date_start}) => {
-                    const dateStartVC = new Date(date_start)
+                  var newestArr = newArr.filter( ({date_end}) => {
+                    const dateEndVC = new Date(date_end)
                     const today = new Date()
 
-                    console.log("dateStartVC: " + dateStartVC)
+                    console.log("dateEndVC: " + dateEndVC)
                     console.log("dateToday: " + today)
 
-                    return dateStartVC.getTime() > today.getTime()
+                    return dateEndVC.getTime() > today.getTime()
                   })  
                   // console.log("INI DARI GET CLASS YANG KATALOG")
                   // console.log(arr)
@@ -584,7 +584,7 @@ export default [
     const getQuestion = () => {
       axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
         .then( res => {
-          axios.get(`https://dev.akademis.id/api/tanya?user_email=${res.data.data.email}`)
+          axios.get(`https://dev.akademis.id/api/tanya?user_email=${res.data.data.email}&event_id=${id}`)
             .then( res1 => {
               console.log("Ini dari getQuestion")
               console.log(res1.data.data)

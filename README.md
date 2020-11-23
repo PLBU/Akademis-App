@@ -26,7 +26,8 @@ Akademis.id mobile app v1.3.2 mainly has 3 big features which are Tryout, Virtua
 	└── src
 		├── assets
 		│	├── icons
-		│	└── images (The advertisement images are here)
+		│	└── images 
+		|		└── iklan (The advertisement images are here)
 		├── components
 		│	├── App.js
 		│	├── Context.js

@@ -1041,12 +1041,12 @@ export default [
     const isFocused = useIsFocused()
     
     const [refreshing, setRefreshing] = React.useState(false)
-    const [loading, setLoading] = React.useState(false)
+    const [loading, setLoading] = React.useState(true)
 
-    const [tests, setTests] = React.useState([])
-    const [subTests, setSubTests] = React.useState([[], []])
+    const [tests, setTests] = React.useState(null)
+    const [subTests, setSubTests] = React.useState(null)
     const [activeSections, setActiveSections] = React.useState([])
-    const [ranks, setRanks] = React.useState([])
+    const [ranks, setRanks] = React.useState(null)
     const [myRank, setMyRank] = React.useState({rank: null, nilai: null})
     const [score, setScore] = React.useState({
       nilai_biologi: null, 
@@ -1073,65 +1073,55 @@ export default [
     const onRefresh = React.useCallback(() => {
       setRefreshing(true)
       getData()
-      getRanking()
-      getScore()
       wait(2000).then(() => setRefreshing(false))
     }, [])
-
-    const getRanking = () => {
-      axios.get(`https://dev.akademis.id/api/ranking?tryout_id=${id}`)
-        .then(res => {
-          console.log('RANKING: ')
-          console.log(res.data.data)
-          setRanks(res.data.data)
-
-          res.data.data.forEach( (value, index) => {
-            if (value.user_id = authState?.userToken) {
-              setMyRank({rank: index + 1, nilai: value.nilai})
-            }
-          })
-
-        })
-        .catch(e => {
-          console.log(e)
-        })
-    }
-
-    const getScore = () => {
-      axios.get(`https://dev.akademis.id/api/my-tryout/?tryout_id=${id}&user_id=${authState?.userToken}`)
-        .then(res => {
-          // console.log('MY SCOREEE')
-          // console.log(res.data.data[0].score[0] )
-          (res.data.data[0].score[0] ) ? setScore(res.data.data[0].score[0] ) : setScore(0)
-        })
-        .catch(e => {
-          // console.log('MY SCORE')
-          console.log(e)
-        })
-    }
 
     const getData = () => {
       setLoading(true)
       axios.get(`https://dev.akademis.id/api/tryout/${id}`)
-        .then(res => {
-          var arr = res.data.data.test
-          var newArr = []
+      .then(res => {
+        var arr = res.data.data.test
+        var newArr = []
 
-          arr.forEach( (element) => {
-            newArr.push(element.subtest)
-          })
-            
-          setTests(arr)
-          setSubTests(newArr)
-
-          console.log("Data response: ")
-          console.log(arr)
-          console.log("Subtest response: ")
-          console.log(newArr)
-
-          setLoading(false)
+        arr.forEach( (element) => {
+          newArr.push(element.subtest)
         })
-        .catch(e => {console.log(e), setLoading(false) })
+          
+        setTests(arr)
+        setSubTests(newArr)
+
+        console.log("Data response: ")
+        console.log(arr)
+        console.log("Subtest response: ")
+        console.log(newArr)
+
+        axios.get(`https://dev.akademis.id/api/my-tryout/?tryout_id=${id}&user_id=${authState?.userToken}`)
+          .then(res => {
+            // console.log('MY SCOREEE')
+            // console.log(res.data.data[0].score[0] )
+            // setLoading(false)
+            (res.data.data[0].score[0] ) ? setScore(res.data.data[0].score[0] ) : setScore(0)
+            axios.get(`https://dev.akademis.id/api/ranking?tryout_id=${id}`)
+              .then(res => {
+                setRanks(res.data.data)
+
+                res.data.data.forEach( (value, index) => {
+                  if (value.user_id = authState?.userToken) {
+                    setMyRank({rank: index + 1, nilai: value.nilai})
+                  }
+                })
+                setLoading(false)
+              })
+              .catch(e => {
+                console.log(e)
+              })
+          })
+          .catch(e => {
+            // console.log('MY SCORE')
+            // console.log(e)
+          })
+      })
+      .catch(e => {console.log(e) })
     }
 
     const _renderHeader = sections => (
@@ -1198,11 +1188,20 @@ export default [
 
     React.useEffect(() => {
       getData()
-      getRanking()
-      getScore()
     }, [isFocused])
 
-    if (loading === true) return (
+    // React.useEffect( () => {
+    //   if (ranks) {
+    //     setLoading(false)
+    //     console.log("Hasil DARI USE EFFECT")
+    //     console.log(ranks)
+    //     console.log(tests)
+    //     console.log(subTests)
+    //     console.log(myRank)
+    //   }
+    // }, [ranks, loading])
+
+    if (loading) return (
       <View style={{flex:1,justifyContent:'center',alignItems:'center', backgroundColor: 'white'}}>
           <ActivityIndicator size="large" color="black"/>
       </View>
@@ -1274,13 +1273,13 @@ export default [
               data={['No', 'Nama', 'PTN', 'Jurusan', 'Nilai']} 
               textStyle={{fontSize: 17, margin: 2.5}}
               style={{backgroundColor: theme.SECONDARY_DARK_COLOR}}
-              widthArr={[0.08 * (Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) )]}/>
+              widthArr={[0.1 * (Dimensions.get('window').width*0.95 - RFValue(20) ), 0.26 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.26 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.15 *(Dimensions.get('window').width*0.95 - RFValue(20) )]}/>
             {ranks.map( (value, index) => (
               <Row 
                 data={[index + 1, value.name, value.ptn, value.jurusan, value.nilai]} 
                 key={index} 
-                textStyle={{fontSize: 15, margin: 2.5, color: 'dark-gray'}} 
-                widthArr={[0.08 * (Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) )]}/>
+                textStyle={{fontSize: 15, margin: 2.5, color: 'darkgrey'}} 
+                widthArr={[0.1 * (Dimensions.get('window').width*0.95 - RFValue(20) ), 0.26 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.26 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.15 *(Dimensions.get('window').width*0.95 - RFValue(20) )]}/>
             ))}
           </Table>}
         </View>

@@ -194,6 +194,17 @@ const TryoutStackComponent = ({navigation}) => {
           ),
         })}
       />
+      <TryoutStack.Screen name="Ranks Finished Tryout" component={TryoutScreen[5]}
+        options={ ({ route }) => ({
+          headerTopInsetEnabled: false,
+          headerCenter: () => <Text style={styles.headerText}>Ranking</Text>,
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('Main Tryout')}>
+              <BackButton/>
+            </TouchableOpacity>
+          ),
+        })}
+      />
       <TryoutStack.Screen name="Conduct Tryout" component={TryoutConductScreen}
         options={({ route }) => ({
           headerTopInsetEnabled: false,

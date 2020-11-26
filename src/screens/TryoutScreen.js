@@ -27,6 +27,7 @@ import { Overlay } from 'react-native-elements';
 import { useIsFocused } from '@react-navigation/native'
 import ImagePicker from 'react-native-image-picker';
 import { Table, Row, Rows } from 'react-native-table-component';
+import { WebView } from 'react-native-webview';
 
 //Styles
 import styles from '../styles/mainScreenStyle.js';
@@ -1046,8 +1047,7 @@ export default [
     const [tests, setTests] = React.useState(null)
     const [subTests, setSubTests] = React.useState(null)
     const [activeSections, setActiveSections] = React.useState([])
-    const [ranks, setRanks] = React.useState(null)
-    const [myRank, setMyRank] = React.useState({rank: null, nilai: null})
+
     const [score, setScore] = React.useState({
       nilai_biologi: null, 
       nilai_ekonomi: null, 
@@ -1101,20 +1101,7 @@ export default [
             // console.log(res.data.data[0].score[0] )
             // setLoading(false)
             (res.data.data[0].score[0] ) ? setScore(res.data.data[0].score[0] ) : setScore(0)
-            axios.get(`https://dev.akademis.id/api/ranking?tryout_id=${id}`)
-              .then(res => {
-                setRanks(res.data.data)
-
-                res.data.data.forEach( (value, index) => {
-                  if (value.user_id = authState?.userToken) {
-                    setMyRank({rank: index + 1, nilai: value.nilai})
-                  }
-                })
-                setLoading(false)
-              })
-              .catch(e => {
-                console.log(e)
-              })
+            setLoading(false)
           })
           .catch(e => {
             // console.log('MY SCORE')
@@ -1201,13 +1188,20 @@ export default [
     //   }
     // }, [ranks, loading])
 
+
+
     if (loading) return (
       <View style={{flex:1,justifyContent:'center',alignItems:'center', backgroundColor: 'white'}}>
           <ActivityIndicator size="large" color="black"/>
       </View>
     )
     else return (
-      <ScrollView 
+
+      /*<TouchableOpacity onPress={() => navigation.navigate('Ranks Finished Tryout', {...value.tryout, mytryout_id: value.id})} key={index}>
+        <Text>Ranks</Text>
+      </TouchableOpacity>*/
+
+      <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -1262,29 +1256,31 @@ export default [
         <View style={styles.horizontalRuler}/>
 
         <View style={{width: Dimensions.get('window').width*0.95, alignSelf: 'center', marginBottom: 15}}>
-          <Text style={styles.leftMediumText}>Ranking anda : {"\n"}
-            { (myRank.rank === null) 
-              ? <Text style={styles.leftSmallText}>Anda belum tercantum pada ranking</Text> 
-              : <Text style={styles.leftSmallText}>{myRank.rank} dengan nilai: {myRank.nilai}</Text> }
-          </Text>
-          {ranks.length !==0 &&
-          <Table style={{marginHorizontal: RFValue(10), marginVertical: 15}} borderStyle={{borderWidth: 0.5, borderColor: theme.SECONDARY_DARK_COLOR}}>
-            <Row 
-              data={['No', 'Nama', 'PTN', 'Jurusan', 'Nilai']} 
-              textStyle={{fontSize: 17, margin: 2.5}}
-              style={{backgroundColor: theme.SECONDARY_DARK_COLOR}}
-              widthArr={[0.1 * (Dimensions.get('window').width*0.95 - RFValue(20) ), 0.26 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.26 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.15 *(Dimensions.get('window').width*0.95 - RFValue(20) )]}/>
-            {ranks.map( (value, index) => (
-              <Row 
-                data={[index + 1, value.name, value.ptn, value.jurusan, value.nilai]} 
-                key={index} 
-                textStyle={{fontSize: 15, margin: 2.5, color: 'darkgrey'}} 
-                widthArr={[0.1 * (Dimensions.get('window').width*0.95 - RFValue(20) ), 0.26 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.26 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.23 *(Dimensions.get('window').width*0.95 - RFValue(20) ), 0.15 *(Dimensions.get('window').width*0.95 - RFValue(20) )]}/>
-            ))}
-          </Table>}
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Ranks Finished Tryout', {id: id})}
+          style={[styles.button, {marginTop: RFValue(10)}]}
+          >
+          <Text style={styles.buttonText}>Lihat Ranking</Text>
+        </TouchableOpacity>
+
         </View>
 
       </ScrollView>
     )
   },
+  //Ranki
+  ({route, navigation}) => {
+    //const { id, name, start_at, end_at, mytryout_id } = route.params
+    const { id } = route.params
+    const { authState } = React.useContext(AuthContext)
+    React.useEffect(() => {
+      console.log(id)
+    }, [])
+
+    return (
+      <View style={{flex: 1}}>
+        <WebView source={{uri : `https://akademis.id/internal/ranking/index.php?tryout_id=${id}`}} />
+      </View>
+    )
+  }
 ]

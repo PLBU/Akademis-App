@@ -430,8 +430,11 @@ export default [
           <Text style={styles.leftMediumText}>Pelajaran : {"\n"}
             <Text style={styles.leftSmallText}>{data.pelajaran}</Text>
           </Text>
-          <Text style={styles.leftMediumText}>Kapasistas : {"\n"}
+          <Text style={styles.leftMediumText}>Kapasitas : {"\n"}
             <Text style={styles.leftSmallText}>{data.kapasitas} murid</Text>
+          </Text>
+          <Text style={styles.leftMediumText}>Jumlah Pendaftar : {"\n"}
+            <Text style={styles.leftSmallText}>{data.students} murid</Text>
           </Text>
           <Text style={styles.leftMediumText}>Tanggal : {"\n"}
             <Text style={styles.leftSmallText}>{dateFormat(data.date_start)} hingga {dateFormat(data.date_end)}</Text>
@@ -476,6 +479,7 @@ export default [
         <View style={styles.horizontalRuler}/>
 
         <View style={{margin: 20, alignItems: 'center'}}>
+          {(data.kapasitas > data.students) ? 
           <TouchableOpacity 
             style={(authState?.diamond >= (data.harga)) ? styles.button : styles.disabledButton} 
             onPress={ () => buyClass()} 
@@ -483,7 +487,14 @@ export default [
             <Text style={styles.buttonText} >
               { (authState?.diamond >= (data.harga)) ? "Beli dengan diamond" : "Diamond anda tidak cukup"}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> :
+          <TouchableOpacity 
+            style={styles.disabledButton}  
+            disabled={true}>
+            <Text style={styles.buttonText} >
+              Kelas Sudah Penuh :(
+            </Text>
+          </TouchableOpacity>}
         </View>
 
       </ScrollView>
@@ -500,6 +511,7 @@ export default [
     const [kritik, setKritik] = React.useState(null)
     const [data, setData] = React.useState({})
     const [teacher, setTeacher] = React.useState({})
+    const [students, setStudents] = React.useState({})
     const [session, setSession] = React.useState([])
     const [rating, setRating] = React.useState(null)
     const [notifList, setNotifList] = React.useState([])
@@ -535,6 +547,7 @@ export default [
           reviews.forEach( el => sumRating += parseFloat(el.kualitas) )
 
           setData(res.data.data)
+          setStudents(res.data.data.students)
           setTeacher(res.data.data.teacher)
           setSession(res.data.data.sesi)          
           if (reviews.length > 0) setRating(sumRating/reviews.length)
@@ -780,6 +793,9 @@ export default [
             </Text>
             <Text style={styles.leftMediumText}>Tanggal : {"\n"}
               <Text style={styles.leftSmallText}>{dateFormat(data.date_start)} hingga {dateFormat(data.date_end)}</Text>
+            </Text>
+            <Text style={styles.leftMediumText}>Jumlah Pendaftar : {"\n"}
+              <Text style={styles.leftSmallText}>{JSON.stringify(students)} murid</Text>
             </Text>
             <Text style={styles.leftMediumText}>Deskripsi : {"\n"}
               <Text style={styles.leftSmallText}>{data.deskripsi}</Text>

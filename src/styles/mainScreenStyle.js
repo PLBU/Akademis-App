@@ -130,6 +130,9 @@ export default StyleSheet.create({
     backgroundColor: 'white'
   },
   leftSmallText: {fontSize: 16, left: 10, color: 'gray'},
+  leftSmallText8: {fontSize: 16, left: 10, color: 'red'},
+  leftSmallText11: {fontSize: 16, left: 10, color: '#bf9600'},
+  leftSmallText15: {fontSize: 16, left: 10, color: '#b0cf00'},
   leftMediumText: {fontSize: 18, left: 10, marginTop: 5},
   leftSmallMediumText: {fontSize: 17, left: 10},
   mediumText: {fontSize: RFValue(17)},

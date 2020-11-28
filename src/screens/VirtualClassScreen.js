@@ -433,8 +433,14 @@ export default [
           <Text style={styles.leftMediumText}>Kapasitas : {"\n"}
             <Text style={styles.leftSmallText}>{data.kapasitas} murid</Text>
           </Text>
-          <Text style={styles.leftMediumText}>Jumlah Pendaftar : {"\n"}
-            <Text style={styles.leftSmallText}>{data.students} murid</Text>
+          <Text style={styles.leftMediumText}>Sisa Kuota : {"\n"}
+            <Text style={(((data.kapasitas - data.students)) <= 8)
+            ? styles.leftSmallText8
+            : ((((data.kapasitas - data.students)) <= 11 ) 
+            ? styles.leftSmallText11
+            : ((((data.kapasitas - data.students)) <= 15 )
+            ? styles.leftSmallText15
+            : styles.leftSmallText))}>{(((data.kapasitas - data.students))) <= 0 ? 'Habis Terjual !!' : (data.kapasitas - data.students) + ' murid'}</Text>
           </Text>
           <Text style={styles.leftMediumText}>Tanggal : {"\n"}
             <Text style={styles.leftSmallText}>{dateFormat(data.date_start)} hingga {dateFormat(data.date_end)}</Text>
@@ -492,7 +498,7 @@ export default [
             style={styles.disabledButton}  
             disabled={true}>
             <Text style={styles.buttonText} >
-              Kelas Sudah Penuh :(
+              Kelas Sudah Penuh
             </Text>
           </TouchableOpacity>}
         </View>
@@ -793,9 +799,6 @@ export default [
             </Text>
             <Text style={styles.leftMediumText}>Tanggal : {"\n"}
               <Text style={styles.leftSmallText}>{dateFormat(data.date_start)} hingga {dateFormat(data.date_end)}</Text>
-            </Text>
-            <Text style={styles.leftMediumText}>Jumlah Pendaftar : {"\n"}
-              <Text style={styles.leftSmallText}>{JSON.stringify(students)} murid</Text>
             </Text>
             <Text style={styles.leftMediumText}>Deskripsi : {"\n"}
               <Text style={styles.leftSmallText}>{data.deskripsi}</Text>

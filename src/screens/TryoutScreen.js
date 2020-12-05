@@ -352,6 +352,7 @@ export default [
     const [shareModal, setShareModal] = React.useState(false)
     const [isShared, setIsShared] = React.useState(false)
     const [isVerified, setVerified] = React.useState(false)
+    const [diamond, setDiamond] = React.useState(false)
 
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -443,19 +444,29 @@ export default [
 
     const buyTryout = () => {
       setLoading(true)
-      axios.post('https://dev.akademis.id/api/my-tryout', {
+      axios.all([
+        axios.post('https://dev.akademis.id/api/my-tryout', {
         "tryout_id": id,
         "user_id": authState?.userToken,
         "is_verified": "not verified",
         "is_finished": "not finished",
         "is_premium": "premium"
-      })
-        .then(res => {
-          console.log(res)
-          _setDiamond(res.data.data.user_diamond)
+        }), 
+        axios.post(`https://dev.akademis.id/api/user-data`, {
+          "user_id": authState?.userToken,
+          'no_telp': telp,
+          'asal_sekolah': sekolah,
+          'kota': kota,
+          'provinsi': provinsi,
+          "tryout_id": id
+        })
+      ])
+        .then(axios.spread((res1,res2) => {
+          console.log((res1,res2))
+          _setDiamond(res1.data.data.user_diamond)
           setBuySuccessModal(true)
           setLoading(false)
-        })
+        }))
         .catch(e => {
           Alert.alert("Error", e.response)
           console.log(e.response)
@@ -554,9 +565,10 @@ export default [
         <Overlay
           animationType="fade"
           fullscreen={false}
-          isVisible={shareModal}
+          isVisible={shareModal || diamond}
           onRequestClose={() => {
             setShareModal(false)
+            setDiamond(false)
           }}
           overlayStyle={styles.overlay}>
           <View style={styles.centeredView}>
@@ -569,7 +581,8 @@ export default [
                 setSekolah(null)
                 setKota(null)
                 setProvinsi(null)
-                setShareModal(false)}} 
+                setShareModal(false)
+                setDiamond(false)}} 
               style={{position: 'absolute', top: 10, right: 10}}>
               <FontAwesomeIcon name='close' size={35} color='white'/>
             </TouchableOpacity>
@@ -586,7 +599,7 @@ export default [
                 }}>
 
               <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%', borderTopLeftRadius: 25, borderTopRightRadius: 25}}>
-                <Text style={[styles.bigWhiteText, {margin: 10, left: 15}]}>Konfirmasi Sharing</Text>
+                <Text style={[styles.bigWhiteText, {margin: 10, left: 15}]}>Konfirmasi {diamond ? 'Pembelian' : 'Sharing'}</Text>
               </View>
               <View style={{height: '100%', width: '100%', padding: 20}}>
 
@@ -637,19 +650,17 @@ export default [
                     colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
                     roundness: 10,
                   }}
-                />
-
-                <Text style={{fontSize: RFValue(18), marginBottom: 10, marginTop: 10}}>Unggah Bukti Follow: </Text>
-                <View style={{flexDirection: 'row', alignItems:'center', marginBottom: 15}}>
+                /> 
+                <Text style={diamond ? {display:'none'} : {fontSize: RFValue(18), marginBottom: 10, marginTop: 10}}>Unggah Bukti Follow: </Text>
+                <View style={diamond ? {display:'none'} : {flexDirection: 'row', alignItems:'center', marginBottom: 15}}>
                   <TouchableOpacity style={{backgroundColor: 'white', borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 1, padding: RFValue(12), width: '65%', borderRadius: 20}} 
                     onPress={() => openGallery('f')}>
                     <Text style={{fontSize: RFValue(15), alignSelf: 'center'}}>Unggah Foto</Text>
                   </TouchableOpacity>
                   {buktiFollow && <FontAwesomeIcon name={"check-square-o"} size={30} color={theme.SECONDARY_DARK_COLOR} style={{marginLeft: RFValue(15)}}/>}
                 </View>
-
-                <Text style={{fontSize: RFValue(18), marginBottom: 10}}>Unggah Bukti Tag: </Text>
-                <View style={{flexDirection: 'row', alignItems:'center', marginBottom: 15}}>
+                <Text style={diamond ? {display:'none'} : {fontSize: RFValue(18), marginBottom: 10}}>Unggah Bukti Tag: </Text>
+                <View style={diamond ? {display:'none'} : {flexDirection: 'row', alignItems:'center', marginBottom: 15}}>
                   <TouchableOpacity style={{backgroundColor: 'white', borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 1, padding: RFValue(12), width: '65%', borderRadius: 20}} 
                     onPress={() => openGallery('t')}>
                     <Text style={{fontSize: RFValue(15), alignSelf: 'center'}}>Unggah Foto</Text>
@@ -657,22 +668,29 @@ export default [
                   {buktiTag && <FontAwesomeIcon name={"check-square-o"} size={30} color={theme.SECONDARY_DARK_COLOR} style={{marginLeft: RFValue(15)}}/>}
                 </View>
 
-                <Text style={{fontSize: RFValue(18), marginBottom: 10}}>Unggah Bukti Share: </Text>
-                <View style={{flexDirection: 'row', alignItems:'center', marginBottom: 15}}>
+                <Text style={diamond ? {display:'none'} : {fontSize: RFValue(18), marginBottom: 10}}>Unggah Bukti Share: </Text>
+                <View style={diamond ? {display:'none'} : {flexDirection: 'row', alignItems:'center', marginBottom: 15}}>
                   <TouchableOpacity style={{backgroundColor: 'white', borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 1, padding: RFValue(12), width: '65%', borderRadius: 20}} 
                     onPress={() => openGallery('s')}>
                     <Text style={{fontSize: RFValue(15), alignSelf: 'center'}}>Unggah Foto</Text>
                   </TouchableOpacity>
                   {buktiShare && <FontAwesomeIcon name={"check-square-o"} size={30} color={theme.SECONDARY_DARK_COLOR} style={{marginLeft: RFValue(15)}}/>}
                 </View>
-
+                {diamond ? 
+                <TouchableOpacity
+                  type="submit" 
+                  style={(telp && sekolah && kota && provinsi) ? [styles.button, {width: '90%', marginTop: RFValue(10)}] : [styles.disabledButton, {width: '90%', marginTop: RFValue(10)}]} 
+                  onPress={ () => buyTryout()} 
+                  disabled={(telp && sekolah && kota && provinsi) ? false : true}>
+                  <Text style={styles.buttonText}>Beli Tryout!</Text>
+                </TouchableOpacity> :
                 <TouchableOpacity
                   type="submit" 
                   style={(buktiFollow && buktiShare && buktiTag && telp && sekolah && kota && provinsi) ? [styles.button, {width: '90%', marginTop: RFValue(10)}] : [styles.disabledButton, {width: '90%', marginTop: RFValue(10)}]} 
                   onPress={ () => shareTryout()} 
                   disabled={(buktiFollow && buktiShare && buktiTag && telp && sekolah && kota && provinsi) ? false : true}>
                   <Text style={styles.buttonText}>Beli Tryout!</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>}
               </View>
             </ScrollView>
           </View>
@@ -771,7 +789,7 @@ export default [
         <View style={{margin: 20, alignItems: 'center'}}>
           <TouchableOpacity 
             style={(authState?.diamond >= price) ? styles.button : styles.disabledButton} 
-            onPress={ () => buyTryout()} 
+            onPress={ () => setDiamond(true)} 
             disabled={(authState?.diamond >= price) ? false : true}>
             <Text style={styles.buttonText} >
               { (authState?.diamond >= price) ? "Beli dengan diamond" : "Diamond anda tidak cukup"}

@@ -299,7 +299,11 @@ export default [
     const [rating, setRating] = React.useState(null)
     const [buySuccessModal, setBuySuccessModal] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
-
+    const [telp, setTelp] = React.useState(null)
+    const [sekolah, setSekolah] = React.useState(null)
+    const [kota, setKota] = React.useState(null)
+    const [provinsi, setProvinsi] = React.useState(null)
+    const [buy, setBuy] = React.useState(false)
     const wait = (timeout) => {
       return new Promise(resolve => {
         setTimeout(resolve, timeout);
@@ -316,10 +320,20 @@ export default [
       setLoading(true)
       axios.get(`https://dev.akademis.id/api/user/${authState?.userToken}`)
         .then ( res1 => {
-          axios.post(`https://dev.akademis.id/api/myclass?user_id=${authState?.userToken}`, {
+          axios.all([
+            axios.post(`https://dev.akademis.id/api/myclass?user_id=${authState?.userToken}`, {
             "email": res1.data.data.email,
             "event_id": id
-          })
+            }), 
+            axios.post(`https://dev.akademis.id/api/user-data`, {
+              "user_id": authState?.userToken,
+              'no_telp': telp,
+              'asal_sekolah': sekolah,
+              'kota': kota,
+              'provinsi': provinsi,
+              "tryout_id": id
+            })
+          ])
             .then(res => {
               console.log("FROM BUYING CLASS")
               console.log(res.data)
@@ -369,6 +383,98 @@ export default [
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         contentContainerStyle={{flexGrow: 1}} style={styles.bgAll}>
+        <Overlay
+          animationType="fade"
+          fullscreen={false}
+          isVisible={buy}
+          onRequestClose={() => {
+            setBuy(false)
+          }}
+          overlayStyle={styles.overlay}>
+          <View style={styles.centeredView}>
+            <TouchableOpacity 
+              onPress={() => {
+                setTelp(null)
+                setSekolah(null)
+                setKota(null)
+                setProvinsi(null)
+                setBuy(false)}} 
+              style={{position: 'absolute', top: 10, right: 10}}>
+              <FontAwesomeIcon name='close' size={35} color='white'/>
+            </TouchableOpacity>
+            <ScrollView contentContainerStyle={[{flexGrow: 1}]}
+              showsVerticalScrollIndicator={false}
+              style={{
+                width: Dimensions.get('window').width*0.8,
+                maxHeight: Dimensions.get('window').height*0.8,
+                backgroundColor: 'white',
+                elevation: 5,
+                margin: 20,
+                borderRadius: 25,
+                flex: 0.78
+                }}>
+
+              <View style={{backgroundColor: theme.PRIMARY_DARK_COLOR, height: 50, width: '100%', borderTopLeftRadius: 25, borderTopRightRadius: 25}}>
+                <Text style={[styles.bigWhiteText, {margin: 10, left: 15}]}>Konfirmasi {buy ? 'Pembelian' : 'Sharing'}</Text>
+              </View>
+              <View style={{height: '100%', width: '100%', padding: 20}}>
+
+                <Text style={{fontSize: RFValue(18), marginBottom: 10, marginTop: 10}}>Isi Data Kamu: </Text>
+                <TextInput 
+                  style={styles.textInputModal}
+                  label="Nomor Telepon"
+                  onChangeText={val => setTelp(val)}
+                  value={telp}
+                  mode='flat'
+                  theme={{
+                    colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
+                    roundness: 10,
+                  }}
+                />
+                <TextInput 
+                  style={styles.textInputModal}
+                  label="Asal Sekola"
+                  onChangeText={val => setSekolah(val)}
+                  value={sekolah}
+                  mode='flat'
+                  theme={{
+                    colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
+                    roundness: 10,
+                  }}
+                />
+                <TextInput 
+                  style={styles.textInputModal}
+                  label="Asal Kota"
+                  onChangeText={val => setKota(val)}
+                  value={kota}
+                  mode='flat'
+                  theme={{
+                    colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
+                    roundness: 10,
+                  }}
+                />
+                <TextInput 
+                  style={styles.textInputModal}
+                  label="Asal Provinsi"
+                  onChangeText={val => setProvinsi(val)}
+                  value={provinsi}
+                  mode='flat'
+                  theme={{
+                    colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
+                    roundness: 10,
+                  }}
+                />
+                <TouchableOpacity
+                  type="submit" 
+                  style={(telp && sekolah && kota && provinsi) ? [styles.button, {width: '90%', marginTop: RFValue(10)}] : [styles.disabledButton, {width: '90%', marginTop: RFValue(10)}]} 
+                  onPress={ () => buyClass()} 
+                  disabled={(telp && sekolah && kota && provinsi) ? false : true}>
+                  <Text style={styles.buttonText}>Beli Kelas!</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </Overlay>
         {/* Modal pembelian berhasil */}
         <Overlay
           animationType="fade"
@@ -488,7 +594,7 @@ export default [
           {(data.kapasitas > data.students) ? 
           <TouchableOpacity 
             style={(authState?.diamond >= (data.harga)) ? styles.button : styles.disabledButton} 
-            onPress={ () => buyClass()} 
+            onPress={ () => setBuy(true)} 
             disabled={(authState?.diamond >= (data.harga)) ? false : true}>
             <Text style={styles.buttonText} >
               { (authState?.diamond >= (data.harga)) ? "Beli dengan diamond" : "Diamond anda tidak cukup"}

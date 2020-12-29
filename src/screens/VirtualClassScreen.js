@@ -4,7 +4,6 @@ import {
   StyleSheet,
   View,
   Text,
-  TextInput,
   StatusBar,
   Dimensions,
   TouchableOpacity,
@@ -15,11 +14,13 @@ import {
   ImageBackground,
   ActivityIndicator,
   Linking,
+  TextInput,
   RefreshControl,
 } from 'react-native';
 import { Picker } from '@react-native-community/picker';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import Stars from 'react-native-stars';
+//import { TextInput } from 'react-native-paper';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import axios from 'react-native-axios';
@@ -30,6 +31,9 @@ import { useIsFocused } from '@react-navigation/native'
 
 //Context
 import { AuthContext } from '../components/Context.js'
+
+//Data
+import { provinsies, kotas } from '../data';
 
 //Styles
 import styles from '../styles/mainScreenStyle.js';
@@ -331,16 +335,16 @@ export default [
               'asal_sekolah': sekolah,
               'kota': kota,
               'provinsi': provinsi,
-              "tryout_id": id
+              "virtualclass_id": id
             })
           ])
-            .then(res => {
+            .then(axios.spread((res,res2) => {
               console.log("FROM BUYING CLASS")
               console.log(res.data)
               setBuySuccessModal(true)
               setLoading(false)
               _setDiamond(res.data.message.user_diamond)
-            })
+            }))
             .catch(e => {
               Alert.alert("Error", e.response)
               console.log("FAILED from buying Class"), console.log(e.response), setLoading(false)})
@@ -418,52 +422,53 @@ export default [
                 <Text style={[styles.bigWhiteText, {margin: 10, left: 15}]}>Konfirmasi {buy ? 'Pembelian' : 'Sharing'}</Text>
               </View>
               <View style={{height: '100%', width: '100%', padding: 20}}>
-
-                <Text style={{fontSize: RFValue(18), marginBottom: 10, marginTop: 10}}>Isi Data Kamu: </Text>
+              <Text style={{fontSize: RFValue(18), marginBottom: 10, marginTop: 10}}>Isi Data Kamu: </Text>
                 <TextInput 
-                  style={styles.textInputModal}
-                  label="Nomor Telepon"
-                  onChangeText={val => setTelp(val)}
-                  value={telp}
-                  mode='flat'
-                  theme={{
-                    colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
-                    roundness: 10,
-                  }}
+                style={{alignSelf: 'center', fontSize: 16, padding: 15, height: 50, width: '95%', borderColor: 'lightgray', borderWidth: 1, borderRadius: 15, margin: 2, marginBottom: 10}}
+                multiline={false}
+                numberOfLines={1}
+                onChangeText={(val) => setTelp(val)}
+                value={telp}
+                placeholder="Nomor Telepon"
                 />
                 <TextInput 
-                  style={styles.textInputModal}
-                  label="Asal Sekola"
-                  onChangeText={val => setSekolah(val)}
-                  value={sekolah}
-                  mode='flat'
-                  theme={{
-                    colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
-                    roundness: 10,
-                  }}
+                style={{alignSelf: 'center', fontSize: 16, padding: 15, height: 50, width: '95%', borderColor: 'lightgray', borderWidth: 1, borderRadius : 15, margin: 0}}
+                multiline={false}
+                numberOfLines={1}
+                onChangeText={(val) => setSekolah(val)}
+                value={sekolah}
+                placeholder="Asal Sekolah"
                 />
-                <TextInput 
-                  style={styles.textInputModal}
-                  label="Asal Kota"
-                  onChangeText={val => setKota(val)}
-                  value={kota}
-                  mode='flat'
-                  theme={{
-                    colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
-                    roundness: 10,
-                  }}
-                />
-                <TextInput 
-                  style={styles.textInputModal}
-                  label="Asal Provinsi"
-                  onChangeText={val => setProvinsi(val)}
-                  value={provinsi}
-                  mode='flat'
-                  theme={{
-                    colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
-                    roundness: 10,
-                  }}
-                />
+              
+                <View style={[styles.pickerContainerStyle2, {marginTop: 10}]}>
+                  <Picker
+                    selectedValue={provinsi}
+                    style={styles.pickerStyle}
+                    onValueChange={ (itemValue) =>
+                      {setProvinsi(itemValue)
+                      setKota(kotas[itemValue][0])}
+                    }
+                    >
+                    <Picker.Item label="Pilih Asal Provinsi" value={"null"}/>
+                    {provinsies.map( (item, index) => (
+                      <Picker.Item label={item} value={item} key={index}/>
+                    ))}
+                  </Picker>
+                </View>
+                
+                <View style={[styles.pickerContainerStyle2, {marginTop: 10}]}>
+                  <Picker
+                    selectedValue={kota}
+                    style={styles.pickerStyle}
+                    onValueChange={ (itemValue) =>
+                      {setKota(itemValue)} }>
+                    {
+                      kotas[String(provinsi) ].map( (item, index) => (
+                        <Picker.Item label={item} value={item} key={index}/>
+                      ))
+                    }
+                  </Picker>
+                </View>
                 <TouchableOpacity
                   type="submit" 
                   style={(telp && sekolah && kota && provinsi) ? [styles.button, {width: '90%', marginTop: RFValue(10)}] : [styles.disabledButton, {width: '90%', marginTop: RFValue(10)}]} 

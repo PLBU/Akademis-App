@@ -32,6 +32,9 @@ import { WebView } from 'react-native-webview';
 //Styles
 import styles from '../styles/mainScreenStyle.js';
 
+//Data
+import { provinsies, kotas } from '../data';
+
 //Importing theme
 import theme from '../styles/theme.js'
 
@@ -404,6 +407,7 @@ export default [
     }
 
     const shareTryout = () => {
+      setLoading(true)
       axios.all([
         axios.post(`https://dev.akademis.id/api/share`, {
           "user_id": authState?.userToken,
@@ -435,10 +439,12 @@ export default [
         setProvinsi(null)
         getData()
         Alert.alert("Berhasil", "Pembelian dengan metode share berhasil, tunggu verifikasi dari tim kami ya")
+        setLoading(false)
       }))
       .catch(e => {
         Alert.alert("Error", "Pembelian dengan metode share gagal diunggah ke server kami, silakan coba lagi")
         console.log(e)
+        setLoading(false)
       })
     }
 
@@ -608,7 +614,7 @@ export default [
 
                 <Text style={{fontSize: RFValue(18), marginBottom: 10, marginTop: 10}}>Isi Data Kamu: </Text>
                 <TextInput 
-                  style={styles.textInputModal}
+                  style={styles.textInputModal2}
                   label="Nomor Telepon"
                   onChangeText={val => setTelp(val)}
                   value={telp}
@@ -618,8 +624,9 @@ export default [
                     roundness: 10,
                   }}
                 />
+                <View style={{padding: 5}}></View>
                 <TextInput 
-                  style={styles.textInputModal}
+                  style={styles.textInputModal2}
                   label="Asal Sekolah"
                   onChangeText={val => setSekolah(val)}
                   value={sekolah}
@@ -629,28 +636,37 @@ export default [
                     roundness: 10,
                   }}
                 />
-                <TextInput 
-                  style={styles.textInputModal}
-                  label="Asal Kota"
-                  onChangeText={val => setKota(val)}
-                  value={kota}
-                  mode='flat'
-                  theme={{
-                    colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
-                    roundness: 10,
-                  }}
-                />
-                <TextInput 
-                  style={styles.textInputModal}
-                  label="Asal Provinsi"
-                  onChangeText={val => setProvinsi(val)}
-                  value={provinsi}
-                  mode='flat'
-                  theme={{
-                    colors: { placeholder: 'gray', text: 'gray', primary: theme.PRIMARY_DARK_COLOR,},
-                    roundness: 10,
-                  }}
-                /> 
+                
+                <View style={[styles.pickerContainerStyle2, {marginTop: 10}]}>
+                  <Picker
+                    selectedValue={provinsi}
+                    style={styles.pickerStyle}
+                    onValueChange={ (itemValue) =>
+                      {setProvinsi(itemValue)
+                      setKota(kotas[itemValue][0])}
+                    }
+                    >
+                    <Picker.Item label="Pilih Asal Provinsi" value={"null"}/>
+                    {provinsies.map( (item, index) => (
+                      <Picker.Item label={item} value={item} key={index}/>
+                    ))}
+                  </Picker>
+                </View>
+                
+                <View style={[styles.pickerContainerStyle2, {marginTop: 10}]}>
+                  <Picker
+                    selectedValue={kota}
+                    style={styles.pickerStyle}
+                    onValueChange={ (itemValue) =>
+                      {setKota(itemValue)} }>
+                    {
+                      kotas[String(provinsi) ].map( (item, index) => (
+                        <Picker.Item label={item} value={item} key={index}/>
+                      ))
+                    }
+                  </Picker>
+                </View>
+                
                 <Text style={diamond ? {display:'none'} : {fontSize: RFValue(18), marginBottom: 10, marginTop: 10}}>Unggah Bukti Follow: </Text>
                 <View style={diamond ? {display:'none'} : {flexDirection: 'row', alignItems:'center', marginBottom: 15}}>
                   <TouchableOpacity style={{backgroundColor: 'white', borderColor: theme.SECONDARY_DARK_COLOR, borderWidth: 1, padding: RFValue(12), width: '65%', borderRadius: 20}} 

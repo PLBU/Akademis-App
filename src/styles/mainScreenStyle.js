@@ -19,6 +19,16 @@ export default StyleSheet.create({
     height: 50,
     backgroundColor: 'white',
   },
+  textInputModal2: {
+    width: Dimensions.get('window').width*0.67,
+    height: 50,
+    backgroundColor: 'white',
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    borderWidth: 1,
+    borderColor: 'lightgrey',
+    alignSelf: 'center'
+  },
   headerText:{
     color: 'white',
     fontSize: 24,
@@ -163,6 +173,14 @@ export default StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
     borderColor: theme.SECONDARY_DARK_COLOR
+  },
+  pickerContainerStyle2: {
+    alignSelf: 'center',
+    width: Dimensions.get('window').width*0.67, 
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: theme.SECONDARY_DARK_COLOR,
+    fontSize: 16
   },
   backgroundImage: {
     flex: 1,
